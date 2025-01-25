@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: black;
+  color: white;
+}
+
+svg {
+  width: 24px;
+  height: 24px;
+}
+
+.app_animate-fill-slot {
+  animation: animate-fill-slot 5s linear;
+}
+
+.app_transparent-input-text {
+  background: transparent;
+  color: black;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes animate-fill-slot {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
