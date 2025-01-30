@@ -1,6 +1,12 @@
 import { Link } from "react-router";
 
-function SearchBarResults({ searchTerm, posts, profiles }) {
+function SearchBarResults({
+  searchTerm,
+  posts,
+  profiles,
+  questions,
+  clearSearchResults,
+}) {
   // const [highlightTitle, setHighlightTitle] = useState(null);
   // const [highlightDescription, setHighlightDescription] = useState(null);
 
@@ -52,22 +58,36 @@ function SearchBarResults({ searchTerm, posts, profiles }) {
       {posts.length > 0 && (
         <div className="flex flex-col gap-2">
           <h1 className="p-2 font-bold">Posts</h1>
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             {posts.map((post, index) => (
               <Link
+                onClick={clearSearchResults}
                 key={index}
                 to={`/posts/${post.id}`}
                 state={{ post }}
-                className="flex flex-col gap-4 border border-neutral-700 p-2 first:rounded-t-lg last:rounded-b-lg hover:border-white"
-                target="_blank"
+                className="flex flex-col gap-2 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0"
               >
-                {/* {highlightTitle && <span>{parse(highlightTitle)}{highlightDescription && <span> - {parse(highlightDescription)}</span>}</span>} */}
-                {
-                  <span>
-                    {post.title}
-                    {post.description && <span> - {post.description}</span>}
-                  </span>
-                }
+                <p>{post.title}</p>
+                {post.description && <p>{post.description}</p>}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+      {questions.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <h1 className="p-2 font-bold">Questions</h1>
+          <div className="flex flex-col gap-2">
+            {questions.map((question, index) => (
+              <Link
+                onClick={clearSearchResults}
+                key={index}
+                to={`/questions/${question.id}`}
+                state={{ question }}
+                className="flex flex-col gap-2 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0"
+              >
+                <p>{question.title}</p>
+                {question.description && <p>{question.description}</p>}
               </Link>
             ))}
           </div>
@@ -76,24 +96,19 @@ function SearchBarResults({ searchTerm, posts, profiles }) {
       {profiles.length > 0 && (
         <div className="flex flex-col gap-2">
           <h1 className="p-2 font-bold">Users</h1>
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             {profiles.map((profile, index) => (
               <Link
+                onClick={clearSearchResults}
                 key={index}
-                to={`/users/${profile.username}#posts`}
+                to={`/profile/${profile.username}#posts`}
                 state={{ profile }}
-                className="flex flex-col gap-4 border border-neutral-700 p-2 first:rounded-t-lg last:rounded-b-lg hover:border-white"
-                target="_blank"
+                className="flex flex-col gap-2 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0"
               >
-                {/* {highlightUsername && <span>{parse(highlightUsername)}{highlightDisplayName && <span> - {parse(highlightDisplayName)}</span>}</span>} */}
-                {
-                  <span>
-                    {profile.username}
-                    {profile.display_name && (
-                      <span> - {profile.display_name}</span>
-                    )}
-                  </span>
-                }
+                <p>
+                  {profile.username}
+                  {profile.display_name ? ` - ${profile.display_name}` : ""}
+                </p>
               </Link>
             ))}
           </div>

@@ -1,47 +1,51 @@
 import { useEffect, useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router";
 import {
   ModalContext,
-  ScreenSizeContext,
+  ScreenResizeContext,
+  ScrollDataContext,
   SessionContext,
   UserContext,
+  FullscreenContext,
 } from "./common/contexts";
 import { supabase } from "./common/supabase";
-import Footer from "./components/Footer";
+import CommentModal from "./components/CommentModal.jsx";
+import Loading from "./components/Loading.jsx";
 import NavBar from "./components/NavBar";
 import NavBarMobile from "./components/NavBarMobile.jsx";
-
+import NavBarModal from "./components/NavBarModal.jsx";
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import ExploreLayout from "./layouts/ExploreLayout.jsx";
+import ForbiddenLayout from "./layouts/ForbiddenLayout.jsx";
+import ForgotPasswordLayout from "./layouts/ForgotPasswordLayout.jsx";
 import HomeLayout from "./layouts/HomeLayout.jsx";
 import LearnLayout from "./layouts/LearnLayout.jsx";
 import LogInLayout from "./layouts/LogInLayout.jsx";
+import NoContentLayout from "./layouts/NoContentLayout.jsx";
 import NotFoundLayout from "./layouts/NotFoundLayout.jsx";
 import NotificationsLayout from "./layouts/NotificationsLayout.jsx";
+import PostLayout from "./layouts/PostLayout.jsx";
 import ProfileLayout from "./layouts/ProfileLayout.jsx";
+import QuestionLayout from "./layouts/QuestionLayout.jsx";
 import ResetPasswordLayout from "./layouts/ResetPasswordLayout.jsx";
 import SettingsLayout from "./layouts/SettingsLayout.jsx";
 import SignUpLayout from "./layouts/SignUpLayout.jsx";
-
-import Loading from "./components/Loading.jsx";
-
-import { BrowserRouter, Route, Routes } from "react-router";
-import NavBarModal from "./components/NavBarModal.jsx";
-import PostModal from "./components/PostModal.jsx";
-import QuestionModal from "./components/QuestionModal.jsx";
-import ForbiddenLayout from "./layouts/ForbiddenLayout.jsx";
-import ForgotPasswordLayout from "./layouts/ForgotPasswordLayout.jsx";
-import NoContentLayout from "./layouts/NoContentLayout.jsx";
-import PostLayout from "./layouts/PostLayout.jsx";
-import QuestionLayout from "./layouts/QuestionLayout.jsx";
-
-import CommentModal from "./components/CommentModal.jsx";
+import SearchBar from "./components/SearchBar.jsx";
+import CreateModal from "./components/CreateModal.jsx";
 
 function App() {
   const [session, setSession] = useState(null);
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
-  const [screenSize, setScreenSize] = useState(window.innerWidth);
+  const [screenResize, setScreenResize] = useState(0);
   const [showModal, setShowModal] = useState(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [scrollData, setScrollData] = useState({
+    type: "",
+    data: [],
+    hasMoreData: true,
+    scrollY: 0,
+  });
 
   async function getUser(session, abortController) {
     const { data, error } = await supabase
@@ -106,14 +110,24 @@ function App() {
   useEffect(() => {
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
-        if (showModal) setShowModal(null);
+        setShowModal(null);
       }
     });
-  }, [showModal]);
+  }, []);
 
   useEffect(() => {
     window.addEventListener("resize", () => {
-      setScreenSize(window.innerWidth);
+      setScreenResize(window.innerWidth);
+    });
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("fullscreenchange", () => {
+      if (document.fullscreenElement) {
+        setIsFullscreen(true);
+      } else {
+        setIsFullscreen(false);
+      }
     });
   }, []);
 
@@ -122,76 +136,94 @@ function App() {
       <SessionContext.Provider value={{ session, setSession }}>
         <UserContext.Provider value={{ loadingUser, user, setUser }}>
           <ModalContext.Provider value={{ showModal, setShowModal }}>
-            <ScreenSizeContext.Provider value={{ screenSize }}>
-              {loadingUser && <Loading />}
-              {!loadingUser && (
-                <>
-                  <NavBar />
-                  <NavBarMobile />
-
-                  {showModal && showModal.type === "NAVBAR_MODAL" && <NavBarModal />}
-
-                  {showModal && showModal.type === "POST_MODAL" && <PostModal />}
-
-                  {showModal && showModal.type === "QUESTION_MODAL" && <QuestionModal />}
-
-                  {showModal && showModal.type === "COMMENT_MODAL" && <CommentModal />}
-                </>
-              )}
-
-              {!loadingUser && (
-                <main
-                  id="app"
-                  className={`relative left-0 top-0 mb-[88px] flex min-h-screen w-full flex-col gap-4 p-4 lg:mb-0 lg:py-4 lg:pl-[88px] lg:pr-4`}
+            <ScreenResizeContext.Provider value={{ screenResize }}>
+              <ScrollDataContext.Provider value={{ scrollData, setScrollData }}>
+                <FullscreenContext.Provider
+                  value={{ isFullscreen, setIsFullscreen }}
                 >
-                  <Routes>
-                    <Route path="/" element={<HomeLayout />} />
-                    <Route
-                      path="log-in"
-                      element={user ? <NoContentLayout /> : <LogInLayout />}
-                    />
-                    <Route
-                      path="sign-up"
-                      element={user ? <NoContentLayout /> : <SignUpLayout />}
-                    />
-                    <Route
-                      path="forgot-password"
-                      element={<ForgotPasswordLayout />}
-                    />
-                    <Route
-                      path="reset-password"
-                      element={
-                        user ? <ResetPasswordLayout /> : <NoContentLayout />
-                      }
-                    />
-                    <Route
-                      path="notifications"
-                      element={
-                        user ? <NotificationsLayout /> : <NoContentLayout />
-                      }
-                    />
-                    <Route path="explore" element={<ExploreLayout />} />
-                    <Route path="posts/:id" element={<PostLayout />} />
-                    <Route path="questions" element={<LearnLayout />} />
-                    <Route path="questions/:id" element={<QuestionLayout />} />
-                    <Route path="users/:username" element={<ProfileLayout />} />
-                    <Route path="settings" element={<SettingsLayout />} />
-                    <Route
-                      path="admin"
-                      element={
-                        user && user.user_role === "SUPER_ADMIN" ? (
-                          <AdminLayout />
-                        ) : (
-                          <ForbiddenLayout />
-                        )
-                      }
-                    />
-                    <Route path="*" element={<NotFoundLayout />} />
-                  </Routes>
-                  <Footer />
-                </main>
-              )}
-            </ScreenSizeContext.Provider>
+                  {loadingUser && <Loading />}
+                  {!loadingUser && (
+                    <>
+                      <NavBar />
+                      <NavBarMobile />
+
+                      {showModal && showModal.type === "NAVBAR_MODAL" && (
+                        <NavBarModal />
+                      )}
+
+                      {showModal && showModal.type === "CREATE_MODAL" && (
+                        <CreateModal />
+                      )}
+
+                      {showModal && showModal.type === "COMMENT_MODAL" && (
+                        <CommentModal />
+                      )}
+                    </>
+                  )}
+
+                  {!loadingUser && (
+                    <main
+                      id="app"
+                      className={`relative left-0 top-0 mb-[76px] flex min-h-screen w-full flex-col gap-4 px-4 pb-4 pt-0 sm:mb-0 sm:pl-[216px]`}
+                    >
+                      <SearchBar />
+                      <Routes>
+                        <Route path="/" element={<HomeLayout />} />
+                        <Route
+                          path="log-in"
+                          element={user ? <NoContentLayout /> : <LogInLayout />}
+                        />
+                        <Route
+                          path="sign-up"
+                          element={
+                            user ? <NoContentLayout /> : <SignUpLayout />
+                          }
+                        />
+                        <Route
+                          path="forgot-password"
+                          element={<ForgotPasswordLayout />}
+                        />
+                        <Route
+                          path="reset-password"
+                          element={
+                            user ? <ResetPasswordLayout /> : <NoContentLayout />
+                          }
+                        />
+                        <Route
+                          path="notifications"
+                          element={
+                            user ? <NotificationsLayout /> : <NoContentLayout />
+                          }
+                        />
+                        <Route path="explore" element={<ExploreLayout />} />
+                        <Route path="posts/:id" element={<PostLayout />} />
+                        <Route path="questions" element={<LearnLayout />} />
+                        <Route
+                          path="questions/:id"
+                          element={<QuestionLayout />}
+                        />
+                        <Route
+                          path="profile/:username"
+                          element={<ProfileLayout />}
+                        />
+                        <Route path="settings" element={<SettingsLayout />} />
+                        <Route
+                          path="admin"
+                          element={
+                            user && user.user_role === "SUPER_ADMIN" ? (
+                              <AdminLayout />
+                            ) : (
+                              <ForbiddenLayout />
+                            )
+                          }
+                        />
+                        <Route path="*" element={<NotFoundLayout />} />
+                      </Routes>
+                    </main>
+                  )}
+                </FullscreenContext.Provider>
+              </ScrollDataContext.Provider>
+            </ScreenResizeContext.Provider>
           </ModalContext.Provider>
         </UserContext.Provider>
       </SessionContext.Provider>
@@ -202,33 +234,39 @@ function App() {
 export default App;
 
 /* 
-    TODO:
+    BACKLOG:
+    - infinite scroll admin page
+    - fix realtime bug where setting new state loses the previous array state
+    - revamp profile layout - lots of bugs
+    - search bar questions bug
+    - show preview of post before submission
+    - auto delete rejected posts within 24 hours using CRON job with a "delete_at" unless user resubmits it and becomes "PENDING" again
+    - show trending users (based on followers) and posts (based on likes and views)
+    - search bar history search terms for quick access
+    - view history (not the same as views as views only count users that viewed posts other than their own)
+    - create custom toggle - similar to how we did the slider
+    - make sure custom inputs can listen to important keys (enter, spacebar, etc.)
+    - consider making the following global state to always keep track and never reset unless the user refreshes the page so we can save on making requests
+    --- all questions a user has loaded
+    --- all posts a user has loaded
+    --- all profile-based data (the user's profile not random profiles)
+    - boost questions to get them more attention - check to make sure you havent boosted a quesiton before doing so to avoid artificial inflation
     - auto refresh lists when a question or comment is added
-    - listen to 'enter' key when interacting with buttons and inputs
-    - boost questions to get them more attention
-    - nested comments - tree view with best practices https://app.uxcel.com/courses/common-patterns/comments-best-practices-499 - also only infinite load top-level comments, all nested comments must be expanded by the user manually
+    - move questions to explore page
+    - pages for search results (posts, questions, users) when a user clicks on 'see more results' in the search bar
     - post comments
     - edit/delete post
     - edit/delete question
-    - infinite scroll save page state when navigating between explore page and post page (same with questions)
     - deactivate account - mark user as 'inactive' and keep all content, simply hide the user info from posts
     - edit posts + files + history of edits
-    - pin posts (ordered by post date)
-    - show trending users (based on followers) and posts (based on likes and views)
     - counts for likes, number of posts, followers, views (unique), views (repeated)
-    - hashtags # and mentions @ and annotations for videos (ex: 0:30 plays video from that point)
-    - stories (24 hours) + archived stories
+    - hashtags # and mentions @ and annotations for videos (ex: 0:30 plays video from that point) and formatted links w/ preview option - dont forget to check for title before submission!!!
     - allow user to select a video frame to set as their thumbnail
-    - allow users to retry failed uploads
     - allow image reordering
-    - allow user to select image ratio for a carousel post (1:1, 3:2, 5:4, 16:9 and more)
-    - show preview of post before submission
     - filters and sorts for content
     - scheduled posts
     - expired posts
     - analytics page
-    - reward system to encourage good, quality content and interactions
-    - custom video control UI - play/pause, progress time + bar, mute/unmute, volume, fullscreen, thumbnail (play video after showing thumbnail for 3 seconds)
     - allow users to bypass post reviews when they earn enought trust based on their activity history
     - banned users (when signing up or logging in, check the error code to avoid banned users from entering the platform) user_banned
     - captcha protection when signing up/logging in
@@ -238,7 +276,19 @@ export default App;
     - auth email templates configuration - https://supabase.com/docs/guides/auth/auth-email-templates
     - rate limit supabase requests for data and storage to avoid potential spam
 
-    Costs
+    FUTURE:
+    - pin posts
+    - stories (24 hours) + archived stories
+    - video timestamps similar to youtube
+    - groups - title/description/posts + masonry view
+    - reward system to encourage good, quality content and interactions
+    - message and sharing
+    - post boosting
+    - ecommerce
+    - livestreaming
+    - email change page flow
+
+    COSTS
     - $25/month - Supabase
     - $20/month - Vercel
     - $20/year - Namecheap
@@ -247,7 +297,7 @@ export default App;
     --- ~ $100/month ($1,200/year)
     --- goal: get 12 paying members to cover year 1 costs
 
-    Free Version
+    FREE
     - $0 with ads
     - upload up to 5 files per post
     - max 2 GB per file
@@ -260,7 +310,7 @@ export default App;
     - no priority support
     - no supporter badge
 
-    Pro Version
+    PRO
     - https://stripe.com/en-ca/payments/link
     - $100 per year or pay $250 for 3 years (save $50) or $400 for 5 years (save $100) with no ads
     - upload up to 20 files per post (4x more!)
@@ -273,13 +323,4 @@ export default App;
     - expired posts
     - priority support
     - supporter badge
-
-    FUTURE:
-    - post boosting
-    - ecommerce
-    - album allows the user to group related photos and playlist allows the user to group related videos
-    - livestreaming - mobile only unless i can access all cameras using an api
-    - mobile app
-    - email change page flow
-    - redesign your portfolio to be a minimalist design with amazing break down of 4 websites to showcase (including purpose, technologies, screenshots of designs and database tables, video demo, testing account for the user to play with the app, descriptions of various minor and major features and how they were implemented, apis used, etc) - make the websites into case studies almost - tailwind docs inspiration?? i want it to look like a blue print and have a clean look
   */

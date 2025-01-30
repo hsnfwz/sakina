@@ -1,12 +1,3 @@
-function getMediaExtension(fileName) {
-  const extension = fileName.split(".").pop();
-
-  if (extension === "jpeg" || extension === "jpg" || extension === "png")
-    return "IMAGE";
-  if (extension === "mp4" || extension === "m4v" || extension === "mov")
-    return "VIDEO";
-}
-
 function expectedUsernameFormat(username) {
   return /^[a-zA-Z0-9._]+$/.test(username);
 }
@@ -56,10 +47,61 @@ function formatFileSize(fileSize) {
   return _fileSize;
 }
 
+function getDate(date, showTime) {
+  const _date = new Date(date);
+  const dateTime = new Intl.DateTimeFormat("default", {
+    hour: showTime ? "numeric" : undefined,
+    minute: showTime ? "numeric" : undefined,
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+  }).format(_date);
+
+  return dateTime;
+}
+
+function getIslamicDate(date, showTime) {
+  const _date = new Date(date);
+  const dateTime = new Intl.DateTimeFormat("en-u-ca-islamic-nu-latn", {
+    hour: showTime ? "numeric" : undefined,
+    minute: showTime ? "numeric" : undefined,
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+  }).format(_date);
+
+  return dateTime;
+}
+
+function formatDuration(seconds) {
+  // note: this assumes videos are maximum 24 hours long
+
+  let iso;
+
+  const tenMinuteInSeconds = 600;
+  const oneHourInSeconds = 3600;
+  const tenHoursInSeconds = 36000;
+
+  if (seconds < tenMinuteInSeconds) {
+    iso = new Date(seconds * 1000).toISOString().substring(15, 19);
+  } else if (seconds < oneHourInSeconds) {
+    iso = new Date(seconds * 1000).toISOString().substring(14, 19);
+  } else if (seconds < tenHoursInSeconds) {
+    iso = new Date(seconds * 1000).toISOString().substring(12, 19);
+  } else {
+    iso = new Date(seconds * 1000).toISOString().substring(11, 19);
+  }
+  return iso;
+}
+
 export {
-  getMediaExtension,
   expectedUsernameFormat,
   formatFileName,
   formatFileSize,
   formatFileSizeAbbreviation,
+  getDate,
+  getIslamicDate,
+  formatDuration,
 };

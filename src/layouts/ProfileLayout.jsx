@@ -37,7 +37,7 @@ function ProfileLayout() {
   const [loadingViewedPostsCount, setLoadingViewedPostsCount] = useState(false);
   const [hasMoreViewedPosts, setHasMoreViewedPosts] = useState(true);
 
-  const [elementRef, isIntersecting] = useElementIntersection();
+  const [elementRef, intersectingElement] = useElementIntersection();
 
   useEffect(() => {
     async function initialize() {
@@ -132,7 +132,7 @@ function ProfileLayout() {
     }
 
     if (profile) initialize();
-  }, [profile, isIntersecting]);
+  }, [profile, intersectingElement]);
 
   useEffect(() => {
     async function initialize() {
@@ -323,14 +323,14 @@ function ProfileLayout() {
 
           <div className="flex gap-2">
             <Link
-              className={`rounded-lg p-2 ${location.hash === "#posts" ? "pointer-events-none bg-sky-500 text-white" : "bg-neutral-700"} `}
+              className={`${location.hash === "#posts" ? "bg-sky-500 text-white" : "bg-transparent text-sky-500"} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
               to="#posts"
             >
               {postsCount} Posts
             </Link>
             {user && profile && user.id === profile.id && (
               <Link
-                className={`rounded-lg p-2 ${location.hash === "#archived-posts" ? "pointer-events-none bg-sky-500 text-white" : "bg-neutral-700"} `}
+                className={`${location.hash === "#archived-posts" ? "bg-sky-500 text-white" : "bg-transparent text-sky-500"} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
                 to="#archived-posts"
               >
                 {archivedPostsCount} Archived Posts
@@ -338,7 +338,7 @@ function ProfileLayout() {
             )}
             {user && profile && user.id === profile.id && (
               <Link
-                className={`rounded-lg p-2 ${location.hash === "#viewed-posts" ? "pointer-events-none bg-sky-500 text-white" : "bg-neutral-700"} `}
+                className={`${location.hash === "#viewed-posts" ? "bg-sky-500 text-white" : "bg-transparent text-sky-500"} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
                 to="#viewed-posts"
               >
                 {viewedPostsCount} Viewed Posts
@@ -356,7 +356,9 @@ function ProfileLayout() {
                 <>
                   <Masonry posts={posts} elementRef={elementRef} />
                   {!hasMorePosts && (
-                    <p className="text-center">That's everything for now!</p>
+                    <p className="text-center text-neutral-700">
+                      That's everything for now!
+                    </p>
                   )}
                 </>
               )}
@@ -375,7 +377,9 @@ function ProfileLayout() {
                 <>
                   <Masonry posts={archivedPosts} elementRef={elementRef} />
                   {!hasMoreArchivedPosts && (
-                    <p className="text-center">That's everything for now!</p>
+                    <p className="text-center text-neutral-700">
+                      That's everything for now!
+                    </p>
                   )}
                 </>
               )}
@@ -394,7 +398,9 @@ function ProfileLayout() {
                 <>
                   <Masonry posts={viewedPosts} elementRef={elementRef} />
                   {!hasMoreViewedPosts && (
-                    <p className="text-center">That's everything for now!</p>
+                    <p className="text-center text-neutral-700">
+                      That's everything for now!
+                    </p>
                   )}
                 </>
               )}

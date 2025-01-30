@@ -5,12 +5,13 @@ function Textarea({ handleInput, placeholder, label, value, max, min }) {
       <textarea
         id={placeholder}
         placeholder={placeholder}
-        className="flex w-full rounded-lg border border-neutral-700 bg-black p-2 placeholder-neutral-700 focus:border focus:border-white focus:outline-none focus:ring-0"
+        className="flex w-full rounded-lg border-2 border-neutral-700 bg-black p-2 placeholder-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0"
         onInput={handleInput}
         value={value}
         rows={10}
         maxLength={max}
         minLength={min}
+        autoComplete="off"
       />
     </div>
   );

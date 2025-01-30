@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router";
 import { UserContext } from "../common/contexts";
 import { supabase } from "../common/supabase";
@@ -9,17 +9,13 @@ import VideoView from "../components/VideoView";
 
 function PostLayout() {
   const { user } = useContext(UserContext);
-
   const { id } = useParams();
   const location = useLocation();
   const [post, setPost] = useState(null);
   const [loadingPost, setLoadingPost] = useState(false);
-
   const [disabled, setDisabled] = useState(false);
   const [like, setLike] = useState(null);
-  const [parentPostId, setParentPostId] = useState(null);
-
-  const [showModal, setShowModal] = useState(false);
+  const timerRef = useRef();
 
   useEffect(() => {
     async function initialize() {
@@ -46,7 +42,8 @@ function PostLayout() {
           console.log(viewsResult.error);
         } else {
           if (viewsResult.count === 0 && user.id !== post.user_id.id) {
-            setTimeout(async () => {
+            clearTimeout(timerRef.current);
+            timerRef.current = setTimeout(async () => {
               await supabase
                 .from("views")
                 .insert({ user_id: user.id, post_id: post.id });
@@ -73,12 +70,46 @@ function PostLayout() {
         if (error) {
           console.log(error);
         } else {
+          const postIds = data.map((post) => post.id);
+
+          const resultImages = await supabase
+            .from("images")
+            .select("*")
+            .in("post_id", postIds);
+
+          if (resultImages.error) console.log(resultImages.error);
+
+          const resultVideos = await supabase
+            .from("videos")
+            .select("*")
+            .in("post_id", postIds);
+
+          if (resultVideos.error) console.log(resultVideos.error);
+
+          data.forEach((post) => {
+            post.files = {
+              images: [],
+              videos: [],
+            };
+            resultImages.data.forEach((file) => {
+              if (post.id === file.post_id) {
+                post.images.push(file);
+              }
+            });
+            resultVideos.data.forEach((file) => {
+              if (post.id === file.post_id) {
+                post.videos.push(file);
+              }
+            });
+          });
+
           setPost(data[0]);
         }
       }
       setLoadingPost(false);
     }
 
+    window.scroll({ top: 0, behavior: "instant" });
     initialize();
   }, []);
 
@@ -90,16 +121,17 @@ function PostLayout() {
         <div>
           {post.type === "IMAGE" && (
             <ImageView
-              fileNames={JSON.parse(post.files)}
+              images={post.images}
               isMasonryView={false}
               autoPlayCarousel={false}
             />
           )}
           {post.type !== "IMAGE" && (
             <VideoView
-              fileNames={JSON.parse(post.files)}
+              images={post.images}
+              videos={post.videos}
               isMasonryView={false}
-              videoType={post.type}
+              showControls={true}
             />
           )}
 
@@ -144,7 +176,7 @@ function PostLayout() {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                strokeWidth={1.5}
+                strokeWidth={2}
                 className={`${like ? "fill-black" : "fill-white stroke-black"}`}
               >
                 <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
@@ -158,10 +190,12 @@ function PostLayout() {
                 isDisabled={disabled}
                 handleClick={async () => {
                   setDisabled(true);
-                  let isArchived = !post.is_archived;
                   const { data, error } = await supabase
                     .from("posts")
-                    .update({ is_archived: isArchived })
+                    .update({
+                      status:
+                        post.status === "ARCHIVED" ? "ACCEPTED" : "ARCHIVED",
+                    })
                     .eq("id", post.id)
                     .select("*, user_id(*)");
 
@@ -177,9 +211,8 @@ function PostLayout() {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className={`${post.is_archived ? "fill-black stroke-white" : "fill-white stroke-black"}`}
+                  strokeWidth={2}
+                  className={`${post.status === "ARCHIVED" ? "fill-black stroke-white" : "fill-white stroke-black"}`}
                 >
                   <path
                     strokeLinecap="round"
@@ -193,7 +226,7 @@ function PostLayout() {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  strokeWidth={1.5}
+                  strokeWidth={2}
                 >
                   <path
                     strokeLinecap="round"
@@ -204,20 +237,6 @@ function PostLayout() {
               </IconButton>
             </div>
           )}
-
-          {/* {user && (
-            <button
-              className="flex disabled:opacity-50 disabled:pointer-events-none"
-              disabled={disabled}
-              type="button"
-              onClick={async () => {
-                setParentPostId(post.id);
-                setShowModal(true);
-              }}
-            >
-              Reply
-            </button>
-          )} */}
         </div>
       )}
     </div>

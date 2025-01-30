@@ -1,15 +1,17 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
-import { ScreenSizeContext } from "../common/contexts.js";
+import { ScreenResizeContext, ScrollDataContext } from "../common/contexts.js";
 import ImageView from "./ImageView.jsx";
 import VideoView from "./VideoView.jsx";
 
-function Masonry({ posts, elementRef }) {
+function Masonry({ elementRef }) {
+  const { scrollData, setScrollData } = useContext(ScrollDataContext);
+  const { screenResize } = useContext(ScreenResizeContext);
   const [masonry, setMasonry] = useState(null);
+  const [isMasonryCreated, setIsMasonryCreated] = useState(false);
+  const timerRef = useRef();
 
-  const { screenSize } = useContext(ScreenSizeContext);
-
-  function createMasonry(posts, numberOfColumns) {
+  function createMasonry(numberOfColumns) {
     const masonryInfo = {
       columns: {},
       lastPostId: null,
@@ -22,10 +24,10 @@ function Masonry({ posts, elementRef }) {
     }
 
     let j = 0;
-    while (j < posts.length) {
-      const post = posts[j];
+    while (j < scrollData.data.length) {
+      const post = scrollData.data[j];
 
-      if (j === posts.length - 1) {
+      if (j === scrollData.data.length - 1) {
         masonryInfo.lastPostId = post.id;
       }
 
@@ -36,88 +38,85 @@ function Masonry({ posts, elementRef }) {
     }
 
     setMasonry(masonryInfo);
+    if (!isMasonryCreated) setIsMasonryCreated(true);
   }
 
-  let timer;
-  useEffect(() => {
-    timer = setTimeout(() => {
-      if (screenSize < 640) {
-        createMasonry(posts, 1);
-      } else if (screenSize >= 640 && screenSize < 768) {
-        createMasonry(posts, 2);
-      } else {
-        createMasonry(posts, 3);
+  function callCreateMasonry() {
+    if (screenResize === 0) {
+      if (window.innerWidth < 640) {
+        createMasonry(2);
+      } else if (window.innerWidth >= 640) {
+        createMasonry(4);
       }
-    }, 1000);
+    } else {
+      if (screenResize < 640) {
+        createMasonry(2);
+      } else if (screenResize >= 640) {
+        createMasonry(4);
+      }
+    }
+  }
 
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [posts, screenSize]);
+  useEffect(() => {
+    callCreateMasonry();
+  }, [scrollData]);
 
-  // useEffect(() => {
-  //   let previousScreenSize = window.innerWidth;
+  useEffect(() => {
+    if (isMasonryCreated && scrollData && scrollData.type === "POSTS") {
+      window.scroll({ top: scrollData.scrollYPosition, behavior: "instant" });
+    }
+  }, [isMasonryCreated]);
 
-  //   if (previousScreenSize < 640) {
-  //     createMasonry(posts, 1);
-  //   } else if (previousScreenSize >= 640 && previousScreenSize < 768) {
-  //     createMasonry(posts, 2);
-  //   } else {
-  //     createMasonry(posts, 3);
-  //   }
+  useEffect(() => {
+    if (screenResize !== 0) {
+      clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => callCreateMasonry(), 1000);
 
-  //     window.addEventListener("resize", () => {
-  //         if (window.innerWidth < 640 && previousScreenSize >= 640) {
-  //           createMasonry(posts, 1);
-  //         } else if (
-  //           window.innerWidth >= 640 &&
-  //           window.innerWidth < 768 &&
-  //           (previousScreenSize < 640 || previousScreenSize >= 768)
-  //         ) {
-  //           createMasonry(posts, 2);
-  //         } else if (window.innerWidth >= 768 && previousScreenSize < 768) {
-  //           createMasonry(posts, 3);
-  //         }
-
-  //         previousScreenSize = window.innerWidth;
-
-  //         // setAddedEventListener(true);
-  //     });
-  // }, [posts]);
+      return () => {
+        clearTimeout(timerRef.current);
+      };
+    }
+  }, [screenResize]);
 
   return (
     <>
       {masonry && (
-        // <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
-        <div className="flex w-full gap-2">
+        <div className="flex w-full gap-4">
           {Object.values(masonry.columns).map((column, columnIndex) => (
-            <div key={columnIndex} className="flex w-full flex-col gap-2">
+            <div key={columnIndex} className="flex w-full flex-col gap-4">
               {column.map((post, postIndex) => (
                 <Link
                   to={`/posts/${post.id}`}
                   state={{ post }}
-                  className="group relative top-0 w-full rounded-lg border border-transparent hover:border-white focus:border focus:border-white focus:outline-none focus:ring-0"
+                  className="group relative top-0 w-full rounded-lg border-2 border-transparent hover:border-white focus:border-2 focus:border-white focus:outline-none focus:ring-0"
                   ref={post.id === masonry.lastPostId ? elementRef : null}
                   key={postIndex}
-                  target="_blank"
+                  id={post.id}
+                  onClick={() => {
+                    setScrollData({
+                      ...scrollData,
+                      scrollYPosition: window.scrollY,
+                      elementId: post.id,
+                    });
+                  }}
                 >
                   {post.type === "IMAGE" && (
                     <ImageView
-                      fileNames={JSON.parse(post.files)}
+                      images={post.images}
                       isMasonryView={true}
                       autoPlayCarousel={true}
                     />
                   )}
                   {post.type !== "IMAGE" && (
                     <VideoView
-                      fileNames={JSON.parse(post.files)}
+                      images={post.images}
+                      videos={post.videos}
                       isMasonryView={true}
-                      videoType={post.type}
                     />
                   )}
-                  <div className="z-3 absolute bottom-0 flex w-full flex-col justify-end gap-4 rounded-b-lg bg-black/75 p-4 opacity-0 backdrop-blur group-hover:opacity-100">
+                  <div className="z-3 absolute bottom-0 flex w-full flex-col justify-end gap-4 rounded-b-lg bg-black/50 p-4 opacity-0 backdrop-blur group-hover:opacity-100">
                     <h1 className="text-white">{post.title}</h1>
-                    {!post.is_archived && (
+                    {post.status === "ACCEPTED" && (
                       <div className="flex items-center gap-2">
                         {post.user_id.avatar_file && (
                           <img

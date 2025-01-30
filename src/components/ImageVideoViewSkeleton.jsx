@@ -1,22 +1,19 @@
 import { useEffect, useState } from "react";
 
-function ImageVideoViewSkeleton({ show, isMasonryView }) {
+function ImageVideoViewSkeleton({ show, isMasonryView, width, height }) {
   const [skeletonWidth, setSkeletonWidth] = useState(0);
 
   useEffect(() => {
-    const screenSize = window.innerWidth;
     let width = 0;
 
     if (isMasonryView) {
-      if (screenSize < 640) {
-        width = window.innerWidth - 32;
-      } else if (screenSize >= 640 && screenSize < 768) {
-        width = (window.innerWidth - 32 - 8) / 2;
-      } else {
-        width = (window.innerWidth - 32 - 16) / 3;
+      if (window.innerWidth < 640) {
+        width = (window.innerWidth - 16 - 16 - 8) / 2;
+      } else if (window.innerWidth >= 640) {
+        width = (window.innerWidth - 16 - 16 - 8 - 8 - 8) / 4;
       }
     } else {
-      width = screenSize;
+      width = window.innerWidth;
     }
 
     setSkeletonWidth(width);
@@ -24,7 +21,8 @@ function ImageVideoViewSkeleton({ show, isMasonryView }) {
 
   return (
     <div
-      className={`${show ? "visible" : "hidden"} flex flex-col items-center justify-center bg-neutral-700 w-[${skeletonWidth}px] aspect-square animate-pulse rounded-lg`}
+      style={{ aspectRatio: `${width}/${height}` }}
+      className={`${show ? "visible" : "hidden"} flex flex-col items-center justify-center bg-neutral-700 w-[${skeletonWidth}px] animate-pulse rounded-lg`}
     ></div>
   );
 }

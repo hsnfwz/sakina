@@ -1,74 +1,68 @@
-import { useEffect, useState } from "react";
-import { supabase } from "../common/supabase.js";
-
+import { useContext, useEffect, useState } from "react";
+import { useElementIntersection } from "../common/hooks.js";
+import { getAcceptedPosts } from "../common/supabase.js";
 import Loading from "../components/Loading.jsx";
 import Masonry from "../components/Masonry.jsx";
 
-import { useElementIntersection } from "../common/hooks.js";
-import SearchBar from "../components/SearchBar.jsx";
+import { ScrollDataContext } from "../common/contexts.js";
 
 function ExploreLayout() {
-  const [posts, setPosts] = useState([]);
+  const { scrollData, setScrollData } = useContext(ScrollDataContext);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
-  const [hasMorePosts, setHasMorePosts] = useState(true);
-
-  const [elementRef, isIntersecting] = useElementIntersection();
+  const [elementRef, intersectingElement] = useElementIntersection();
 
   useEffect(() => {
     async function initialize() {
-      const abortController = new AbortController();
+      await getPosts();
+    }
 
-      setIsLoadingPosts(true);
-      await getPosts(abortController);
-      setIsLoadingPosts(false);
+    if (scrollData.type !== "POSTS") initialize();
+  }, []);
 
-      return () => {
-        abortController.abort();
+  useEffect(() => {
+    async function initialize() {
+      await getPosts();
+    }
+
+    if (intersectingElement && scrollData.hasMoreData) initialize();
+  }, [intersectingElement]);
+
+  async function getPosts() {
+    setIsLoadingPosts(true);
+
+    let _scrollData;
+
+    if (scrollData.type !== "POSTS") {
+      _scrollData = {
+        type: "POSTS",
+        data: [],
+        hasMoreData: true,
+        scrollY: 0,
       };
-    }
-
-    if (hasMorePosts) initialize();
-  }, [isIntersecting]);
-
-  async function getPosts(abortController) {
-    const limit = 6;
-
-    const { data, error } = await supabase
-      .from("posts")
-      .select("*, user_id(*)")
-      .eq("status", "ACCEPTED")
-      .order("created_at", { ascending: false })
-      .range(posts.length, limit + posts.length - 1)
-      .abortSignal(abortController.signal);
-
-    if (error) {
-      console.log(error);
     } else {
-      setPosts([...posts, ...data]);
-
-      if (data.length < limit) {
-        setHasMorePosts(false);
-      }
+      _scrollData = { ...scrollData };
     }
+
+    const { data, hasMore } = await getAcceptedPosts(_scrollData.length);
+    _scrollData.data = [..._scrollData.data, ...data];
+    _scrollData.hasMoreData = hasMore;
+
+    setScrollData(_scrollData);
+    setIsLoadingPosts(false);
   }
 
   return (
     <div className="flex w-full flex-col gap-4">
-      <SearchBar />
-
-      {/* recently joined */}
-      {/* recently added */}
-
-      {/* trending users */}
-      {/* trending posts */}
-
-      {posts.length > 0 && (
+      {scrollData.type === "POSTS" && scrollData.data.length > 0 && (
         <div className="flex flex-col gap-4">
-          <Masonry posts={posts} elementRef={elementRef} />
-          {!hasMorePosts && <p>That's everything for now!</p>}
+          <Masonry elementRef={elementRef} />
+          {!scrollData.hasMoreData && (
+            <p className="text-center text-neutral-700">
+              That's everything for now!
+            </p>
+          )}
         </div>
       )}
-
       {isLoadingPosts && <Loading />}
     </div>
   );

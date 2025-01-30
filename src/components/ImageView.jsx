@@ -1,17 +1,36 @@
 import { useEffect, useState } from "react";
 import IconButton from "./IconButton";
 import ImageVideoViewSkeleton from "./ImageVideoViewSkeleton";
+import SVGOutlineArrowLeft from "./svgs/outline/SVGOutlineArrowLeft";
+import SVGOutlineArrowRight from "./svgs/outline/SVGOutlineArrowRight";
 
-function ImageView({ fileNames, isMasonryView, autoPlayCarousel }) {
+function ImageView({ images, isMasonryView, autoPlayCarousel }) {
   const [isLoadingFile, setIsLoadingFile] = useState(true);
   const [carouselIndex, setCarouselIndex] = useState(0);
 
+  function isCarouselAspectRatioEqual(images) {
+    const first = images[0];
+
+    let i = 1;
+    while (i < images.length) {
+      const next = images[i];
+
+      if (first.width / first.height !== next.width / next.height) {
+        return false;
+      }
+
+      i++;
+    }
+
+    return true;
+  }
+
   useEffect(() => {
     if (!isLoadingFile) {
-      if (fileNames.length > 1) {
+      if (images.length > 1) {
         if (autoPlayCarousel) {
           const interval = setInterval(() => {
-            if (carouselIndex === fileNames.length - 1) {
+            if (carouselIndex === images.length - 1) {
               setCarouselIndex(0);
             } else {
               setCarouselIndex(carouselIndex + 1);
@@ -22,10 +41,10 @@ function ImageView({ fileNames, isMasonryView, autoPlayCarousel }) {
             clearInterval(interval);
           };
         } else {
-          if (carouselIndex === fileNames.length) {
+          if (carouselIndex === images.length) {
             setCarouselIndex(0);
           } else if (carouselIndex === -1) {
-            setCarouselIndex(fileNames.length - 1);
+            setCarouselIndex(images.length - 1);
           }
         }
       }
@@ -34,24 +53,32 @@ function ImageView({ fileNames, isMasonryView, autoPlayCarousel }) {
 
   return (
     <div className="relative">
-      <ImageVideoViewSkeleton
-        show={isLoadingFile}
-        isMasonryView={isMasonryView}
-      />
-      {fileNames.map((fileName, index) => (
-        <img
-          key={index}
-          src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/images/${fileName}`}
-          alt={fileName}
-          width=""
-          height=""
-          className={`z-1 ${index === carouselIndex ? "visible" : "hidden"} ${isLoadingFile ? "hidden" : "block"} aspect-auto rounded-lg object-cover`}
-          onLoad={() => setIsLoadingFile(false)}
-        />
+      {images.map((image, index) => (
+        <div key={index} className="rounded-lg bg-neutral-700">
+          <div className={`${index === carouselIndex ? "visible" : "hidden"}`}>
+            <ImageVideoViewSkeleton
+              show={isLoadingFile}
+              isMasonryView={isMasonryView}
+              width={isCarouselAspectRatioEqual(images) ? image.width : 1}
+              height={isCarouselAspectRatioEqual(images) ? image.height : 1}
+            />
+          </div>
+          <img
+            key={index}
+            src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/images/${image.name}`}
+            alt={image.name}
+            width=""
+            height=""
+            className={`z-1 ${index === carouselIndex ? "visible" : "hidden"} ${isLoadingFile ? "hidden" : "block"} rounded-lg ${isCarouselAspectRatioEqual(images) ? "aspect-auto object-cover" : "aspect-square object-contain"}`}
+            onLoad={() => {
+              setIsLoadingFile(false);
+            }}
+          />
+        </div>
       ))}
-      {!isLoadingFile && fileNames.length > 1 && (
+      {!isLoadingFile && images.length > 1 && (
         <div className="z-2 absolute bottom-0 flex w-full gap-2 p-2">
-          {fileNames.map((fileName, index) => (
+          {images.map((image, index) => (
             <div key={index} className={`h-2 w-full rounded-lg bg-white/50`}>
               {autoPlayCarousel && (
                 <>
@@ -85,39 +112,13 @@ function ImageView({ fileNames, isMasonryView, autoPlayCarousel }) {
           ))}
         </div>
       )}
-      {!isLoadingFile && fileNames.length > 1 && !autoPlayCarousel && (
+      {!isLoadingFile && images.length > 1 && !autoPlayCarousel && (
         <div className="z-3 absolute left-1/2 top-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 justify-between gap-2 p-2">
           <IconButton handleClick={() => setCarouselIndex(carouselIndex - 1)}>
-            <svg
-              className="stroke-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 19.5 8.25 12l7.5-7.5"
-              />
-            </svg>
+            <SVGOutlineArrowLeft />
           </IconButton>
           <IconButton handleClick={() => setCarouselIndex(carouselIndex + 1)}>
-            <svg
-              className="stroke-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m8.25 4.5 7.5 7.5-7.5 7.5"
-              />
-            </svg>
+            <SVGOutlineArrowRight />
           </IconButton>
         </div>
       )}

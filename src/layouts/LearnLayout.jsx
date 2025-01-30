@@ -1,49 +1,29 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router";
 import { ModalContext } from "../common/contexts";
+import { ScrollDataContext } from "../common/contexts.js";
 import { useElementIntersection } from "../common/hooks";
 import { supabase } from "../common/supabase";
-import IconButton from "../components/IconButton";
 import Loading from "../components/Loading";
-import SVGPlus from "../components/svg/SVGPlus";
+import { getDate } from "../common/helpers.js";
+import { UserContext } from "../common/contexts";
 
 function LearnLayout() {
-  const [questions, setQuestions] = useState([]);
+  const { scrollData, setScrollData } = useContext(ScrollDataContext);
+  const [elementRef, intersectingElement] = useElementIntersection();
   const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
-  const [hasMoreQuestions, setHasMoreQuestions] = useState(true);
-  const { setShowModal } = useContext(ModalContext);
-
-  const [elementRef, isIntersecting] = useElementIntersection();
-
-  async function getQuestions(abortController) {
-    const limit = 6;
-    const { data, error } = await supabase
-      .from("questions")
-      .select("*, user_id(*)")
-      .order("created_at", { ascending: false })
-      .range(questions.length, limit + questions.length - 1)
-      .abortSignal(abortController.signal);
-
-    if (error) {
-      console.log(JSON.stringify(error));
-    } else {
-      setQuestions([...questions, ...data]);
-
-      if (data.length < limit) {
-        setHasMoreQuestions(false);
-      }
-    }
-  }
 
   useEffect(() => {
     async function initialize() {
-      setIsLoadingQuestions(true);
-      const abortController = new AbortController();
-      await getQuestions(abortController);
-      setIsLoadingQuestions(false);
-      return () => {
-        abortController.abort();
-      };
+      if (scrollData.type !== "QUESTIONS") {
+        setIsLoadingQuestions(true);
+        const abortController = new AbortController();
+        await getQuestions(abortController);
+        setIsLoadingQuestions(false);
+        return () => {
+          abortController.abort();
+        };
+      }
     }
 
     initialize();
@@ -60,36 +40,82 @@ function LearnLayout() {
       };
     }
 
-    if (hasMoreQuestions) initialize();
-  }, [isIntersecting]);
+    if (intersectingElement && scrollData.hasMoreData) initialize();
+  }, [intersectingElement]);
+
+  useEffect(() => {
+    if (scrollData && scrollData.type === "QUESTIONS") {
+      window.scroll({ top: scrollData.scrollYPosition, behavior: "instant" });
+    }
+  }, []);
+
+  async function getQuestions(abortController) {
+    let _scrollData;
+    if (scrollData.type !== "QUESTIONS") {
+      _scrollData = {
+        type: "QUESTIONS",
+        data: [],
+        hasMoreData: true,
+        scrollY: 0,
+      };
+    } else {
+      _scrollData = { ...scrollData };
+    }
+
+    const limit = 6;
+    const { data, error } = await supabase
+      .from("questions")
+      .select("*, user_id(*)")
+      .order("created_at", { ascending: false })
+      .range(_scrollData.data.length, limit + _scrollData.data.length - 1)
+      .abortSignal(abortController.signal);
+
+    if (error) {
+      console.log(JSON.stringify(error));
+    } else {
+      _scrollData.data = [..._scrollData.data, ...data];
+
+      if (data.length < limit) {
+        _scrollData.hasMoreData = false;
+      }
+
+      setScrollData(_scrollData);
+    }
+  }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-between gap-2">
-        <h1 className="text-2xl">Questions</h1>
-        <IconButton handleClick={() => setShowModal({ type: "QUESTION_MODAL" })}>
-          <SVGPlus />
-        </IconButton>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        {questions.map((question, index) => (
+    <div className="flex w-full flex-col gap-4">
+      {isLoadingQuestions && <Loading />}
+      {scrollData.type === "QUESTIONS" &&
+        scrollData.data.map((question, index) => (
           <Link
             key={index}
             to={`/questions/${question.id}`}
-            className="flex w-full flex-col gap-4 rounded-lg border border-neutral-700 p-2 hover:border-white focus:border focus:border-white focus:outline-none focus:ring-0"
-            ref={index === questions.length - 1 ? elementRef : null}
+            className="flex w-full flex-col gap-4 rounded-lg border-2 border-neutral-700 p-2 hover:border-white focus:border-2 focus:border-white focus:outline-none focus:ring-0"
+            ref={index === scrollData.data.length - 1 ? elementRef : null}
             state={{ question }}
-            target="_blank"
           >
+            <div className="flex gap-4">
+              {question.is_anonymous && <p className="text-xs">Anonymous</p>}
+              {!question.is_anonymous && (
+                <Link
+                  to={`/profile/${question.user_id.username}#posts`}
+                  state={{ profile: question.user_id }}
+                  className={`text-xs underline hover:text-sky-500`}
+                >
+                  {question.user_id.username}
+                </Link>
+              )}
+              <p className="text-xs text-neutral-700">
+                {getDate(question.created_at, true)}
+              </p>
+            </div>
             <h1>{question.title}</h1>
-            {!question.is_anonymous && (
-              <p className="text-xs">By {question.user_id.username}</p>
+            {question.description && (
+              <p className="line-clamp-4">{question.description}</p>
             )}
           </Link>
         ))}
-      </div>
-      {isLoadingQuestions && <Loading />}
     </div>
   );
 }

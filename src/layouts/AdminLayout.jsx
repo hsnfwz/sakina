@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../common/supabase.js";
+import {
+  getPendingPosts,
+  supabase,
+  getPostImagesVideos,
+} from "../common/supabase.js";
+import Button from "../components/Button.jsx";
 import ImageView from "../components/ImageView.jsx";
 import Loading from "../components/Loading.jsx";
 import VideoView from "../components/VideoView.jsx";
@@ -10,18 +15,16 @@ function AdminLayout() {
 
   async function getPosts() {
     setLoadingPosts(true);
-    const { data, error } = await supabase
-      .from("posts")
-      .select("*")
-      .eq("status", "PENDING")
-      .order("created_at", { ascending: true });
-
-    if (error) {
-      console.log(error);
-    } else {
-      setPosts(data);
-    }
+    const { data } = await getPendingPosts();
+    setPosts(data);
     setLoadingPosts(false);
+  }
+
+  async function refreshPosts(post) {
+    const _post = { ...post };
+    await getPostImagesVideos([_post]);
+    console.log(posts, _post);
+    setPosts([...posts, _post]);
   }
 
   useEffect(() => {
@@ -39,7 +42,10 @@ function AdminLayout() {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "posts" },
         async (payload) => {
-          await getPosts();
+          // console.log('INSERT', payload);
+          // await getPosts();
+
+          await refreshPosts(payload.new);
         },
       )
       .subscribe();
@@ -50,6 +56,7 @@ function AdminLayout() {
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "posts" },
         async (payload) => {
+          console.log("UPDATE", payload);
           await getPosts();
         },
       )
@@ -61,28 +68,78 @@ function AdminLayout() {
     };
   }, []);
 
+  async function handleAccept(post) {
+    const { data: postsData, error: postsError } = await supabase
+      .from("posts")
+      .update({ status: "ACCEPTED" })
+      .eq("id", post.id)
+      .select();
+
+    if (postsError) {
+      console.log(postsError);
+    }
+
+    const { data: notificationsData, error: notificationsError } =
+      await supabase
+        .from("notifications")
+        .insert({
+          user_id: post.user_id,
+          message: "Your post has been accepted!",
+          message_type: "POST_ACCEPTED",
+          message_data: post.id,
+        })
+        .select();
+
+    if (notificationsError) {
+      console.log(notificationsError);
+    }
+  }
+
+  async function handleReject(post) {
+    const { data: postsData, error: postsError } = await supabase
+      .from("posts")
+      .update({ status: "REJECTED" })
+      .eq("id", post.id)
+      .select();
+
+    if (postsError) {
+      console.log(postsError);
+    }
+
+    const { data: notificationsData, error: notificationsError } =
+      await supabase
+        .from("notifications")
+        .insert({
+          user_id: post.user_id,
+          message: "Your post has been rejected.",
+          message_type: "POST_REJECTED",
+        })
+        .select();
+
+    if (notificationsError) {
+      console.log(notificationsError);
+    }
+  }
+
   return (
     <div>
-      <h1>Admin</h1>
-
       {loadingPosts && <Loading />}
-
       {!loadingPosts && (
         <div className="flex aspect-auto w-full max-w-[300px] flex-col gap-8">
           {posts.map((post) => (
             <div key={post.id} className="flex flex-col gap-4">
               {post.type === "IMAGE" && (
                 <ImageView
-                  fileNames={JSON.parse(post.files)}
+                  images={post.images}
                   isMasonryView={false}
                   autoPlayCarousel={false}
                 />
               )}
-              {post.type !== "IMAGE" && (
+              {post.type === "VIDEO" && (
                 <VideoView
-                  fileNames={JSON.parse(post.files)}
+                  images={post.images}
+                  videos={post.videos}
                   isMasonryView={false}
-                  videoType={post.type}
                 />
               )}
               <div className="flex flex-col gap-2">
@@ -90,75 +147,15 @@ function AdminLayout() {
                 {post.description && <p>{post.description}</p>}
               </div>
               <div className="flex gap-2">
-                <button
-                  className="flex w-full items-center justify-center rounded-lg bg-neutral-200 p-2 disabled:pointer-events-none disabled:opacity-50"
-                  type="button"
-                  onClick={async () => {
-                    const { data: postsData, error: postsError } =
-                      await supabase
-                        .from("posts")
-                        .update({ status: "ACCEPTED" })
-                        .eq("id", post.id)
-                        .select();
-
-                    if (postsError) {
-                      console.log(postsError);
-                    }
-
-                    const {
-                      data: notificationsData,
-                      error: notificationsError,
-                    } = await supabase
-                      .from("notifications")
-                      .insert({
-                        user_id: post.user_id,
-                        message: "Your post has been accepted!",
-                        message_type: "POST_ACCEPTED",
-                        message_data: post.id,
-                      })
-                      .select();
-
-                    if (notificationsError) {
-                      console.log(notificationsError);
-                    }
-                  }}
+                <Button
+                  handleClick={async () => await handleAccept(post)}
+                  isOutline={true}
                 >
                   Accept
-                </button>
-                <button
-                  className="flex w-full items-center justify-center rounded-lg bg-neutral-200 p-2 disabled:pointer-events-none disabled:opacity-50"
-                  type="button"
-                  onClick={async () => {
-                    const { data: postsData, error: postsError } =
-                      await supabase
-                        .from("posts")
-                        .update({ status: "REJECTED" })
-                        .eq("id", post.id)
-                        .select();
-
-                    if (postsError) {
-                      console.log(postsError);
-                    }
-
-                    const {
-                      data: notificationsData,
-                      error: notificationsError,
-                    } = await supabase
-                      .from("notifications")
-                      .insert({
-                        user_id: post.user_id,
-                        message: "Your post has been rejected.",
-                        message_type: "POST_REJECTED",
-                      })
-                      .select();
-
-                    if (notificationsError) {
-                      console.log(notificationsError);
-                    }
-                  }}
-                >
+                </Button>
+                <Button handleClick={async () => await handleReject(post)}>
                   Reject
-                </button>
+                </Button>
               </div>
             </div>
           ))}

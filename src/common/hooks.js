@@ -1,9 +1,8 @@
-import { useEffect, useState, useCallback } from "react";
 import Uppy from "@uppy/core";
-import Tus from "@uppy/tus";
 import "@uppy/core/dist/style.min.css";
 import "@uppy/dashboard/dist/style.min.css";
-import { useContext } from "react";
+import Tus from "@uppy/tus";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { SessionContext } from "./contexts";
 
 const useUppyWithSupabase = ({ uppyOptions }) => {
@@ -25,12 +24,13 @@ const useUppyWithSupabase = ({ uppyOptions }) => {
         removeFingerprintOnSuccess: true, // Remove fingerprint after successful upload
         chunkSize: 6 * 1024 * 1024, // Chunk size for TUS uploads (6MB)
         allowedMetaFields: [
+          "width",
+          "height",
           "bucketName",
           "objectName",
           "contentType",
           "cacheControl",
         ], // Metadata fields allowed for the upload
-        onError: (error) => console.error("Upload error:", error), // Error handling for uploads
       });
     };
 
@@ -43,15 +43,15 @@ const useUppyWithSupabase = ({ uppyOptions }) => {
 };
 
 const useElementIntersection = (threshold = 1) => {
-  const [isIntersecting, setIsIntersecting] = useState(false);
+  const [intersectingElement, setIntersectingElement] = useState(null);
   const [elementNode, setElementNode] = useState(null);
   const [observer, setObserver] = useState(null);
+  const elementNodeTimerRef = useRef();
 
-  let elementNodeTimer;
   const elementRef = useCallback((node) => {
     if (node && node !== elementNode) {
-      clearTimeout(elementNodeTimer);
-      elementNodeTimer = setTimeout(() => {
+      clearTimeout(elementNodeTimerRef.current);
+      elementNodeTimerRef.current = setTimeout(() => {
         setElementNode(node);
       }, 1000);
     }
@@ -61,7 +61,11 @@ const useElementIntersection = (threshold = 1) => {
     const intersectionObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) setIsIntersecting(entry);
+          if (entry.isIntersecting) {
+            setIntersectingElement(entry);
+          } else {
+            setIntersectingElement(null);
+          }
         });
       },
       { threshold },
@@ -80,7 +84,33 @@ const useElementIntersection = (threshold = 1) => {
     };
   }, [elementNode]);
 
-  return [elementRef, isIntersecting];
+  return [elementRef, intersectingElement];
 };
 
-export { useUppyWithSupabase, useElementIntersection };
+const useAcceptedPosts = async (
+  startIndex = 0,
+  limit = 6,
+  orderBy = ORDER_BY.NEW,
+) => {
+  try {
+    const { data, error } = await supabase
+      .from("posts")
+      .select("*, user_id(*)")
+      .eq("status", "ACCEPTED")
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    await getPostImagesVideos(data);
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { useElementIntersection, useUppyWithSupabase };

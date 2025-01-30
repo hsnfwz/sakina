@@ -1,17 +1,19 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { supabase } from "../common/supabase.js";
 import IconButton from "./IconButton.jsx";
 import SearchBarResults from "./SearchBarResults.jsx";
 import TextInput from "./TextInput.jsx";
-
-let timer;
+import SVGOutlineX from "./svgs/outline/SVGOutlineX.jsx";
 
 function SearchBar() {
+  const timerRef = useRef();
   const [searchTerm, setSearchTerm] = useState("");
   const [posts, setPosts] = useState([]);
   const [profiles, setProfiles] = useState([]);
+  const [questions, setQuestions] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
   const [loadingProfiles, setLoadingProfiles] = useState(false);
+  const [loadingQuestions, setLoadingQuestions] = useState(false);
 
   async function findPosts(searchTerm) {
     setLoadingPosts(true);
@@ -35,50 +37,54 @@ function SearchBar() {
     setLoadingProfiles(false);
   }
 
+  async function findQuestions(searchTerm) {
+    setLoadingQuestions(true);
+    const { data, error } = await supabase.rpc("search_questions", {
+      prefix: searchTerm,
+    });
+    if (data) {
+      setQuestions(data);
+    }
+    setLoadingQuestions(false);
+  }
+
   async function search(event) {
     setSearchTerm(event.target.value);
 
-    clearTimeout(timer);
+    clearTimeout(timerRef.current);
     if (event.target.value && event.target.value.length > 0) {
-      timer = setTimeout(async () => {
+      timerRef.current = setTimeout(async () => {
         await Promise.all([
           findPosts(event.target.value.split(" ").join("+")),
           findProfiles(event.target.value.split(" ").join("+")),
+          findQuestions(event.target.value.split(" ").join("+")),
         ]);
       }, 1000);
     } else {
-      setPosts([]);
-      setProfiles([]);
+      clearSearchResults();
     }
   }
 
+  function clearSearch() {
+    setSearchTerm("");
+    clearSearchResults();
+  }
+
+  function clearSearchResults() {
+    setPosts([]);
+    setProfiles([]);
+  }
+
   return (
-    <div className="flex w-full flex-col gap-4">
-      <div className="flex w-full gap-2">
+    <div className="sticky top-0 z-40 flex w-full flex-col gap-4 bg-black py-4">
+      <div className="flex w-full items-center gap-2">
         <TextInput
           placeholder="Search"
           handleInput={search}
           value={searchTerm}
         />
-        <IconButton
-          handleClick={() => {
-            setSearchTerm("");
-            setPosts([]);
-            setProfiles([]);
-          }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18 18 6M6 6l12 12"
-            />
-          </svg>
+        <IconButton handleClick={clearSearch}>
+          <SVGOutlineX />
         </IconButton>
       </div>
       {(posts.length > 0 || profiles.length > 0) && (
@@ -86,6 +92,8 @@ function SearchBar() {
           searchTerm={searchTerm}
           posts={posts}
           profiles={profiles}
+          questions={questions}
+          clearSearchResults={clearSearchResults}
         />
       )}
     </div>

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import { Link } from "react-router";
 import { UserContext } from "../common/contexts";
+import { getIslamicDate } from "../common/helpers.js";
 import { supabase } from "../common/supabase.js";
 import Loading from "../components/Loading.jsx";
 
@@ -43,53 +43,32 @@ function HomeLayout() {
 
   useEffect(() => {
     async function initialize() {
-      if (user) {
-        await getPosts();
-      }
+      await getPosts();
     }
 
-    initialize();
+    if (user) initialize();
   }, [user]);
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center gap-8">
+    <div className="flex w-full flex-col items-center justify-center gap-8">
       <div className="flex flex-col gap-4">
         {!user && (
           <>
             <h1 className="text-center text-2xl">Salam!</h1>
-            <p className="text-center">
-              Welcome to Project313. Let's get you started by logging in to an
-              existing account or signing up for a new account.
-            </p>
+            <p className="text-center">Welcome to Project 313.</p>
           </>
         )}
         {user && (
           <>
             <h1 className="text-center text-2xl">Salam {user.username}!</h1>
             <p className="text-center">
-              Welcome back. Your feed is up to date.
+              Welcome back. Your feed is up to date for{" "}
+              {getIslamicDate(new Date())}
             </p>
           </>
         )}
       </div>
-      {!user && (
-        <div className="flex gap-2">
-          <Link
-            to="/log-in"
-            className="rounded-lg bg-emerald-500 p-2 text-white hover:bg-emerald-700"
-          >
-            Log In
-          </Link>
-          <Link
-            to="/sign-up"
-            className="rounded-lg bg-sky-500 p-2 text-white hover:bg-sky-700"
-          >
-            Sign Up
-          </Link>
-        </div>
-      )}
       {loadingPosts && <Loading />}
-
       {!loadingPosts && (
         <>
           {posts.map((post) => (

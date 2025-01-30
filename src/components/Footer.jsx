@@ -2,8 +2,8 @@ import { Link } from "react-router";
 
 function Footer() {
   return (
-    <footer className="mt-auto flex w-full flex-col items-center justify-start p-4 text-xs">
-      <p className="text-center">
+    <footer className="mt-auto flex w-full p-2 text-xs">
+      <p>
         Designed and built by{" "}
         <Link
           target="_blank"
