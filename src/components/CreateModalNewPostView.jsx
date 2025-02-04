@@ -1,26 +1,28 @@
-import { useUppyState } from "@uppy/react";
-import DefaultStore from "@uppy/store-default";
-import { useContext, useEffect, useRef, useState } from "react";
-import { ModalContext, SessionContext, UserContext } from "../common/contexts";
-import { useUppyWithSupabase } from "../common/hooks";
-import { supabase } from "../common/supabase";
-import Button from "./Button";
-import Modal from "./Modal";
-import UploadFileButton from "./UploadFileButton";
-import UploadFileTable from "./UploadFileTable";
-import { Link } from "react-router";
+import { useUppyState } from '@uppy/react';
+import DefaultStore from '@uppy/store-default';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { ModalContext, SessionContext, UserContext } from '../common/contexts';
+import { useUppyWithSupabase } from '../common/hooks';
+import { supabase } from '../common/supabase';
+import Button from './Button';
+import Modal from './Modal';
+import UploadFileButton from './UploadFileButton';
+import UploadFileTable from './UploadFileTable';
+import { Link } from 'react-router';
+import VideoView from './VideoView';
+import ImageView from './ImageView';
 
 const UPLOAD_TYPE = Object.freeze({
   IMAGE: {
-    type: "IMAGE",
-    bucketName: "images",
-    mimeTypes: ["image/jpeg", "image/png", "image/gif"],
+    type: 'IMAGE',
+    bucketName: 'images',
+    mimeTypes: ['image/jpeg', 'image/png', 'image/gif'],
     sizeLimit: 50000000, // 50 MB
   },
   VIDEO: {
-    type: "VIDEO",
-    bucketName: "videos",
-    mimeTypes: ["video/mp4", "video/mov", "video/avi"],
+    type: 'VIDEO',
+    bucketName: 'videos',
+    mimeTypes: ['video/mp4', 'video/mov', 'video/avi'],
     sizeLimit: 50000000, // 50 MB
   },
 });
@@ -34,8 +36,8 @@ function CreateModalNewPostView() {
   const [uploadStarted, setUploadStarted] = useState(false);
   const [uploadCompleted, setUploadCompleted] = useState(false);
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
   const uppyImage = useUppyWithSupabase({
     store: new DefaultStore(),
@@ -67,14 +69,16 @@ function CreateModalNewPostView() {
     },
   });
 
-  const uppyImageFiles = useUppyState(uppyImage, (state) =>
-    Object.values(state.files),
-  );
+  const uppyImageFiles = useUppyState(uppyImage, (state) => {
+    console.log(state);
+
+    return Object.values(state.files);
+  });
   const uppyVideoFiles = useUppyState(uppyVideo, (state) =>
-    Object.values(state.files),
+    Object.values(state.files)
   );
   const uppyVideoThumbnailFiles = useUppyState(uppyVideoThumbnail, (state) =>
-    Object.values(state.files),
+    Object.values(state.files)
   );
 
   const imageUploadFileButtonRef = useRef();
@@ -83,21 +87,21 @@ function CreateModalNewPostView() {
 
   async function addPost() {
     const { data, error } = await supabase
-      .from("posts")
+      .from('posts')
       .insert({
         user_id: user.id,
         title,
         description,
         type: uploadType,
       })
-      .select("id");
+      .select('id');
 
     return data[0];
   }
 
   async function addImages(post, files) {
     const promises = files.map((file) => {
-      return supabase.from("images").insert({
+      return supabase.from('images').insert({
         user_id: user.id,
         post_id: post.id,
         name: file.meta.objectName,
@@ -111,7 +115,7 @@ function CreateModalNewPostView() {
 
   async function addVideos(post, files) {
     const promises = files.map((file) => {
-      return supabase.from("videos").insert({
+      return supabase.from('videos').insert({
         user_id: user.id,
         post_id: post.id,
         name: file.meta.objectName,
@@ -124,15 +128,26 @@ function CreateModalNewPostView() {
     await Promise.all(promises);
   }
 
+  async function addPostNotification(postId) {
+    const { error } = await supabase.from('notifications').insert({
+      receiver_user_id: user.id,
+      type: 'PENDING',
+      post_id: postId,
+    });
+
+    console.log(error);
+  }
+
   async function handleSubmit() {
-    if (uploadType === "IMAGE") {
+    if (uploadType === 'IMAGE') {
       const result = await uppyImage.upload();
       if (result && result.failed.length === 0) {
         const post = await addPost();
         const files = result.successful;
         await addImages(post, files);
+        await addPostNotification(post.id);
       }
-    } else if (uploadType === "VIDEO") {
+    } else if (uploadType === 'VIDEO') {
       const result = await uppyVideo.upload();
       if (result && result.failed.length === 0) {
         const post = await addPost();
@@ -146,10 +161,15 @@ function CreateModalNewPostView() {
             await addImages(post, files);
           }
         }
+
+        await addPostNotification(post.id);
       }
     }
 
-    setShowModal(null);
+    setShowModal({
+      type: null,
+      data: null,
+    });
   }
 
   const contentEditableRef = useRef(null);
@@ -160,14 +180,22 @@ function CreateModalNewPostView() {
 
     const key = contentEditableEvent?.key;
 
-    if (key === "Backspace") {
-      console.log("BACKSPACE");
-    } else if (key === "@") {
-      console.log("@");
-    } else if (key === " ") {
-      console.log("SPACE");
+    if (key === 'Backspace') {
+      console.log('BACKSPACE');
+    } else if (key === '@') {
+      console.log('@');
+    } else if (key === ' ') {
+      console.log('SPACE');
     }
   }, [contentEditableEvent]);
+
+  // function previewImages(files) {
+  //   const element = document.getElementById('preview');
+  //   element.src = URL.createObjectURL(files);
+  //   element.onload = function() {
+  //     URL.revokeObjectURL(element.src) // free memory
+  //   }
+  // };
 
   return (
     <>
@@ -200,7 +228,7 @@ function CreateModalNewPostView() {
               uppyVideoThumbnail.cancelAll();
               setUploadType(UPLOAD_TYPE.IMAGE.type);
             }}
-            className={`${uploadType === "IMAGE" ? "bg-sky-500 text-white" : "bg-transparent text-sky-500"} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
+            className={`${uploadType === 'IMAGE' ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
           >
             <span className="capitalize">
               Upload {UPLOAD_TYPE.IMAGE.type.toLowerCase()}
@@ -212,7 +240,7 @@ function CreateModalNewPostView() {
               uppyImage.cancelAll();
               setUploadType(UPLOAD_TYPE.VIDEO.type);
             }}
-            className={`${uploadType === "VIDEO" ? "bg-sky-500 text-white" : "bg-transparent text-sky-500"} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
+            className={`${uploadType === 'VIDEO' ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
           >
             <span className="capitalize">
               Upload {UPLOAD_TYPE.VIDEO.type.toLowerCase()}
@@ -220,10 +248,9 @@ function CreateModalNewPostView() {
           </Link>
         </div>
 
-        {uploadType === "IMAGE" && (
+        {uploadType === 'IMAGE' && (
           <>
             <h1 className="text-2xl font-bold">Upload Image</h1>
-
             <div className="flex flex-col gap-4">
               <UploadFileButton
                 id="uppyImage"
@@ -244,9 +271,16 @@ function CreateModalNewPostView() {
                 />
               )}
             </div>
+            <h2>Preview</h2>
+            {/* {uppyImageFiles.length > 0 && (
+
+            )}
+            <ImageView
+              images={uppyVideoThumbnailFiles}
+            /> */}
           </>
         )}
-        {uploadType === "VIDEO" && (
+        {uploadType === 'VIDEO' && (
           <>
             <h1 className="text-2xl font-bold">Upload Video</h1>
             <div className="flex flex-col gap-4">
@@ -300,6 +334,15 @@ function CreateModalNewPostView() {
                 )}
               </div>
             </div>
+            <h2>Preview</h2>
+            {/* {uppyVideosFiles.length > 0 && (
+
+            )}
+
+            {/* <VideoView
+              images={uppyVideoThumbnailFiles}
+              videos={uppyVideoFiles}
+            /> */}
           </>
         )}
       </div>
@@ -307,13 +350,16 @@ function CreateModalNewPostView() {
         <Button
           isDisabled={uploadStarted}
           handleClick={() => {
-            if (uploadType === "IMAGE") {
+            if (uploadType === 'IMAGE') {
               uppyImage.cancelAll();
-            } else if (uploadType === "VIDEO") {
+            } else if (uploadType === 'VIDEO') {
               uppyVideo.cancelAll();
               uppyVideoThumbnail.cancelAll();
             }
-            setShowModal(null);
+            setShowModal({
+              type: null,
+              data: null,
+            });
           }}
         >
           Close

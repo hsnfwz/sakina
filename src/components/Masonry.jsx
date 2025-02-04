@@ -1,44 +1,41 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { Link } from "react-router";
-import { ScreenResizeContext, ScrollDataContext } from "../common/contexts.js";
-import ImageView from "./ImageView.jsx";
-import VideoView from "./VideoView.jsx";
+import { useContext, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router';
+import { ScreenResizeContext } from '../common/contexts.js';
+import ImageView from './ImageView.jsx';
+import VideoView from './VideoView.jsx';
 
-function Masonry({ elementRef }) {
-  const { scrollData, setScrollData } = useContext(ScrollDataContext);
+function Masonry({ elementRef, data }) {
   const { screenResize } = useContext(ScreenResizeContext);
-  const [masonry, setMasonry] = useState(null);
-  const [isMasonryCreated, setIsMasonryCreated] = useState(false);
   const timerRef = useRef();
+  const [masonry, setMasonry] = useState(null);
 
   function createMasonry(numberOfColumns) {
-    const masonryInfo = {
+    const _masonry = {
       columns: {},
-      lastPostId: null,
+      lastPost: null,
     };
 
     let i = 0;
     while (i < numberOfColumns) {
-      masonryInfo.columns[`column-${i}`] = [];
+      _masonry.columns[`column-${i}`] = [];
       i++;
     }
 
     let j = 0;
-    while (j < scrollData.data.length) {
-      const post = scrollData.data[j];
+    while (j < data.length) {
+      const post = data[j];
 
-      if (j === scrollData.data.length - 1) {
-        masonryInfo.lastPostId = post.id;
+      if (j === data.length - 1) {
+        _masonry.lastPost = post;
       }
 
       const col = j % numberOfColumns;
-      masonryInfo.columns[`column-${col}`].push(post);
+      _masonry.columns[`column-${col}`].push(post);
 
       j++;
     }
 
-    setMasonry(masonryInfo);
-    if (!isMasonryCreated) setIsMasonryCreated(true);
+    setMasonry(_masonry);
   }
 
   function callCreateMasonry() {
@@ -59,23 +56,17 @@ function Masonry({ elementRef }) {
 
   useEffect(() => {
     callCreateMasonry();
-  }, [scrollData]);
-
-  useEffect(() => {
-    if (isMasonryCreated && scrollData && scrollData.type === "POSTS") {
-      window.scroll({ top: scrollData.scrollYPosition, behavior: "instant" });
-    }
-  }, [isMasonryCreated]);
+  }, [data]);
 
   useEffect(() => {
     if (screenResize !== 0) {
       clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => callCreateMasonry(), 1000);
-
-      return () => {
-        clearTimeout(timerRef.current);
-      };
     }
+
+    return () => {
+      clearTimeout(timerRef.current);
+    };
   }, [screenResize]);
 
   return (
@@ -86,28 +77,20 @@ function Masonry({ elementRef }) {
             <div key={columnIndex} className="flex w-full flex-col gap-4">
               {column.map((post, postIndex) => (
                 <Link
-                  to={`/posts/${post.id}`}
+                  to={`/post/${post.id}`}
                   state={{ post }}
                   className="group relative top-0 w-full rounded-lg border-2 border-transparent hover:border-white focus:border-2 focus:border-white focus:outline-none focus:ring-0"
-                  ref={post.id === masonry.lastPostId ? elementRef : null}
+                  ref={post.id === masonry.lastPost.id ? elementRef : null}
                   key={postIndex}
-                  id={post.id}
-                  onClick={() => {
-                    setScrollData({
-                      ...scrollData,
-                      scrollYPosition: window.scrollY,
-                      elementId: post.id,
-                    });
-                  }}
                 >
-                  {post.type === "IMAGE" && (
+                  {post.type === 'IMAGE' && (
                     <ImageView
                       images={post.images}
                       isMasonryView={true}
                       autoPlayCarousel={true}
                     />
                   )}
-                  {post.type !== "IMAGE" && (
+                  {post.type !== 'IMAGE' && (
                     <VideoView
                       images={post.images}
                       videos={post.videos}
@@ -116,7 +99,7 @@ function Masonry({ elementRef }) {
                   )}
                   <div className="z-3 absolute bottom-0 flex w-full flex-col justify-end gap-4 rounded-b-lg bg-black/50 p-4 opacity-0 backdrop-blur group-hover:opacity-100">
                     <h1 className="text-white">{post.title}</h1>
-                    {post.status === "ACCEPTED" && (
+                    {post.status === 'ACCEPTED' && (
                       <div className="flex items-center gap-2">
                         {post.user_id.avatar_file && (
                           <img

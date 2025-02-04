@@ -4,31 +4,31 @@ function expectedUsernameFormat(username) {
 
 function formatFileName(fileName) {
   const newFileName = fileName
-    .split(".")
+    .split('.')
     .slice(0, -1)
-    .join("")
-    .replace(/[^a-zA-Z0-9]/g, "");
+    .join('')
+    .replace(/[^a-zA-Z0-9]/g, '');
   return newFileName;
 }
 
 function formatFileSizeAbbreviation(fileSize) {
-  let abbreviation = "";
+  let abbreviation = '';
 
   if (fileSize > 0 && fileSize < 1000) {
-    abbreviation = "B";
+    abbreviation = 'B';
   } else if (fileSize >= 1000 && fileSize < 1000000) {
-    abbreviation = "KB";
+    abbreviation = 'KB';
   } else if (fileSize >= 1000000 && fileSize < 1000000000) {
-    abbreviation = "MB";
+    abbreviation = 'MB';
   } else if (fileSize >= 1000000000) {
-    abbreviation = "GB";
+    abbreviation = 'GB';
   }
 
   return abbreviation;
 }
 
 function formatFileSize(fileSize) {
-  let _fileSize = "";
+  let _fileSize = '';
 
   if (fileSize > 0 && fileSize < 1000) {
     const size = fileSize;
@@ -49,13 +49,13 @@ function formatFileSize(fileSize) {
 
 function getDate(date, showTime) {
   const _date = new Date(date);
-  const dateTime = new Intl.DateTimeFormat("default", {
-    hour: showTime ? "numeric" : undefined,
-    minute: showTime ? "numeric" : undefined,
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    weekday: "long",
+  const dateTime = new Intl.DateTimeFormat('default', {
+    hour: showTime ? 'numeric' : undefined,
+    minute: showTime ? 'numeric' : undefined,
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
   }).format(_date);
 
   return dateTime;
@@ -63,13 +63,13 @@ function getDate(date, showTime) {
 
 function getIslamicDate(date, showTime) {
   const _date = new Date(date);
-  const dateTime = new Intl.DateTimeFormat("en-u-ca-islamic-nu-latn", {
-    hour: showTime ? "numeric" : undefined,
-    minute: showTime ? "numeric" : undefined,
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    weekday: "long",
+  const dateTime = new Intl.DateTimeFormat('en-u-ca-islamic-nu-latn', {
+    hour: showTime ? 'numeric' : undefined,
+    minute: showTime ? 'numeric' : undefined,
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
   }).format(_date);
 
   return dateTime;
@@ -96,6 +96,15 @@ function formatDuration(seconds) {
   return iso;
 }
 
+function formatCount(count) {
+  let countFormatter = Intl.NumberFormat('en', {
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  });
+  const _count = countFormatter.format(count);
+  return _count;
+}
+
 export {
   expectedUsernameFormat,
   formatFileName,
@@ -104,4 +113,5 @@ export {
   getDate,
   getIslamicDate,
   formatDuration,
+  formatCount,
 };

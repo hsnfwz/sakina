@@ -1,9 +1,9 @@
-import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router";
-import { SessionContext, UserContext } from "../common/contexts.js";
-import { expectedUsernameFormat } from "../common/helpers.js";
-import { supabase } from "../common/supabase.js";
-import AvatarModal from "../components/AvatarModal.jsx";
+import { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { SessionContext, UserContext } from '../common/contexts.js';
+import { expectedUsernameFormat } from '../common/helpers.js';
+import { supabase } from '../common/supabase.js';
+import AvatarModal from '../components/AvatarModal.jsx';
 
 function SettingsLayout() {
   const navigate = useNavigate();
@@ -11,11 +11,11 @@ function SettingsLayout() {
   const { user, setUser } = useContext(UserContext);
 
   const [disabled, setDisabled] = useState(false);
-  const [displayName, setDisplayName] = useState("");
-  const [bio, setBio] = useState("");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [authMessage, setAuthMessage] = useState("");
+  const [displayName, setDisplayName] = useState('');
+  const [bio, setBio] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [authMessage, setAuthMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ function SettingsLayout() {
     setDisabled(true);
 
     if (email === session.user.email) {
-      setAuthMessage("SAME_EMAIL");
+      setAuthMessage('SAME_EMAIL');
       setDisabled(false);
       return;
     }
@@ -41,15 +41,15 @@ function SettingsLayout() {
     if (error) {
       console.log(JSON.stringify(error));
 
-      if (error.code === "email_exists") {
-        setAuthMessage("EMAIL_EXISTS");
-      } else if (error.code === "validation_failed") {
-        setAuthMessage("VALIDATION_FAILED");
-      } else if (error.code === "over_email_send_rate_limit") {
-        setAuthMessage("OVER_EMAIL_SEND_RATE_LIMIT");
+      if (error.code === 'email_exists') {
+        setAuthMessage('EMAIL_EXISTS');
+      } else if (error.code === 'validation_failed') {
+        setAuthMessage('VALIDATION_FAILED');
+      } else if (error.code === 'over_email_send_rate_limit') {
+        setAuthMessage('OVER_EMAIL_SEND_RATE_LIMIT');
       }
     } else {
-      setAuthMessage("CONFIRM_EMAIL_CHANGE");
+      setAuthMessage('CONFIRM_EMAIL_CHANGE');
     }
 
     setDisabled(false);
@@ -59,27 +59,27 @@ function SettingsLayout() {
     setDisabled(true);
 
     if (displayName === user.display_name) {
-      setAuthMessage("SAME_DISPLAY_NAME");
+      setAuthMessage('SAME_DISPLAY_NAME');
       setDisabled(false);
       return;
     } else if (displayName.length > 40) {
-      setAuthMessage("DISPLAY_NAME_LENGTH");
+      setAuthMessage('DISPLAY_NAME_LENGTH');
       setDisabled(false);
       return;
     }
 
     const { data, error } = await supabase
-      .from("users")
+      .from('users')
       .update({ display_name: displayName })
-      .eq("id", user.id)
-      .select("*");
+      .eq('id', user.id)
+      .select('*');
 
     if (error) {
       console.log(JSON.stringify(error));
     } else {
       const user = data[0];
       setUser(user);
-      setAuthMessage("DONE_UPDATE_DISPLAY_NAME");
+      setAuthMessage('DONE_UPDATE_DISPLAY_NAME');
     }
 
     setDisabled(false);
@@ -89,27 +89,27 @@ function SettingsLayout() {
     setDisabled(true);
 
     if (bio === user.bio) {
-      setAuthMessage("SAME_BIO");
+      setAuthMessage('SAME_BIO');
       setDisabled(false);
       return;
     } else if (bio.length > 200) {
-      setAuthMessage("BIO_LENGTH");
+      setAuthMessage('BIO_LENGTH');
       setDisabled(false);
       return;
     }
 
     const { data, error } = await supabase
-      .from("users")
+      .from('users')
       .update({ bio })
-      .eq("id", user.id)
-      .select("*");
+      .eq('id', user.id)
+      .select('*');
 
     if (error) {
       console.log(JSON.stringify(error));
     } else {
       const user = data[0];
       setUser(user);
-      setAuthMessage("DONE_UPDATE_BIO");
+      setAuthMessage('DONE_UPDATE_BIO');
     }
 
     setDisabled(false);
@@ -119,42 +119,42 @@ function SettingsLayout() {
     setDisabled(true);
 
     if (username === user.username) {
-      setAuthMessage("SAME_USERNAME");
+      setAuthMessage('SAME_USERNAME');
       setDisabled(false);
       return;
     } else if (username.length < 2 || username.length > 40) {
-      setAuthMessage("USERNAME_LENGTH");
+      setAuthMessage('USERNAME_LENGTH');
       setDisabled(false);
       return;
     } else if (!expectedUsernameFormat(username)) {
-      setAuthMessage("USERNAME_CHARACTERS");
+      setAuthMessage('USERNAME_CHARACTERS');
       setDisabled(false);
       return;
     }
 
     const { data: users } = await supabase
-      .from("users")
-      .select("*")
-      .eq("username", username);
+      .from('users')
+      .select('*')
+      .eq('username', username);
 
     if (users.length > 0) {
-      setAuthMessage("USERNAME_EXISTS");
+      setAuthMessage('USERNAME_EXISTS');
       setDisabled(false);
       return;
     }
 
     const { data, error } = await supabase
-      .from("users")
+      .from('users')
       .update({ username })
-      .eq("id", user.id)
-      .select("*");
+      .eq('id', user.id)
+      .select('*');
 
     if (error) {
       console.log(JSON.stringify(error));
     } else {
       const user = data[0];
       setUser(user);
-      setAuthMessage("DONE_UPDATE_USERNAME");
+      setAuthMessage('DONE_UPDATE_USERNAME');
     }
 
     setDisabled(false);
@@ -168,7 +168,12 @@ function SettingsLayout() {
             <AvatarModal
               refreshUser={(user) => setUser(user)}
               showModal={showModal}
-              hideModal={() => setShowModal(false)}
+              hideModal={() =>
+                setShowModal({
+                  type: null,
+                  data: null,
+                })
+              }
             />
             {user.avatar_file && (
               <img
@@ -180,7 +185,7 @@ function SettingsLayout() {
                 className="h-[360px] w-[360px] bg-black object-cover"
                 onDoubleClick={() => {
                   const element = document.getElementById(
-                    `img-${user.avatar_file}`,
+                    `img-${user.avatar_file}`
                   );
                   setImageElement(element);
 
@@ -197,7 +202,15 @@ function SettingsLayout() {
               <div className="h-[360px] w-[360px] bg-neutral-200"></div>
             )}
 
-            <button type="button" onClick={() => setShowModal(true)}>
+            <button
+              type="button"
+              onClick={() =>
+                setShowModal({
+                  type: null,
+                  data: null,
+                })
+              }
+            >
               Upload Avatar
             </button>
 
@@ -251,8 +264,8 @@ function SettingsLayout() {
               Update Username
             </button>
 
-            {authMessage !== "CONFIRM_EMAIL_CHANGE" &&
-              authMessage !== "RESENT_EMAIL_CHANGE_CONFIRMATION" && (
+            {authMessage !== 'CONFIRM_EMAIL_CHANGE' &&
+              authMessage !== 'RESENT_EMAIL_CHANGE_CONFIRMATION' && (
                 <>
                   <input
                     type="text"
@@ -280,9 +293,9 @@ function SettingsLayout() {
             onClick={async () => {
               setDisabled(true);
               await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: "http://localhost:5173/reset-password",
+                redirectTo: 'http://localhost:5173/reset-password',
               });
-              setAuthMessage("RESET");
+              setAuthMessage('RESET');
               setDisabled(false);
             }}
           >
@@ -292,19 +305,19 @@ function SettingsLayout() {
           <button
             type="button"
             onClick={async () => {
-              await supabase.auth.signOut({ scope: "local" });
+              await supabase.auth.signOut({ scope: 'local' });
               setSession(null);
-              navigate("/");
+              navigate('/');
             }}
           >
             Sign Out
           </button>
 
-          {authMessage === "CONFIRM_EMAIL_CHANGE" && (
+          {authMessage === 'CONFIRM_EMAIL_CHANGE' && (
             <>
               <p>
-                A confirmation email has been sent to your new email{" "}
-                <strong>{email}</strong> and old email{" "}
+                A confirmation email has been sent to your new email{' '}
+                <strong>{email}</strong> and old email{' '}
                 <strong>{session.user.email}</strong> with a link. Please click
                 on the link from both emails to confirm your email change.
               </p>
@@ -316,13 +329,13 @@ function SettingsLayout() {
                   setDisabled(true);
 
                   const { error } = await supabase.auth.resend({
-                    type: "email_change",
+                    type: 'email_change',
                     email,
                   });
 
                   if (error) console.log(JSON.stringify(error));
 
-                  setAuthMessage("RESENT_EMAIL_CHANGE_CONFIRMATION");
+                  setAuthMessage('RESENT_EMAIL_CHANGE_CONFIRMATION');
                   setDisabled(false);
                 }}
               >
@@ -331,68 +344,68 @@ function SettingsLayout() {
             </>
           )}
 
-          {authMessage === "SAME_EMAIL" && (
+          {authMessage === 'SAME_EMAIL' && (
             <p>
               Your new email cannot be the same as your old email. Please try a
               different email.
             </p>
           )}
 
-          {authMessage === "RESET" && (
+          {authMessage === 'RESET' && (
             <p>
               An email has been sent to <strong>{email}</strong> with a link.
               Please click on the link to reset your password.
             </p>
           )}
 
-          {authMessage === "VALIDATION_FAILED" && (
+          {authMessage === 'VALIDATION_FAILED' && (
             <p>
               Your email is not in the expected format. Please try a different
               email.
             </p>
           )}
 
-          {authMessage === "EMAIL_EXISTS" && (
+          {authMessage === 'EMAIL_EXISTS' && (
             <p>Email already exists. Please try a different email.</p>
           )}
         </>
       )}
 
-      {authMessage === "RESENT_EMAIL_CHANGE_CONFIRMATION" && (
+      {authMessage === 'RESENT_EMAIL_CHANGE_CONFIRMATION' && (
         <p>
-          A confirmation email has been resent to your new email{" "}
-          <strong>{email}</strong> and old email{" "}
+          A confirmation email has been resent to your new email{' '}
+          <strong>{email}</strong> and old email{' '}
           <strong>{session.user.email}</strong> with a link. Please click on the
           link from both emails to confirm your email change.
         </p>
       )}
 
-      {authMessage === "SAME_DISPLAY_NAME" && (
+      {authMessage === 'SAME_DISPLAY_NAME' && (
         <p>
           Your new display name cannot be the same as your old display name.
           Please try a different display name.
         </p>
       )}
 
-      {authMessage === "DONE_UPDATE_DISPLAY_NAME" && (
+      {authMessage === 'DONE_UPDATE_DISPLAY_NAME' && (
         <p>Your display name has been changed!</p>
       )}
 
-      {authMessage === "SAME_USERNAME" && (
+      {authMessage === 'SAME_USERNAME' && (
         <p>
           Your new username cannot be the same as your old username. Please try
           a different username.
         </p>
       )}
 
-      {authMessage === "USERNAME_LENGTH" && (
+      {authMessage === 'USERNAME_LENGTH' && (
         <p>
           Username must be between 2 and 40 characters. Please try a different
           username.
         </p>
       )}
 
-      {authMessage === "USERNAME_CHARACTERS" && (
+      {authMessage === 'USERNAME_CHARACTERS' && (
         <p>
           Username can only include uppercase letters (A-Z), lowercase letters
           (a-z), underscores (_), or periods(.). Please try a different
@@ -400,28 +413,28 @@ function SettingsLayout() {
         </p>
       )}
 
-      {authMessage === "USERNAME_EXISTS" && (
+      {authMessage === 'USERNAME_EXISTS' && (
         <p>Username already exists. Please try a different username.</p>
       )}
 
-      {authMessage === "DONE_UPDATE_USERNAME" && (
+      {authMessage === 'DONE_UPDATE_USERNAME' && (
         <p>Your username has been changed!</p>
       )}
 
-      {authMessage === "OVER_EMAIL_SEND_RATE_LIMIT" && (
+      {authMessage === 'OVER_EMAIL_SEND_RATE_LIMIT' && (
         <p>Email send limit reached. Please try again later.</p>
       )}
 
-      {authMessage === "SAME_BIO" && (
+      {authMessage === 'SAME_BIO' && (
         <p>
           Your new bio cannot be the same as your old bio. Please try a
           different bio.
         </p>
       )}
 
-      {authMessage === "DONE_UPDATE_BIO" && <p>Your bio has been changed!</p>}
+      {authMessage === 'DONE_UPDATE_BIO' && <p>Your bio has been changed!</p>}
 
-      {authMessage === "BIO_LENGTH" && (
+      {authMessage === 'BIO_LENGTH' && (
         <p>
           Bio cannot be more than 200 characters. Please try a different bio.
         </p>

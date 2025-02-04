@@ -1,16 +1,16 @@
-import { useState } from "react";
-import { Link } from "react-router";
-import { supabase } from "../common/supabase.js";
+import { useState } from 'react';
+import { Link } from 'react-router';
+import { supabase } from '../common/supabase.js';
 
 function ResetPasswordLayout() {
-  const [password, setPassword] = useState("");
-  const [authMessage, setAuthMessage] = useState("");
+  const [password, setPassword] = useState('');
+  const [authMessage, setAuthMessage] = useState('');
 
   const [disabled, setDisabled] = useState(false);
 
   return (
     <div>
-      {authMessage !== "PASSWORD_RESET" && (
+      {authMessage !== 'PASSWORD_RESET' && (
         <>
           <input
             type="text"
@@ -37,16 +37,16 @@ function ResetPasswordLayout() {
               if (error) {
                 console.log(JSON.stringify(error));
 
-                if (error.code === "weak_password") {
-                  setAuthMessage("WEAK_PASSWORD");
-                } else if (error.code === "same_password") {
-                  setAuthMessage("SAME_PASSWORD");
-                } else if (error.code === "over_email_send_rate_limit") {
-                  setAuthMessage("OVER_EMAIL_SEND_RATE_LIMIT");
+                if (error.code === 'weak_password') {
+                  setAuthMessage('WEAK_PASSWORD');
+                } else if (error.code === 'same_password') {
+                  setAuthMessage('SAME_PASSWORD');
+                } else if (error.code === 'over_email_send_rate_limit') {
+                  setAuthMessage('OVER_EMAIL_SEND_RATE_LIMIT');
                 }
               }
 
-              if (!error) setAuthMessage("PASSWORD_RESET");
+              if (!error) setAuthMessage('PASSWORD_RESET');
 
               setDisabled(false);
             }}
@@ -56,7 +56,7 @@ function ResetPasswordLayout() {
         </>
       )}
 
-      {authMessage === "PASSWORD_RESET" && (
+      {authMessage === 'PASSWORD_RESET' && (
         <>
           <p>Your password has been reset!</p>
           <p>
@@ -65,18 +65,18 @@ function ResetPasswordLayout() {
         </>
       )}
 
-      {authMessage === "WEAK_PASSWORD" && (
+      {authMessage === 'WEAK_PASSWORD' && (
         <p>Your new password is weak. Please try a different password.</p>
       )}
 
-      {authMessage === "SAME_PASSWORD" && (
+      {authMessage === 'SAME_PASSWORD' && (
         <p>
           Your new password cannot be the same as your old password. Please try
           a different password.
         </p>
       )}
 
-      {authMessage === "OVER_EMAIL_SEND_RATE_LIMIT" && (
+      {authMessage === 'OVER_EMAIL_SEND_RATE_LIMIT' && (
         <p>Email send limit reached. Please try again later.</p>
       )}
     </div>

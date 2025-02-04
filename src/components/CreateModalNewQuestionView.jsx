@@ -1,11 +1,11 @@
-import { useContext, useState } from "react";
-import { ModalContext, UserContext } from "../common/contexts";
-import { supabase } from "../common/supabase";
-import Button from "./Button";
-import Modal from "./Modal";
-import TextInput from "./TextInput";
-import Textarea from "./Textarea";
-import Toggle from "./Toggle";
+import { useContext, useState } from 'react';
+import { ModalContext, UserContext } from '../common/contexts';
+import { supabase } from '../common/supabase';
+import Button from './Button';
+import Modal from './Modal';
+import TextInput from './TextInput';
+import Textarea from './Textarea';
+import Toggle from './Toggle';
 
 const titleCharacterLimit = 100;
 const descriptionCharacterLimit = 2000;
@@ -15,50 +15,55 @@ function CreateModalNewQuestionView() {
   const { setShowModal } = useContext(ModalContext);
 
   const [isAddingQuestion, setIsAddingQuestion] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(true);
 
   async function addQuestion() {
     setIsAddingQuestion(true);
     const { data, error } = await supabase
-      .from("questions")
+      .from('questions')
       .insert({
         user_id: user.id,
         title,
         description,
         is_anonymous: isAnonymous,
       })
-      .select("*");
+      .select('*');
 
-    if (error) {
-      console.log(error);
-    } else {
-      await supabase.rpc("increment", {
-        table_name: "questions",
-        row_id: data[0].id,
-        row_column: "comments_count",
-        increment_amount: 1,
-      });
-    }
+    // if (error) {
+    //   console.log(error);
+    // } else {
+    //   await supabase.rpc('increment', {
+    //     table_name: 'questions',
+    //     row_id: data[0].id,
+    //     row_column: 'comments_count',
+    //     increment_amount: 1,
+    //   });
+    // }
     setIsAddingQuestion(false);
-    setTitle("");
-    setDescription("");
+    setTitle('');
+    setDescription('');
     setIsAnonymous(true);
-    setShowModal(null);
+    setShowModal({
+      type: null,
+      data: null,
+    });
   }
 
   return (
     <>
       <h1 className="text-2xl font-bold">New Question</h1>
-      <Toggle
-        handleChange={() => setIsAnonymous(!isAnonymous)}
-        label="Anonymous"
-        isChecked={isAnonymous}
-      />
+      <div className="flex items-center gap-2">
+        <Toggle
+          handleChange={() => setIsAnonymous(!isAnonymous)}
+          isChecked={isAnonymous}
+        />
+        <p>Anonymous</p>
+      </div>
       <div className="flex flex-col gap-2">
         <p
-          className={`self-end ${title.length > titleCharacterLimit ? "text-rose-500" : "text-white"}`}
+          className={`self-end ${title.length > titleCharacterLimit ? 'text-rose-500' : 'text-white'}`}
         >
           {title.length} / {titleCharacterLimit}
         </p>
@@ -70,7 +75,7 @@ function CreateModalNewQuestionView() {
       </div>
       <div className="flex flex-col gap-2">
         <p
-          className={`self-end ${description.length > descriptionCharacterLimit ? "text-rose-500" : "text-white"}`}
+          className={`self-end ${description.length > descriptionCharacterLimit ? 'text-rose-500' : 'text-white'}`}
         >
           {description.length} / {descriptionCharacterLimit}
         </p>
@@ -83,9 +88,12 @@ function CreateModalNewQuestionView() {
       <div className="flex gap-2 self-end">
         <Button
           handleClick={() => {
-            setTitle("");
-            setDescription("");
-            setShowModal(null);
+            setTitle('');
+            setDescription('');
+            setShowModal({
+              type: null,
+              data: null,
+            });
           }}
         >
           Clear
@@ -93,7 +101,7 @@ function CreateModalNewQuestionView() {
         <Button
           isDisabled={
             isAddingQuestion ||
-            title === "" ||
+            title === '' ||
             title.length > titleCharacterLimit ||
             description.length > descriptionCharacterLimit
           }

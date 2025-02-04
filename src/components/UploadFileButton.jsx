@@ -1,8 +1,8 @@
-import { useUppyEvent } from "@uppy/react";
-import { useState } from "react";
-import { formatFileName } from "../common/helpers";
-import Button from "./Button";
-import { useUppyState } from "@uppy/react";
+import { useUppyEvent } from '@uppy/react';
+import { useState } from 'react';
+import { formatFileName } from '../common/helpers';
+import Button from './Button';
+import { useUppyState } from '@uppy/react';
 
 function UploadFileButton({
   id,
@@ -36,7 +36,7 @@ function UploadFileButton({
           _fileErros.push(`"${file.name}" has already been added.`);
         } else {
           uppy.addFile({
-            source: "file input",
+            source: 'file input',
             name: file.name,
             type: file.type,
             data: file,
@@ -44,16 +44,16 @@ function UploadFileButton({
         }
       } catch (error) {
         // console.log(error);
-        _fileErros.push("There was an error with one or more of your files.");
+        _fileErros.push('There was an error with one or more of your files.');
       }
 
       setFileErrors(_fileErros);
     });
   }
 
-  useUppyEvent(uppy, "file-added", (file) => {
+  useUppyEvent(uppy, 'file-added', (file) => {
     file.name =
-      formatFileName(file.name) + "_" + Date.now() + "." + file.extension;
+      formatFileName(file.name) + '_' + Date.now() + '.' + file.extension;
 
     file.meta = {
       ...file.meta,
@@ -63,23 +63,23 @@ function UploadFileButton({
     };
 
     if (
-      file.type === "image/jpeg" ||
-      file.type === "image/png" ||
-      file.type === "image/gif"
+      file.type === 'image/jpeg' ||
+      file.type === 'image/png' ||
+      file.type === 'image/gif'
     ) {
-      const image = document.createElement("img");
-      image.addEventListener("load", (event) => {
+      const image = document.createElement('img');
+      image.addEventListener('load', (event) => {
         file.meta.width = image.naturalWidth;
         file.meta.height = image.naturalHeight;
       });
       image.src = URL.createObjectURL(file.data);
     } else if (
-      file.meta.type === "video/mp4" ||
-      file.meta.type === "video/mov" ||
-      file.meta.type === "video/avi"
+      file.meta.type === 'video/mp4' ||
+      file.meta.type === 'video/mov' ||
+      file.meta.type === 'video/avi'
     ) {
-      const video = document.createElement("video");
-      video.addEventListener("loadedmetadata", (event) => {
+      const video = document.createElement('video');
+      video.addEventListener('loadedmetadata', (event) => {
         file.meta.width = video.videoWidth;
         file.meta.height = video.videoHeight;
         file.meta.duration = video.duration;

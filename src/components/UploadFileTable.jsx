@@ -1,9 +1,9 @@
-import { useUppyEvent, useUppyState } from "@uppy/react";
-import { useState } from "react";
-import IconButton from "./IconButton";
-import SVGPause from "./svg/SVGPause";
-import SVGPlay from "./svg/SVGPlay";
-import SVGOutlineX from "./svgs/outline/SVGOutlineX";
+import { useUppyEvent, useUppyState } from '@uppy/react';
+import { useState } from 'react';
+import IconButton from './IconButton';
+import SVGOutlinePause from './svgs/outline/SVGOutlinePause';
+import SVGOutlinePlay from './svgs/outline/SVGOutlinePlay';
+import SVGOutlineX from './svgs/outline/SVGOutlineX';
 
 function UploadFileTable({
   uppy,
@@ -18,32 +18,32 @@ function UploadFileTable({
   const [uploadPausedAll, setUploadPausedAll] = useState(false);
   const [uploadResumedAll, setUploadResumedAll] = useState(true);
 
-  useUppyEvent(uppy, "file-removed", () => {
+  useUppyEvent(uppy, 'file-removed', () => {
     uploadFileButtonRef.current.value = null;
   });
 
-  useUppyEvent(uppy, "complete", () => {
+  useUppyEvent(uppy, 'complete', () => {
     setFileUploadCompleted(true);
     if (setUploadCompleted) setUploadCompleted(true);
     uploadFileButtonRef.current.value = null;
   });
 
-  useUppyEvent(uppy, "upload-start", () => {
+  useUppyEvent(uppy, 'upload-start', () => {
     setFileUploadStarted(true);
     if (setUploadStarted) setUploadStarted(true);
   });
 
-  useUppyEvent(uppy, "resume-all", () => {
+  useUppyEvent(uppy, 'resume-all', () => {
     setUploadPausedAll(false);
     setUploadResumedAll(true);
   });
 
-  useUppyEvent(uppy, "pause-all", () => {
+  useUppyEvent(uppy, 'pause-all', () => {
     setUploadResumedAll(false);
     setUploadPausedAll(true);
   });
 
-  useUppyEvent(uppy, "cancel-all", () => {
+  useUppyEvent(uppy, 'cancel-all', () => {
     setFileUploadStarted(false);
     if (setUploadStarted) {
       setUploadStarted(false);
@@ -80,7 +80,7 @@ function UploadFileTable({
                   uppy.pauseResume(file.id);
                 }}
               >
-                {file.isPaused ? <SVGPlay /> : <SVGPause />}
+                {file.isPaused ? <SVGOutlinePlay /> : <SVGOutlinePause />}
               </IconButton>
             )}
             <IconButton

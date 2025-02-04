@@ -1,81 +1,71 @@
-import { useContext, useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router";
-import { ModalContext, UserContext } from "../common/contexts";
-import { useElementIntersection } from "../common/hooks";
-import { supabase } from "../common/supabase";
-import Button from "../components/Button";
-import Loading from "../components/Loading";
-import { getDate } from "../common/helpers";
-import NotFoundLayout from "./NotFoundLayout";
-import { Link } from "react-router";
-import QuestionComment from "../components/QuestionComment";
+import { useContext, useEffect, useState } from 'react';
+import { Link, useLocation, useParams } from 'react-router';
+import { ModalContext, UserContext } from '../common/contexts';
+import { getDate } from '../common/helpers';
+import Loaded from '../components/Loaded';
+import { useElementIntersection } from '../common/hooks';
+import {
+  getQuestionById,
+  getQuestionComments,
+  getReplyComments,
+} from '../common/supabase';
+import Button from '../components/Button';
+import Loading from '../components/Loading';
+import QuestionComment from '../components/QuestionComment';
+import { BUTTON_COLOR } from '../common/enums';
 
-function QuestionLayout() {
+function QuestionNestedLayout() {
   const { user } = useContext(UserContext);
   const { setShowModal } = useContext(ModalContext);
   const { id } = useParams();
   const location = useLocation();
+  const [elementRef, intersectingElement] = useElementIntersection();
+
   const [question, setQuestion] = useState(null);
   const [isLoadingQuestion, setIsLoadingQuestion] = useState(false);
   const [questionComments, setQuestionComments] = useState([]);
   const [isLoadingQuestionComments, setIsLoadingQuestionComments] =
     useState(false);
   const [hasMoreQuestionComments, setHasMoreQuestionComments] = useState(true);
-  const [elementRef, intersectingElement] = useElementIntersection();
   const [commentsList, setCommentsList] = useState({});
 
   useEffect(() => {
-    async function initialize() {
-      setIsLoadingQuestion(true);
-      if (location.state?.question) {
-        setQuestion(location.state.question);
-      } else {
-        const { data, error } = await supabase
-          .from("questions")
-          .select("*, user_id(*)")
-          .eq("id", id);
-
-        if (error) {
-          console.log(error);
-        } else {
-          setQuestion(data[0]);
-        }
-      }
-      setIsLoadingQuestion(false);
+    if (location.state?.question) {
+      setQuestion(location.state.question);
+    } else {
+      getQuestion();
     }
-
-    window.scroll({ top: 0, behavior: "instant" });
-    initialize();
-  }, []);
+  }, [location]);
 
   useEffect(() => {
-    async function initialize() {
-      await getQuestionComments();
+    if (question) {
+      getComments();
     }
+  }, [question]);
 
-    if (question && hasMoreQuestionComments) initialize();
-  }, [question, intersectingElement]);
+  useEffect(() => {
+    if (intersectingElement && hasMoreQuestionComments) {
+      getComments();
+    }
+  }, [intersectingElement]);
 
-  async function getQuestionComments() {
+  async function getQuestion() {
+    setIsLoadingQuestion(true);
+    const { data } = await getQuestionById(id);
+    setQuestion(data[0]);
+    setIsLoadingQuestion(false);
+  }
+
+  async function getComments() {
     setIsLoadingQuestionComments(true);
-    const limit = 6;
-    const questionCommentsResult = await supabase
-      .from("question_comments")
-      .select("*")
-      .eq("question_id", question.id)
-      .is("parent_question_comment_id", null)
-      .order("created_at", { ascending: false })
-      .range(questionComments.length, limit + questionComments.length - 1);
-
-    if (questionCommentsResult.error) {
-      console.log(questionCommentsResult.error);
-    } else {
-      setQuestionComments(questionCommentsResult.data);
-
-      if (questionCommentsResult.data.length < limit) {
-        setHasMoreQuestionComments(false);
-      }
+    const { data, hasMore } = await getQuestionComments(
+      id,
+      questionComments.length
+    );
+    if (data.length > 0) {
+      setQuestionComments([...questionComments, ...data]);
     }
+    setHasMoreQuestionComments(hasMore);
     setIsLoadingQuestionComments(false);
   }
 
@@ -105,31 +95,20 @@ function QuestionLayout() {
       };
     }
 
-    const limit = 6;
-    const { data, error } = await supabase
-      .from("question_comments")
-      .select("*")
-      .eq("question_id", question.id)
-      .eq("parent_question_comment_id", parentQuestionCommentId)
-      .order("created_at", { ascending: false })
-      .range(
-        _commentsListItem.comments.length,
-        limit + _commentsListItem.comments.length - 1,
-      );
+    const { data, hasMore } = await getReplyComments(
+      id,
+      parentQuestionCommentId,
+      _commentsListItem.comments.length
+    );
 
-    if (error) {
-      console.log(error);
-    } else {
+    if (data.length > 0) {
       _commentsListItem.comments = [..._commentsListItem.comments, ...data];
-
-      if (data.length < limit) {
-        _commentsListItem.hasMore = false;
-      }
-
-      const _commentsList = { ...commentsList };
-      _commentsList[parentQuestionCommentId] = _commentsListItem;
-      setCommentsList(_commentsList);
     }
+    _commentsListItem.hasMore = hasMore;
+
+    const _commentsList = { ...commentsList };
+    _commentsList[parentQuestionCommentId] = _commentsListItem;
+    setCommentsList(_commentsList);
 
     setIsLoadingQuestionComments(false);
   }
@@ -137,7 +116,6 @@ function QuestionLayout() {
   return (
     <div className="flex w-full">
       {isLoadingQuestion && <Loading />}
-      {!isLoadingQuestion && !question && <NotFoundLayout />}
       {!isLoadingQuestion && question && (
         <div className="flex w-full flex-col gap-8">
           <div className="flex w-full flex-col gap-2">
@@ -162,16 +140,16 @@ function QuestionLayout() {
               {user && (
                 <div className="flex gap-2 self-start">
                   <Button
-                    tailwindColor="emerald"
-                    handleClick={() => console.log("boost")}
+                    buttonColor={BUTTON_COLOR.GREEN}
+                    handleClick={() => console.log('boost')}
                   >
                     Boost
                   </Button>
                   <Button
-                    tailwindColor="sky"
+                    buttonColor={BUTTON_COLOR.BLUE}
                     handleClick={() => {
                       setShowModal({
-                        type: "COMMENT_MODAL",
+                        type: 'COMMENT_MODAL',
                         data: {
                           parentQuestionCommentId: null,
                           questionId: question.id,
@@ -185,7 +163,6 @@ function QuestionLayout() {
               )}
             </div>
           </div>
-          {questionComments.length === 0 && <p>No comments</p>}
           {questionComments.length > 0 && (
             <div className={`flex w-full flex-col gap-4 overflow-auto`}>
               {questionComments.map((comment, index) => (
@@ -203,10 +180,12 @@ function QuestionLayout() {
               ))}
             </div>
           )}
+          {isLoadingQuestionComments && <Loading />}
+          {questionComments.length === 0 && <Loaded />}
         </div>
       )}
     </div>
   );
 }
 
-export default QuestionLayout;
+export default QuestionNestedLayout;

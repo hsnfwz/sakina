@@ -1,9 +1,9 @@
-import Uppy from "@uppy/core";
-import "@uppy/core/dist/style.min.css";
-import "@uppy/dashboard/dist/style.min.css";
-import Tus from "@uppy/tus";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { SessionContext } from "./contexts";
+import Uppy from '@uppy/core';
+import '@uppy/core/dist/style.min.css';
+import '@uppy/dashboard/dist/style.min.css';
+import Tus from '@uppy/tus';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { SessionContext } from './contexts';
 
 const useUppyWithSupabase = ({ uppyOptions }) => {
   // Initialize Uppy instance only once
@@ -24,12 +24,12 @@ const useUppyWithSupabase = ({ uppyOptions }) => {
         removeFingerprintOnSuccess: true, // Remove fingerprint after successful upload
         chunkSize: 6 * 1024 * 1024, // Chunk size for TUS uploads (6MB)
         allowedMetaFields: [
-          "width",
-          "height",
-          "bucketName",
-          "objectName",
-          "contentType",
-          "cacheControl",
+          'width',
+          'height',
+          'bucketName',
+          'objectName',
+          'contentType',
+          'cacheControl',
         ], // Metadata fields allowed for the upload
       });
     };
@@ -42,7 +42,7 @@ const useUppyWithSupabase = ({ uppyOptions }) => {
   return uppy;
 };
 
-const useElementIntersection = (threshold = 1) => {
+const useElementIntersection = (threshold = 0.1) => {
   const [intersectingElement, setIntersectingElement] = useState(null);
   const [elementNode, setElementNode] = useState(null);
   const [observer, setObserver] = useState(null);
@@ -68,7 +68,7 @@ const useElementIntersection = (threshold = 1) => {
           }
         });
       },
-      { threshold },
+      { threshold }
     );
 
     setObserver(intersectionObserver);
@@ -90,13 +90,13 @@ const useElementIntersection = (threshold = 1) => {
 const useAcceptedPosts = async (
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW,
+  orderBy = ORDER_BY.NEW
 ) => {
   try {
     const { data, error } = await supabase
-      .from("posts")
-      .select("*, user_id(*)")
-      .eq("status", "ACCEPTED")
+      .from('posts')
+      .select('*, user_id(*)')
+      .eq('status', 'ACCEPTED')
       .order(orderBy.columnName, { ascending: orderBy.isAscending })
       .range(startIndex, startIndex + limit - 1);
 

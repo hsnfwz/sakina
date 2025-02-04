@@ -1,10 +1,10 @@
-import { Link } from "react-router";
+import { Link } from 'react-router';
 
 function Footer() {
   return (
     <footer className="mt-auto flex w-full p-2 text-xs">
       <p>
-        Designed and built by{" "}
+        Designed and built by{' '}
         <Link
           target="_blank"
           className="underline hover:text-sky-500"

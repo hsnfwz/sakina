@@ -1,6 +1,12 @@
+import SVGOutlineLoader from './svgs/outline/SVGOutlineLoader';
+
 function Loading() {
   return (
-    <div className="aspect-square w-[40px] animate-spin rounded-full border-2 border-t-0 border-neutral-700 bg-transparent"></div>
+    <div className="flex p-2">
+      <div className="animate-spin self-start fill-sky-500">
+        <SVGOutlineLoader />
+      </div>
+    </div>
   );
 }
 

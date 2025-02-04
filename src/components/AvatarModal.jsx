@@ -1,23 +1,23 @@
-import Uppy from "@uppy/core";
-import "@uppy/core/dist/style.min.css";
-import "@uppy/dashboard/dist/style.min.css";
-import { Dashboard } from "@uppy/react";
-import Tus from "@uppy/tus";
-import { useContext, useEffect, useState } from "react";
-import { SessionContext } from "../common/contexts";
-import { supabase } from "../common/supabase";
+import Uppy from '@uppy/core';
+import '@uppy/core/dist/style.min.css';
+import '@uppy/dashboard/dist/style.min.css';
+import { Dashboard } from '@uppy/react';
+import Tus from '@uppy/tus';
+import { useContext, useEffect, useState } from 'react';
+import { SessionContext } from '../common/contexts';
+import { supabase } from '../common/supabase';
 
 const uppy = new Uppy({
   restrictions: {
     maxNumberOfFiles: 1,
     maxFileSize: 50000000, // 50 MB
     minNumberOfFiles: 1,
-    allowedFileTypes: [".jpeg", ".jpg", ".png"],
+    allowedFileTypes: ['.jpeg', '.jpg', '.png'],
   },
   onBeforeFileAdded: (currentFile) => {
     const modifiedFile = {
       ...currentFile,
-      name: Date.now() + "_" + currentFile.name + "." + currentFile.extension,
+      name: Date.now() + '_' + currentFile.name + '.' + currentFile.extension,
     };
     return modifiedFile;
   },
@@ -42,20 +42,20 @@ function AvatarModal({ showModal, hideModal, refreshUser }) {
         removeFingerprintOnSuccess: true, // Remove fingerprint after successful upload
         chunkSize: 6 * 1024 * 1024, // Chunk size for TUS uploads (6MB)
         allowedMetaFields: [
-          "bucketName",
-          "objectName",
-          "contentType",
-          "cacheControl",
+          'bucketName',
+          'objectName',
+          'contentType',
+          'cacheControl',
         ], // Metadata fields allowed for the upload
-        onError: (error) => console.error("Upload error:", error), // Error handling for uploads
+        onError: (error) => console.error('Upload error:', error), // Error handling for uploads
       });
 
-      uppy.on("files-added", (files) => {
+      uppy.on('files-added', (files) => {
         files.forEach((file) => {
           // Attach metadata to each file, including bucket name and content type
           file.meta = {
             ...file.meta,
-            bucketName: "avatars", // Bucket
+            bucketName: 'avatars', // Bucket
             objectName: file.name, // Use file name as object name
             contentType: file.type, // Set content type based on file MIME type
           };
@@ -64,7 +64,7 @@ function AvatarModal({ showModal, hideModal, refreshUser }) {
         setFilesExist(uppy.getFiles().length !== 0);
       });
 
-      uppy.on("file-removed", (file) => {
+      uppy.on('file-removed', (file) => {
         setFilesExist(uppy.getFiles().length !== 0);
       });
     };
@@ -99,12 +99,12 @@ function AvatarModal({ showModal, hideModal, refreshUser }) {
                 const file = result.successful[0].name;
 
                 const { data, error } = await supabase
-                  .from("users")
+                  .from('users')
                   .update({
                     avatar_file: file,
                   })
-                  .eq("id", session.user.id)
-                  .select("*");
+                  .eq('id', session.user.id)
+                  .select('*');
 
                 if (error) console.log(error);
 

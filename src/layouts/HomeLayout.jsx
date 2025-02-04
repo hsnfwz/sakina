@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../common/contexts";
-import { getIslamicDate } from "../common/helpers.js";
-import { supabase } from "../common/supabase.js";
-import Loading from "../components/Loading.jsx";
+import { useContext, useEffect, useState } from 'react';
+import { UserContext } from '../common/contexts';
+import { getIslamicDate } from '../common/helpers.js';
+import { supabase } from '../common/supabase.js';
+import Loading from '../components/Loading.jsx';
 
 function HomeLayout() {
   const { user } = useContext(UserContext);
@@ -14,24 +14,24 @@ function HomeLayout() {
     setLoadingPosts(true);
 
     const { data: followersData, error: followersError } = await supabase
-      .from("followers")
-      .select("*")
-      .eq("sender_user_id", user.id);
+      .from('followers')
+      .select('*')
+      .eq('sender_user_id', user.id);
 
     if (followersError) {
       console.log(followersError);
     }
 
     const receiverUserIds = followersData.map(
-      (follower) => follower.receiver_user_id,
+      (follower) => follower.receiver_user_id
     );
 
     const { data: postsData, error: postsError } = await supabase
-      .from("posts")
-      .select("*")
-      .in("user_id", receiverUserIds)
-      .eq("status", "ACCEPTED")
-      .order("created_at", { ascending: false });
+      .from('posts')
+      .select('*')
+      .in('user_id', receiverUserIds)
+      .eq('status', 'ACCEPTED')
+      .order('created_at', { ascending: false });
 
     if (postsError) {
       console.log(postsError);
@@ -62,7 +62,7 @@ function HomeLayout() {
           <>
             <h1 className="text-center text-2xl">Salam {user.username}!</h1>
             <p className="text-center">
-              Welcome back. Your feed is up to date for{" "}
+              Welcome back. Your feed is up to date for{' '}
               {getIslamicDate(new Date())}
             </p>
           </>

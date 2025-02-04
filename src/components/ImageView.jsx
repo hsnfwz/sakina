@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import IconButton from "./IconButton";
-import ImageVideoViewSkeleton from "./ImageVideoViewSkeleton";
-import SVGOutlineArrowLeft from "./svgs/outline/SVGOutlineArrowLeft";
-import SVGOutlineArrowRight from "./svgs/outline/SVGOutlineArrowRight";
+import { useEffect, useState } from 'react';
+import IconButton from './IconButton';
+import ImageVideoViewSkeleton from './ImageVideoViewSkeleton';
+import SVGOutlineArrowLeft from './svgs/outline/SVGOutlineArrowLeft';
+import SVGOutlineArrowRight from './svgs/outline/SVGOutlineArrowRight';
 
 function ImageView({ images, isMasonryView, autoPlayCarousel }) {
   const [isLoadingFile, setIsLoadingFile] = useState(true);
@@ -52,32 +52,35 @@ function ImageView({ images, isMasonryView, autoPlayCarousel }) {
   }, [carouselIndex, isLoadingFile]);
 
   return (
-    <div className="relative">
-      {images.map((image, index) => (
-        <div key={index} className="rounded-lg bg-neutral-700">
-          <div className={`${index === carouselIndex ? "visible" : "hidden"}`}>
-            <ImageVideoViewSkeleton
-              show={isLoadingFile}
-              isMasonryView={isMasonryView}
-              width={isCarouselAspectRatioEqual(images) ? image.width : 1}
-              height={isCarouselAspectRatioEqual(images) ? image.height : 1}
+    <div className="relative left-0 top-0">
+      <div className="grid">
+        {images.map((image, index) => (
+          <div key={index} style={{ gridColumn: 1, gridRow: 1 }}>
+            {isLoadingFile && (
+              <div
+                className={`${index === carouselIndex ? 'opacity-100' : 'opacity-0'}`}
+              >
+                <ImageVideoViewSkeleton
+                  isMasonryView={isMasonryView}
+                  width={isCarouselAspectRatioEqual(images) ? image.width : 1}
+                  height={isCarouselAspectRatioEqual(images) ? image.height : 1}
+                />
+              </div>
+            )}
+            <img
+              key={index}
+              src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/images/${image.name}`}
+              alt={image.name}
+              width=""
+              height=""
+              className={`${index === carouselIndex ? 'opacity-100' : 'opacity-0'} ${isCarouselAspectRatioEqual(images) ? 'aspect-auto object-cover' : 'aspect-square object-contain'} rounded-lg bg-neutral-700`}
+              onLoad={() => setIsLoadingFile(false)}
             />
           </div>
-          <img
-            key={index}
-            src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/images/${image.name}`}
-            alt={image.name}
-            width=""
-            height=""
-            className={`z-1 ${index === carouselIndex ? "visible" : "hidden"} ${isLoadingFile ? "hidden" : "block"} rounded-lg ${isCarouselAspectRatioEqual(images) ? "aspect-auto object-cover" : "aspect-square object-contain"}`}
-            onLoad={() => {
-              setIsLoadingFile(false);
-            }}
-          />
-        </div>
-      ))}
+        ))}
+      </div>
       {!isLoadingFile && images.length > 1 && (
-        <div className="z-2 absolute bottom-0 flex w-full gap-2 p-2">
+        <div className="absolute bottom-0 flex w-full gap-2 p-2">
           {images.map((image, index) => (
             <div key={index} className={`h-2 w-full rounded-lg bg-white/50`}>
               {autoPlayCarousel && (
@@ -113,7 +116,7 @@ function ImageView({ images, isMasonryView, autoPlayCarousel }) {
         </div>
       )}
       {!isLoadingFile && images.length > 1 && !autoPlayCarousel && (
-        <div className="z-3 absolute left-1/2 top-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 justify-between gap-2 p-2">
+        <div className="absolute left-1/2 top-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 justify-between gap-2 p-2">
           <IconButton handleClick={() => setCarouselIndex(carouselIndex - 1)}>
             <SVGOutlineArrowLeft />
           </IconButton>

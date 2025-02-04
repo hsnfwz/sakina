@@ -1,77 +1,172 @@
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../common/contexts.js";
-import { supabase } from "../common/supabase.js";
-import Loading from "../components/Loading.jsx";
+import { useContext, useEffect, useState } from 'react';
+import { UserContext } from '../common/contexts.js';
+import { Link, Outlet, useLocation } from 'react-router';
 
 function NotificationsLayout() {
   const { user } = useContext(UserContext);
+  const location = useLocation();
 
-  const [notifications, setNotifications] = useState([]);
-  const [loadingNotifications, setLoadingNotifications] = useState(false);
+  const [
+    isLoadingAcceptedPostsNotifications,
+    setIsLoadingAcceptedPostsNotifications,
+  ] = useState(false);
+  const [acceptedPostsNotifications, setAcceptedPostsNotifications] = useState(
+    []
+  );
+  const [
+    acceptedPostsNotificationsHasMore,
+    setAcceptedPostsNotificationsHasMore,
+  ] = useState(true);
+  const [
+    acceptedPostsNotificationsHasInitialized,
+    setAcceptedPostsNotificationsHasInitialized,
+  ] = useState(false);
+  const [
+    acceptedPostsNotificationsScrollY,
+    setAcceptedPostsNotificationsScrollY,
+  ] = useState(0);
 
-  useEffect(() => {
-    async function initialize() {
-      await getNotifications();
-    }
+  const [
+    isLoadingPendingPostsNotifications,
+    setIsLoadingPendingPostsNotifications,
+  ] = useState(false);
+  const [pendingPostsNotifications, setPendingPostsNotifications] = useState(
+    []
+  );
+  const [
+    pendingPostsNotificationsHasMore,
+    setPendingPostsNotificationsHasMore,
+  ] = useState(true);
+  const [
+    pendingPostsNotificationsHasInitialized,
+    setPendingPostsNotificationsHasInitialized,
+  ] = useState(false);
+  const [
+    pendingPostsNotificationsScrollY,
+    setPendingPostsNotificationsScrollY,
+  ] = useState(0);
 
-    initialize();
-  }, []);
+  const [
+    isLoadingRejectedPostsNotifications,
+    setIsLoadingRejectedPostsNotifications,
+  ] = useState(false);
+  const [rejectedPostsNotifications, setRejectedPostsNotifications] = useState(
+    []
+  );
+  const [
+    rejectedPostsNotificationsHasMore,
+    setRejectedPostsNotificationsHasMore,
+  ] = useState(true);
+  const [
+    rejectedPostsNotificationsHasInitialized,
+    setRejectedPostsNotificationsHasInitialized,
+  ] = useState(false);
+  const [
+    rejectedPostsNotificationsScrollY,
+    setRejectedPostsNotificationsScrollY,
+  ] = useState(0);
 
-  useEffect(() => {
-    const notificationsInsertChannel = supabase
-      .channel("notifications-insert")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "notifications",
-          filter: `user_id=eq.${user.id}`,
-        },
-        async (payload) => {
-          await getNotifications();
-        },
-      )
-      .subscribe();
-
-    return () => notificationsInsertChannel.unsubscribe();
-  }, []);
-
-  async function getNotifications() {
-    setLoadingNotifications(true);
-    const { data, error } = await supabase
-      .from("notifications")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.log(error);
-    } else {
-      setNotifications(data);
-    }
-    setLoadingNotifications(false);
-  }
+  const [likesPostsNotifications, setLikesNotifications] = useState([]);
+  const [viewsPostsNotifications, setViewsNotifications] = useState([]);
+  const [commentsPostsNotifications, setCommentsNotifications] = useState([]);
 
   return (
-    <div>
-      {loadingNotifications && <Loading />}
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2 sm:hidden">
+        <Link
+          className={`${location.pathname === `/notifications` || location.pathname.includes('accepted-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
+          to={`accepted-posts`}
+          state={{ profile: user }}
+        >
+          Accepted Posts
+        </Link>
+        <Link
+          className={`${location.pathname.includes('pending-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
+          to={`pending-posts`}
+          state={{ profile: user }}
+        >
+          Pending Posts
+        </Link>
+        <Link
+          className={`${location.pathname.includes('rejected-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
+          to={`rejected-posts`}
+          state={{ profile: user }}
+        >
+          Rejected Posts
+        </Link>
+        <Link
+          className={`${location.pathname.includes('views') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
+          to={`views`}
+          state={{ profile: user }}
+        >
+          Views
+        </Link>
+        <Link
+          className={`${location.pathname.includes('likes') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
+          to={`likes`}
+          state={{ profile: user }}
+        >
+          Likes
+        </Link>
+        <Link
+          className={`${location.pathname.includes('followers') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
+          to={`followers`}
+          state={{ profile: user }}
+        >
+          Followers
+        </Link>
+        <Link
+          className={`${location.pathname.includes('comments') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
+          to={`comments`}
+          state={{ profile: user }}
+        >
+          Comments
+        </Link>
+      </div>
 
-      {!loadingNotifications && (
-        <>
-          {notifications.map((notification) => (
-            <div key={notification.id}>
-              {notification.message_type === "POST_ACCEPTED" && (
-                <p className="bg-sky-500">{notification.message}</p>
-              )}
+      <Outlet
+        context={{
+          isLoadingAcceptedPostsNotifications,
+          setIsLoadingAcceptedPostsNotifications,
+          acceptedPostsNotifications,
+          setAcceptedPostsNotifications,
+          acceptedPostsNotificationsHasMore,
+          setAcceptedPostsNotificationsHasMore,
+          acceptedPostsNotificationsHasInitialized,
+          setAcceptedPostsNotificationsHasInitialized,
+          acceptedPostsNotificationsScrollY,
+          setAcceptedPostsNotificationsScrollY,
 
-              {notification.message_type === "POST_REJECTED" && (
-                <p className="bg-rose-500">{notification.message}</p>
-              )}
-            </div>
-          ))}
-        </>
-      )}
+          isLoadingPendingPostsNotifications,
+          setIsLoadingPendingPostsNotifications,
+          pendingPostsNotifications,
+          setPendingPostsNotifications,
+          pendingPostsNotificationsHasMore,
+          setPendingPostsNotificationsHasMore,
+          pendingPostsNotificationsHasInitialized,
+          setPendingPostsNotificationsHasInitialized,
+          pendingPostsNotificationsScrollY,
+          setPendingPostsNotificationsScrollY,
+
+          isLoadingRejectedPostsNotifications,
+          setIsLoadingRejectedPostsNotifications,
+          rejectedPostsNotifications,
+          setRejectedPostsNotifications,
+          rejectedPostsNotificationsHasMore,
+          setRejectedPostsNotificationsHasMore,
+          rejectedPostsNotificationsHasInitialized,
+          setRejectedPostsNotificationsHasInitialized,
+          rejectedPostsNotificationsScrollY,
+          setRejectedPostsNotificationsScrollY,
+
+          likesPostsNotifications,
+          setLikesNotifications,
+          viewsPostsNotifications,
+          setViewsNotifications,
+          commentsPostsNotifications,
+          setCommentsNotifications,
+        }}
+      />
     </div>
   );
 }

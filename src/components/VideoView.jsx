@@ -1,18 +1,18 @@
-import { useEffect, useRef, useState, useContext } from "react";
-import ImageVideoViewSkeleton from "./ImageVideoViewSkeleton";
-import IconButton from "./IconButton";
-import SVGRestart from "./svg/SVGRestart";
-import SVGArrowsIn from "./svg/SVGArrowsIn";
-import SVGArrowsOut from "./svg/SVGArrowsOut";
-import SVGSoundOff from "./svg/SVGSoundOff";
-import SVGSoundOn from "./svg/SVGSoundOn";
-import SVGPlay from "./svg/SVGPlay";
-import SVGPause from "./svg/SVGPause";
-import { FullscreenContext } from "../common/contexts";
-import Slider from "./Slider";
-import { formatDuration } from "../common/helpers";
+import { useEffect, useRef, useState, useContext } from 'react';
+import ImageVideoViewSkeleton from './ImageVideoViewSkeleton';
+import IconButton from './IconButton';
+import SVGOutlineReset from './svgs/outline/SVGOutlineReset';
+import SVGOutlineCollapseArrow from './svgs/outline/SVGOutlineCollapseArrow';
+import SVGOutlineExpandArrow from './svgs/outline/SVGOutlineExpandArrow';
+import SVGOutlineMute from './svgs/outline/SVGOutlineMute';
+import SVGOutlineUnmute from './svgs/outline/SVGOutlineUnmute';
+import SVGOutlinePlay from './svgs/outline/SVGOutlinePlay';
+import SVGOutlinePause from './svgs/outline/SVGOutlinePause';
+import { FullscreenContext } from '../common/contexts';
+import Slider from './Slider';
+import { formatDuration } from '../common/helpers';
 
-function VideoView({ images, videos, isMasonryView, showControls }) {
+function VideoView({ images, videos, isMasonryView }) {
   const ref = useRef();
   const parentRef = useRef();
   const sliderRef = useRef();
@@ -84,20 +84,21 @@ function VideoView({ images, videos, isMasonryView, showControls }) {
       onMouseLeave={isMasonryView ? null : () => handleMouseLeave()}
       ref={parentRef}
     >
-      <ImageVideoViewSkeleton
-        show={isLoadingFile}
-        isMasonryView={isMasonryView}
-        width={fileVideo.width}
-        height={fileVideo.height}
-      />
+      {isLoadingFile && (
+        <ImageVideoViewSkeleton
+          isMasonryView={isMasonryView}
+          width={fileVideo.width}
+          height={fileVideo.height}
+        />
+      )}
       <video
         ref={ref}
         width=""
         height=""
         controls={false}
-        poster={`${!isMasonryView && fileThumbnail ? `https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/images/${fileThumbnail.name}` : ""}`}
+        poster={`${!isMasonryView && fileThumbnail ? `https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/images/${fileThumbnail.name}` : ''}`}
         style={{ aspectRatio: `${fileVideo.width}/${fileVideo.height}` }}
-        className={`rounded-lg bg-neutral-700 ${isLoadingFile ? "hidden" : "block"} full relative`}
+        className={`rounded-lg bg-black ${isLoadingFile ? 'hidden' : 'block'} full relative`}
         autoPlay={isMasonryView ? false : true}
         loop={isMasonryView ? true : false}
         muted={isMuted}
@@ -140,7 +141,7 @@ function VideoView({ images, videos, isMasonryView, showControls }) {
       </video>
       {!isLoadingFile && (
         <div
-          className={`absolute bottom-0 left-0 flex w-full flex-col gap-4 rounded-b-lg bg-black/50 p-4 backdrop-blur ${showControlsView ? "opacity-100" : "opacity-0"}`}
+          className={`absolute bottom-0 left-0 flex w-full flex-col gap-4 rounded-b-lg bg-black/50 p-4 backdrop-blur ${showControlsView ? 'opacity-100' : 'opacity-0'}`}
         >
           <Slider
             max={fileVideo.duration}
@@ -165,7 +166,7 @@ function VideoView({ images, videos, isMasonryView, showControls }) {
                     setIsDone(false);
                   }}
                 >
-                  <SVGRestart />
+                  <SVGOutlineReset />
                 </IconButton>
               )}
               {!isDone && (
@@ -181,7 +182,7 @@ function VideoView({ images, videos, isMasonryView, showControls }) {
                       setIsPaused(!isPaused);
                     }}
                   >
-                    {isPaused ? <SVGPlay /> : <SVGPause />}
+                    {isPaused ? <SVGOutlinePlay /> : <SVGOutlinePause />}
                   </IconButton>
                   <IconButton
                     handleClick={() => {
@@ -194,13 +195,13 @@ function VideoView({ images, videos, isMasonryView, showControls }) {
                       setIsMuted(!isMuted);
                     }}
                   >
-                    {isMuted ? <SVGSoundOff /> : <SVGSoundOn />}
+                    {isMuted ? <SVGOutlineMute /> : <SVGOutlineUnmute />}
                   </IconButton>
                 </>
               )}
             </div>
             <p>
-              {formatDuration(elapsedDuration)} /{" "}
+              {formatDuration(elapsedDuration)} /{' '}
               {formatDuration(fileVideo.duration)}
             </p>
             <div className="self-end">
@@ -213,7 +214,11 @@ function VideoView({ images, videos, isMasonryView, showControls }) {
                   }
                 }}
               >
-                {isFullscreen ? <SVGArrowsIn /> : <SVGArrowsOut />}
+                {isFullscreen ? (
+                  <SVGOutlineCollapseArrow />
+                ) : (
+                  <SVGOutlineExpandArrow />
+                )}
               </IconButton>
             </div>
           </div>

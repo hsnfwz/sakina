@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-function ImageVideoViewSkeleton({ show, isMasonryView, width, height }) {
+function ImageVideoViewSkeleton({ isMasonryView, width, height }) {
   const [skeletonWidth, setSkeletonWidth] = useState(0);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ function ImageVideoViewSkeleton({ show, isMasonryView, width, height }) {
   return (
     <div
       style={{ aspectRatio: `${width}/${height}` }}
-      className={`${show ? "visible" : "hidden"} flex flex-col items-center justify-center bg-neutral-700 w-[${skeletonWidth}px] animate-pulse rounded-lg`}
+      className={`flex flex-col items-center justify-center bg-neutral-700 w-[${skeletonWidth}px] animate-pulse rounded-lg`}
     ></div>
   );
 }

@@ -1,4 +1,7 @@
-import { Link } from "react-router";
+import { Link } from 'react-router';
+import parse from 'html-react-parser';
+import { useContext } from 'react';
+import { ModalContext } from '../common/contexts';
 
 function SearchBarResults({
   searchTerm,
@@ -7,51 +10,19 @@ function SearchBarResults({
   questions,
   clearSearchResults,
 }) {
-  // const [highlightTitle, setHighlightTitle] = useState(null);
-  // const [highlightDescription, setHighlightDescription] = useState(null);
+  const { setShowModal } = useContext(ModalContext);
 
-  // const [highlightUsername, setHighlightUsername] = useState(null);
-  // const [highlightDisplayName, setHighlightDisplayName] = useState(null);
+  function getHighlightText(text) {
+    const lowercaseText = text.toLowerCase();
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
-  // function getHighlightTitleDescription(post) {
-  //   const postTitle = post.title;
-  //   const regExp = new RegExp(searchInput, "ig");
-  //   const title = postTitle.replace(
-  //     regExp,
-  //     `<span className="bg-sky-500 text-white rounded-lg p-1">${searchInput}</span>`,
-  //   );
-  //   setHighlightTitle(title);
+    const highlightText = lowercaseText.replaceAll(
+      lowerCaseSearchTerm,
+      `<span className="bg-sky-500 text-white rounded-lg p-1">${lowerCaseSearchTerm}</span>`
+    );
 
-  //   if (post.description) {
-  //     const postDescription = post.description;
-  //     const regExp = new RegExp(searchInput, "ig");
-  //     const description = postDescription.replace(
-  //       regExp,
-  //       `<span className="bg-sky-500 text-white rounded-lg p-1">${searchInput}</span>`,
-  //     );
-  //     setHighlightDescription(description);
-  //   }
-  // }
-
-  // function getHighlightDisplayNameUsername(user) {
-  //   const lowerCaseSearchInput = searchInput.toLowerCase();
-
-  //   const lowercaseUsername = user.username.toLowerCase();
-  //   const username = lowercaseUsername.replaceAll(
-  //     lowerCaseSearchInput,
-  //     `<span className="bg-sky-500 text-white rounded-lg p-1">${lowerCaseSearchInput}</span>`,
-  //   );
-  //   setHighlightUsername(username);
-
-  //   if (user.display_name) {
-  //     const lowercaseDisplayName = user.display_name.toLowerCase();
-  //     const displayName = lowercaseDisplayName.replaceAll(
-  //       lowerCaseSearchInput,
-  //       `<span className="bg-sky-500 text-white rounded-lg p-1">${lowerCaseSearchInput}</span>`,
-  //     );
-  //     setHighlightDisplayName(displayName);
-  //   }
-  // }
+    return highlightText;
+  }
 
   return (
     <div className="flex flex-col rounded-lg">
@@ -61,14 +32,18 @@ function SearchBarResults({
           <div className="flex flex-col gap-2">
             {posts.map((post, index) => (
               <Link
-                onClick={clearSearchResults}
+                onClick={() => {
+                  clearSearchResults();
+                }}
                 key={index}
-                to={`/posts/${post.id}`}
+                to={`/post/${post.id}`}
                 state={{ post }}
                 className="flex flex-col gap-2 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0"
               >
-                <p>{post.title}</p>
-                {post.description && <p>{post.description}</p>}
+                <p>{parse(getHighlightText(post.title))}</p>
+                {post.description && (
+                  <p>{parse(getHighlightText(post.description))}</p>
+                )}
               </Link>
             ))}
           </div>
@@ -80,14 +55,18 @@ function SearchBarResults({
           <div className="flex flex-col gap-2">
             {questions.map((question, index) => (
               <Link
-                onClick={clearSearchResults}
+                onClick={() => {
+                  clearSearchResults();
+                }}
                 key={index}
-                to={`/questions/${question.id}`}
+                to={`/question/${question.id}`}
                 state={{ question }}
                 className="flex flex-col gap-2 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0"
               >
-                <p>{question.title}</p>
-                {question.description && <p>{question.description}</p>}
+                <p>{parse(getHighlightText(question.title))}</p>
+                {question.description && (
+                  <p>{parse(getHighlightText(question.description))}</p>
+                )}
               </Link>
             ))}
           </div>
@@ -99,15 +78,18 @@ function SearchBarResults({
           <div className="flex flex-col gap-2">
             {profiles.map((profile, index) => (
               <Link
-                onClick={clearSearchResults}
+                onClick={() => {
+                  clearSearchResults();
+                }}
                 key={index}
-                to={`/profile/${profile.username}#posts`}
+                to={`/${profile.username}`}
                 state={{ profile }}
                 className="flex flex-col gap-2 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0"
               >
+                <p>{parse(getHighlightText(profile.username))}</p>
                 <p>
-                  {profile.username}
-                  {profile.display_name ? ` - ${profile.display_name}` : ""}
+                  {profile.display_name &&
+                    parse(getHighlightText(profile.display_name))}
                 </p>
               </Link>
             ))}
