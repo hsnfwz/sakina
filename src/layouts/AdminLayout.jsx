@@ -86,7 +86,7 @@ function AdminLayout() {
       .eq('id', post.id);
 
     await supabase.from('notifications').insert({
-      receiver_user_id: post.user_id.id,
+      receiver_user_id: post.user.id,
       type: 'ACCEPTED',
       post_id: post.id,
     });
@@ -101,7 +101,7 @@ function AdminLayout() {
       .eq('id', post.id);
 
     await supabase.from('notifications').insert({
-      receiver_user_id: post.user_id.id,
+      receiver_user_id: post.user.id,
       type: 'REJECTED',
       post_id: post.id,
     });

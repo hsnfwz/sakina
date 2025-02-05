@@ -82,7 +82,7 @@ function SearchBarResults({
                   clearSearchResults();
                 }}
                 key={index}
-                to={`/${profile.username}`}
+                to={`/profile/${profile.username}`}
                 state={{ profile }}
                 className="flex flex-col gap-2 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0"
               >

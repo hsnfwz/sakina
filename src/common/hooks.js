@@ -87,30 +87,4 @@ const useElementIntersection = (threshold = 0.1) => {
   return [elementRef, intersectingElement];
 };
 
-const useAcceptedPosts = async (
-  startIndex = 0,
-  limit = 6,
-  orderBy = ORDER_BY.NEW
-) => {
-  try {
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*, user_id(*)')
-      .eq('status', 'ACCEPTED')
-      .order(orderBy.columnName, { ascending: orderBy.isAscending })
-      .range(startIndex, startIndex + limit - 1);
-
-    if (error) throw error;
-
-    await getPostImagesVideos(data);
-
-    return {
-      data,
-      hasMore: data.length === limit,
-    };
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 export { useElementIntersection, useUppyWithSupabase };

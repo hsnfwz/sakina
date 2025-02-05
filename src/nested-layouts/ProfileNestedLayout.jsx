@@ -171,7 +171,7 @@ function ProfileNestedLayout() {
           </div>
           <div className="flex flex-col gap-2 sm:hidden">
             <Link
-              className={`${location.pathname === `/${username}` || location.pathname.includes('accepted-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
+              className={`${location.pathname === `/profile/${username}` || location.pathname.includes('accepted-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
               to={`accepted-posts`}
               state={{ profile }}
             >

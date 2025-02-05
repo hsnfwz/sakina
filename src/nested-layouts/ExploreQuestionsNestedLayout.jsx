@@ -1,19 +1,17 @@
-import { useEffect, useContext, useRef } from 'react';
+import { useEffect, useContext, useRef, useCallback } from 'react';
 import { Link } from 'react-router';
-import { ExploreContext } from '../common/contexts';
+import { ExploreContext, ScrollContext } from '../common/contexts';
 import { getDate } from '../common/helpers';
 import Loaded from '../components/Loaded';
 import Loading from '../components/Loading';
 import { getQuestions } from '../common/supabase';
 
-function QuestionsNestedLayout() {
+function ExploreQuestionsNestedLayout() {
   const {
     questions,
     setQuestions,
     elementRefQuestions,
     intersectingElementQuestions,
-    scrollYQuestions,
-    setScrollYQuestions,
     hasMoreQuestions,
     setHasMoreQuestions,
     isLoadingQuestions,
@@ -22,21 +20,33 @@ function QuestionsNestedLayout() {
     setHasInitializedQuestions,
   } = useContext(ExploreContext);
 
-  const scrollYRef = useRef(0);
+  const { scrollRef } = useContext(ScrollContext);
+
+  // const handleScroll = useCallback(() => {
+  //   scrollRef.current.exploreQuestions.scrollY = window.scrollY;
+  // }, []);
 
   useEffect(() => {
-    if (!hasInitializedQuestions) {
-      getExploreQuestions();
+    async function initialize() {
+      if (!hasInitializedQuestions) {
+        await getExploreQuestions();
+      }
+
+      window.scroll({
+        top: scrollRef.current.exploreQuestions.scrollY,
+        behavior: 'instant',
+      });
     }
 
-    window.scroll({ top: scrollYQuestions, behavior: 'instant' });
+    initialize();
 
-    window.addEventListener('scroll', () => {
-      scrollYRef.current = window.scrollY;
-    });
+    const handleScroll = () =>
+      (scrollRef.current.exploreQuestions.scrollY = window.scrollY);
+
+    window.addEventListener('scroll', handleScroll);
 
     return () => {
-      setScrollYQuestions(scrollYRef.current);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
@@ -70,14 +80,11 @@ function QuestionsNestedLayout() {
               className="flex flex-col gap-4 rounded-lg border-2 border-neutral-700 p-2 hover:border-white focus:border-2 focus:border-white focus:outline-none focus:ring-0"
               ref={index === questions.length - 1 ? elementRefQuestions : null}
               state={{ question }}
-              // onClick={() => {
-              //   setScrollYQuestions(window.scrollY);
-              // }}
             >
               <div className="flex gap-4">
                 {question.is_anonymous && <p className="text-xs">Anonymous</p>}
                 {!question.is_anonymous && (
-                  <p className="text-xs">{question.user_id.username}</p>
+                  <p className="text-xs">{question.user.username}</p>
                 )}
                 <p className="text-xs text-neutral-700">
                   {getDate(question.created_at, true)}
@@ -97,4 +104,4 @@ function QuestionsNestedLayout() {
   );
 }
 
-export default QuestionsNestedLayout;
+export default ExploreQuestionsNestedLayout;

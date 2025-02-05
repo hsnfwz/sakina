@@ -63,14 +63,14 @@ function NavBarMobileBottom() {
         )}
         {user && (
           <Link
-            to={`/${user.username}`}
+            to={`/profile/${user.username}`}
             state={{ profile: user }}
-            className={`${location.pathname.includes(`/${user.username}`) ? 'fill-sky-500' : 'fill-white'} flex gap-2 rounded-full border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+            className={`${location.pathname.includes(`/profile/${user.username}`) ? 'fill-sky-500' : 'fill-white'} flex gap-2 rounded-full border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
           >
-            {location.pathname.includes(`/${user.username}`) && (
+            {location.pathname.includes(`/profile/${user.username}`) && (
               <SVGSolidUser />
             )}
-            {!location.pathname.includes(`/${user.username}`) && (
+            {!location.pathname.includes(`/profile/${user.username}`) && (
               <SVGOutlineUser />
             )}
           </Link>

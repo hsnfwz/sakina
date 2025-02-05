@@ -14,6 +14,10 @@ function Modal({ children }) {
         closeModal();
       }
     });
+
+    return () => {
+      enableBodyScroll();
+    };
   }, []);
 
   function enableBodyScroll() {

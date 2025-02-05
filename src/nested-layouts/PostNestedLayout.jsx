@@ -1,90 +1,82 @@
 import { useEffect, useContext, useRef, useState } from 'react';
 import { useLocation, useParams } from 'react-router';
-import { ExploreContext, UserContext } from '../common/contexts';
-import { supabase, getAcceptedPostById } from '../common/supabase';
-import IconButton from '../components/IconButton';
+import { ExploreContext, ModalContext, UserContext } from '../common/contexts';
+import {
+  getAcceptedPostById,
+  getPostLike,
+  addPostLike,
+  removePostLike,
+  removePost,
+  archivePost,
+  removeStorageObjectsByPostId,
+} from '../common/supabase';
 import ImageView from '../components/ImageView';
 import Loading from '../components/Loading';
 import VideoView from '../components/VideoView';
+import Button from '../components/Button';
+import { BUTTON_COLOR } from '../common/enums';
 
 function PostNestedLayout() {
-  const {
-    acceptedPosts,
-    setAcceptedPosts,
-    elementRefAcceptedPosts,
-    intersectingElementAcceptedPosts,
-    scrollYAcceptedPosts,
-    setScrollYAcceptedPosts,
-    hasMoreAcceptedPosts,
-    setHasMoreAcceptedPosts,
-    isLoadingAcceptedPosts,
-    setIsLoadingAcceptedPosts,
-    hasInitializedAcceptedPosts,
-    setHasInitializedAcceptedPosts,
-  } = useContext(ExploreContext);
+  const { acceptedPosts, setAcceptedPosts } = useContext(ExploreContext);
+
+  const { setShowModal } = useContext(ModalContext);
 
   const { user } = useContext(UserContext);
   const { id } = useParams();
-
   const location = useLocation();
   const [post, setPost] = useState(null);
   const [isLoadingPost, setIsLoadingPost] = useState(false);
-  const [disabled, setDisabled] = useState(false);
-  const [like, setLike] = useState(null);
-  const timerRef = useRef();
+  const [postLike, setPostLike] = useState(null);
+  const [isLoadingPostLike, setIsLoadingPostLike] = useState(false);
 
-  // useEffect(() => {
-  //   async function initialize() {
-  //     if (user && post) {
-  //       const likesResult = await supabase
-  //         .from("likes")
-  //         .select("*")
-  //         .eq("user_id", user.id)
-  //         .eq("post_id", post.id);
+  // const [disabled, setDisabled] = useState(false);
+  // const timerRef = useRef();
 
-  //       if (likesResult.error) {
-  //         console.log(likesResult.error);
-  //       } else {
-  //         setLike(likesResult.data[0]);
-  //       }
+  // const viewsResult = await supabase
+  //   .from("views")
+  //   .select("id", { head: true, count: "estimated" })
+  //   .eq("user_id", user.id)
+  //   .eq("post_id", post.id);
 
-  //       const viewsResult = await supabase
+  // if (viewsResult.error) {
+  //   console.log(viewsResult.error);
+  // } else {
+  //   if (viewsResult.count === 0 && user.id !== post.user_id.id) {
+  //     clearTimeout(timerRef.current);
+  //     timerRef.current = setTimeout(async () => {
+  //       await supabase
   //         .from("views")
-  //         .select("id", { head: true, count: "estimated" })
-  //         .eq("user_id", user.id)
-  //         .eq("post_id", post.id);
-
-  //       if (viewsResult.error) {
-  //         console.log(viewsResult.error);
-  //       } else {
-  //         if (viewsResult.count === 0 && user.id !== post.user_id.id) {
-  //           clearTimeout(timerRef.current);
-  //           timerRef.current = setTimeout(async () => {
-  //             await supabase
-  //               .from("views")
-  //               .insert({ user_id: user.id, post_id: post.id });
-  //           }, 3000);
-  //         }
-  //       }
-  //     }
+  //         .insert({ user_id: user.id, post_id: post.id });
+  //     }, 3000);
   //   }
-
-  //   initialize();
-  // }, [user, post]);
+  // }
 
   useEffect(() => {
     if (location.state?.post) {
       setPost(location.state.post);
-    } else if (!location.state?.post) {
+    } else {
       getPost();
     }
   }, [location]);
+
+  useEffect(() => {
+    if (post) {
+      _getPostLike();
+    }
+  }, [post]);
 
   async function getPost() {
     setIsLoadingPost(true);
     const { data } = await getAcceptedPostById(id);
     setPost(data[0]);
     setIsLoadingPost(false);
+  }
+
+  async function _getPostLike() {
+    setIsLoadingPostLike(true);
+    const { data } = await getPostLike(user.id, post.id);
+    setPostLike(data[0]);
+    setIsLoadingPostLike(false);
   }
 
   return (
@@ -110,6 +102,75 @@ function PostNestedLayout() {
 
           <h1 className="text-2xl">{post.title}</h1>
           {post.description && <p>{post.description}</p>}
+
+          {user.id === post.user.id && (
+            <div className="flex gap-2 self-start">
+              <Button
+                buttonColor={BUTTON_COLOR.BLUE}
+                handleClick={async () => {
+                  if (postLike) {
+                    await removePostLike(postLike.id);
+                    setPostLike(null);
+                  } else {
+                    const { data } = await addPostLike(user.id, post.id);
+                    setPostLike(data[0]);
+                  }
+                }}
+              >
+                {isLoadingPostLike && <Loading />}
+                {!isLoadingPostLike && <>{postLike ? 'Unlike' : 'Like'}</>}
+              </Button>
+              <Button
+                buttonColor={BUTTON_COLOR.RED}
+                handleClick={() => {
+                  setShowModal({
+                    type: 'CONFIRM_MODAL',
+                    data: {
+                      handleSubmit: async () => {
+                        await archivePost(post.id);
+                        setPost(null);
+                        const _acceptedPosts = acceptedPosts.filter(
+                          (_acceptedPost) => post.id !== _acceptedPost.id
+                        );
+                        setAcceptedPosts(_acceptedPosts);
+                        window.history.replaceState(null, '');
+                      },
+                      title: 'Archive Post',
+                      description:
+                        'Are you sure you want to archive your post? Users will no longer be able to view your post until you unarchive it.',
+                    },
+                  });
+                }}
+              >
+                Archive
+              </Button>
+              <Button
+                buttonColor={BUTTON_COLOR.RED}
+                handleClick={() => {
+                  setShowModal({
+                    type: 'CONFIRM_MODAL',
+                    data: {
+                      handleSubmit: async () => {
+                        await removeStorageObjectsByPostId(post.id);
+                        await removePost(post.id);
+                        setPost(null);
+                        const _acceptedPosts = acceptedPosts.filter(
+                          (_acceptedPost) => post.id !== _acceptedPost.id
+                        );
+                        setAcceptedPosts(_acceptedPosts);
+                        window.history.replaceState(null, '');
+                      },
+                      title: 'Delete Post',
+                      description:
+                        'Are you sure you want to delete your post? This action cannot be undone.',
+                    },
+                  });
+                }}
+              >
+                Delete
+              </Button>
+            </div>
+          )}
 
           {/* {user && user.id !== post.user_id.id && (
               <IconButton

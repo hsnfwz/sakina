@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router';
 import {
   ModalContext,
@@ -8,6 +8,7 @@ import {
   FullscreenContext,
   ExploreContext,
   NotificationsContext,
+  ScrollContext,
 } from './common/contexts';
 import { useElementIntersection } from './common/hooks.js';
 import { supabase, getNotificationsCountByProfileId } from './common/supabase';
@@ -30,9 +31,9 @@ import ResetPasswordLayout from './layouts/ResetPasswordLayout.jsx';
 import SettingsLayout from './layouts/SettingsLayout.jsx';
 import SignUpLayout from './layouts/SignUpLayout.jsx';
 
-import PostsNestedLayout from './nested-layouts/PostsNestedLayout.jsx';
-import QuestionsNestedLayout from './nested-layouts/QuestionsNestedLayout.jsx';
-import ProfilesNestedLayout from './nested-layouts/ProfilesNestedLayout.jsx';
+import ExplorePostsNestedLayout from './nested-layouts/ExplorePostsNestedLayout.jsx';
+import ExploreQuestionsNestedLayout from './nested-layouts/ExploreQuestionsNestedLayout.jsx';
+import ExploreProfilesNestedLayout from './nested-layouts/ExploreProfilesNestedLayout.jsx';
 
 import PostNestedLayout from './nested-layouts/PostNestedLayout.jsx';
 import QuestionNestedLayout from './nested-layouts/QuestionNestedLayout.jsx';
@@ -54,6 +55,10 @@ import NotificationsViewsNestedLayout from './nested-layouts/NotificationsViewsN
 import NotificationsCommentsNestedLayout from './nested-layouts/NotificationsCommentsNestedLayout.jsx';
 import NotificationsFollowersNestedLayout from './nested-layouts/NotificationsFollowersNestedLayout.jsx';
 
+import QuestionCommentLayout from './layouts/QuestionCommentLayout.jsx';
+
+import ConfirmModal from './modals/ConfirmModal.jsx';
+
 function App() {
   const [session, setSession] = useState(null);
   const [user, setUser] = useState(null);
@@ -68,6 +73,17 @@ function App() {
   const [notificationsCount, setNotificationsCount] = useState(0);
   const [isLoadingNotificationsCount, setIsLoadingNotificationsCount] =
     useState(false);
+
+  const scrollRef = useRef({
+    exploreAcceptedPosts: {
+      scrollX: 0,
+      scrollY: 0,
+    },
+    exploreQuestions: {
+      scrollX: 0,
+      scrollY: 0,
+    },
+  });
 
   const [acceptedPosts, setAcceptedPosts] = useState([]);
   const [isLoadingAcceptedPosts, setIsLoadingAcceptedPosts] = useState(false);
@@ -433,193 +449,207 @@ function App() {
                       setIsLoadingNotificationsCount,
                     }}
                   >
-                    {loadingUser && (
-                      <div className="flex">
-                        <Loading />
-                      </div>
-                    )}
+                    <ScrollContext.Provider value={{ scrollRef }}>
+                      {loadingUser && <Loading />}
 
-                    {!loadingUser && (
-                      <>
-                        <NavBar />
-                        <NavBarMobileBottom />
-                        <NavBarMobileTop />
+                      {!loadingUser && (
+                        <>
+                          <NavBar />
+                          <NavBarMobileBottom />
+                          <NavBarMobileTop />
 
-                        {showModal && showModal.type === 'CREATE_MODAL' && (
-                          <CreateModal />
-                        )}
+                          {showModal.type === 'CREATE_MODAL' && <CreateModal />}
 
-                        {showModal && showModal.type === 'COMMENT_MODAL' && (
-                          <CommentModal />
-                        )}
-                      </>
-                    )}
-                    {!loadingUser && (
-                      <main
-                        className={`relative left-0 top-0 mb-[76px] flex min-h-screen w-full flex-col gap-4 p-4 sm:mb-0 sm:pl-[300px]`}
-                      >
-                        <Routes>
-                          <Route path="/" element={<HomeLayout />} />
-                          <Route
-                            path="log-in"
-                            element={
-                              user ? <NoContentLayout /> : <LogInLayout />
-                            }
-                          />
-                          <Route
-                            path="sign-up"
-                            element={
-                              user ? <NoContentLayout /> : <SignUpLayout />
-                            }
-                          />
-                          <Route
-                            path="forgot-password"
-                            element={<ForgotPasswordLayout />}
-                          />
-                          <Route
-                            path="reset-password"
-                            element={
-                              user ? (
-                                <ResetPasswordLayout />
-                              ) : (
-                                <NoContentLayout />
-                              )
-                            }
-                          />
+                          {showModal.type === 'COMMENT_MODAL' && (
+                            <CommentModal />
+                          )}
 
-                          <Route path="explore" element={<ExploreLayout />}>
-                            <Route index element={<PostsNestedLayout />} />
+                          {showModal.type === 'CONFIRM_MODAL' && (
+                            <ConfirmModal />
+                          )}
+                        </>
+                      )}
+                      {!loadingUser && (
+                        <main
+                          className={`relative left-0 top-0 mb-[76px] flex min-h-screen w-full flex-col gap-4 p-4 sm:mb-0 sm:pl-[300px]`}
+                        >
+                          <Routes>
+                            <Route path="/" element={<HomeLayout />} />
                             <Route
-                              path="posts"
-                              element={<PostsNestedLayout />}
+                              path="log-in"
+                              element={
+                                user ? <NoContentLayout /> : <LogInLayout />
+                              }
                             />
                             <Route
-                              path="questions"
-                              element={<QuestionsNestedLayout />}
+                              path="sign-up"
+                              element={
+                                user ? <NoContentLayout /> : <SignUpLayout />
+                              }
                             />
                             <Route
-                              path="profiles"
-                              element={<ProfilesNestedLayout />}
+                              path="forgot-password"
+                              element={<ForgotPasswordLayout />}
+                            />
+                            <Route
+                              path="reset-password"
+                              element={
+                                user ? (
+                                  <ResetPasswordLayout />
+                                ) : (
+                                  <NoContentLayout />
+                                )
+                              }
+                            />
+
+                            <Route path="explore" element={<ExploreLayout />}>
+                              <Route
+                                index
+                                element={<ExplorePostsNestedLayout />}
+                              />
+                              <Route
+                                path="posts"
+                                element={<ExplorePostsNestedLayout />}
+                              />
+                              <Route
+                                path="questions"
+                                element={<ExploreQuestionsNestedLayout />}
+                              />
+                              <Route
+                                path="profiles"
+                                element={<ExploreProfilesNestedLayout />}
+                              />
+                              <Route path="*" element={<NotFoundLayout />} />
+                            </Route>
+
+                            <Route
+                              path="post/:id"
+                              element={<PostNestedLayout />}
+                            />
+                            <Route
+                              path="post/comment/:id"
+                              element={<PostNestedLayout />}
+                            />
+                            <Route
+                              path="question/:id"
+                              element={<QuestionNestedLayout />}
+                            />
+                            <Route
+                              path="question/comment/:id"
+                              element={<QuestionCommentLayout />}
+                            />
+
+                            <Route
+                              path="/profile/:username"
+                              element={<ProfileNestedLayout />}
+                            >
+                              <Route
+                                index
+                                element={<ProfileAcceptedPostsNestedLayout />}
+                              />
+                              <Route
+                                path="accepted-posts"
+                                element={<ProfileAcceptedPostsNestedLayout />}
+                              />
+                              <Route
+                                path="pending-posts"
+                                element={<ProfilePendingPostsNestedLayout />}
+                              />
+                              <Route
+                                path="rejected-posts"
+                                element={<ProfileRejectedPostsNestedLayout />}
+                              />
+                              <Route
+                                path="archived-posts"
+                                element={<ProfileArchivedPostsNestedLayout />}
+                              />
+                              <Route
+                                path="viewed-posts"
+                                element={<ProfileViewedPostsNestedLayout />}
+                              />
+                              <Route
+                                path="followers"
+                                element={<ProfileFollowersNestedLayout />}
+                              />
+                              <Route
+                                path="following"
+                                element={<ProfileFollowingNestedLayout />}
+                              />
+                              <Route path="*" element={<NotFoundLayout />} />
+                            </Route>
+
+                            <Route
+                              path="notifications"
+                              element={
+                                user ? (
+                                  <NotificationsLayout />
+                                ) : (
+                                  <NoContentLayout />
+                                )
+                              }
+                            >
+                              <Route
+                                index
+                                element={
+                                  <NotificationsAcceptedPostsNestedLayout />
+                                }
+                              />
+                              <Route
+                                path="accepted-posts"
+                                element={
+                                  <NotificationsAcceptedPostsNestedLayout />
+                                }
+                              />
+                              <Route
+                                path="pending-posts"
+                                element={
+                                  <NotificationsPendingPostsNestedLayout />
+                                }
+                              />
+                              <Route
+                                path="rejected-posts"
+                                element={
+                                  <NotificationsRejectedPostsNestedLayout />
+                                }
+                              />
+                              <Route
+                                path="likes"
+                                element={<NotificationsLikesNestedLayout />}
+                              />
+                              <Route
+                                path="views"
+                                element={<NotificationsViewsNestedLayout />}
+                              />
+                              <Route
+                                path="followers"
+                                element={<NotificationsFollowersNestedLayout />}
+                              />
+                              <Route
+                                path="comments"
+                                element={<NotificationsCommentsNestedLayout />}
+                              />
+                              <Route path="*" element={<NotFoundLayout />} />
+                            </Route>
+
+                            <Route
+                              path="settings"
+                              element={<SettingsLayout />}
+                            />
+                            <Route
+                              path="admin"
+                              element={
+                                user && user.user_role === 'SUPER_ADMIN' ? (
+                                  <AdminLayout />
+                                ) : (
+                                  <ForbiddenLayout />
+                                )
+                              }
                             />
                             <Route path="*" element={<NotFoundLayout />} />
-                          </Route>
-
-                          <Route
-                            path="post/:id"
-                            element={<PostNestedLayout />}
-                          />
-                          <Route
-                            path="question/:id"
-                            element={<QuestionNestedLayout />}
-                          />
-
-                          <Route
-                            path=":username"
-                            element={<ProfileNestedLayout />}
-                          >
-                            <Route
-                              index
-                              element={<ProfileAcceptedPostsNestedLayout />}
-                            />
-                            <Route
-                              path="accepted-posts"
-                              element={<ProfileAcceptedPostsNestedLayout />}
-                            />
-                            <Route
-                              path="pending-posts"
-                              element={<ProfilePendingPostsNestedLayout />}
-                            />
-                            <Route
-                              path="rejected-posts"
-                              element={<ProfileRejectedPostsNestedLayout />}
-                            />
-                            <Route
-                              path="archived-posts"
-                              element={<ProfileArchivedPostsNestedLayout />}
-                            />
-                            <Route
-                              path="viewed-posts"
-                              element={<ProfileViewedPostsNestedLayout />}
-                            />
-                            <Route
-                              path="followers"
-                              element={<ProfileFollowersNestedLayout />}
-                            />
-                            <Route
-                              path="following"
-                              element={<ProfileFollowingNestedLayout />}
-                            />
-                            <Route path="*" element={<NotFoundLayout />} />
-                          </Route>
-
-                          <Route
-                            path="notifications"
-                            element={
-                              user ? (
-                                <NotificationsLayout />
-                              ) : (
-                                <NoContentLayout />
-                              )
-                            }
-                          >
-                            <Route
-                              index
-                              element={
-                                <NotificationsAcceptedPostsNestedLayout />
-                              }
-                            />
-                            <Route
-                              path="accepted-posts"
-                              element={
-                                <NotificationsAcceptedPostsNestedLayout />
-                              }
-                            />
-                            <Route
-                              path="pending-posts"
-                              element={
-                                <NotificationsPendingPostsNestedLayout />
-                              }
-                            />
-                            <Route
-                              path="rejected-posts"
-                              element={
-                                <NotificationsRejectedPostsNestedLayout />
-                              }
-                            />
-                            <Route
-                              path="likes"
-                              element={<NotificationsLikesNestedLayout />}
-                            />
-                            <Route
-                              path="views"
-                              element={<NotificationsViewsNestedLayout />}
-                            />
-                            <Route
-                              path="followers"
-                              element={<NotificationsFollowersNestedLayout />}
-                            />
-                            <Route
-                              path="comments"
-                              element={<NotificationsCommentsNestedLayout />}
-                            />
-                            <Route path="*" element={<NotFoundLayout />} />
-                          </Route>
-
-                          <Route path="settings" element={<SettingsLayout />} />
-                          <Route
-                            path="admin"
-                            element={
-                              user && user.user_role === 'SUPER_ADMIN' ? (
-                                <AdminLayout />
-                              ) : (
-                                <ForbiddenLayout />
-                              )
-                            }
-                          />
-                          <Route path="*" element={<NotFoundLayout />} />
-                        </Routes>
-                      </main>
-                    )}
+                          </Routes>
+                        </main>
+                      )}
+                    </ScrollContext.Provider>
                   </NotificationsContext.Provider>
                 </ExploreContext.Provider>
               </FullscreenContext.Provider>
@@ -635,25 +665,53 @@ export default App;
 
 /* 
     BACKLOG:
-    - FIX: scrollY across pages eventually resets to 0 after a few navigations
-
-    - accept, pending, reject questions
-    - make comments discoverable /comment/commentid
-    - post comments
-
-    - is_read
-    - auto-expire notifications within x time
-    - auto-delete rejected posts within 24 hours
+    - FIX: make sure all state and url state is up to date whenever changes are made - we do not want stale data
+    - FIX: explore posts page overflows x
+    - FIX: image and video views are glitchy when being rendered
+    - FIX: scrollY across pages eventually resets to 0 after a few navigations, need to add infinite scrolling on question page
+    - FIX: make sure only the user can access their archived comments and posts through url and selection
+    - FIX: make sure users cannot access archived content - check between page navigations, page refreshes, etc.
 
     - views - a user can see their own only once, but can see others multiple times
-    - counts for likes, number of posts, followers, views (unique), views (repeated)
-    - delete question, post, comment
-    - archive question, post, comment
- 
+    - post comments
+    - unarchive question, post
+    - delete post_comment, question_comment
+    - archive, unarchive post_comment, question_comment
+    - like, unlike post_comment, question_comment
+    - accept, pending, reject, views, notifications for questions, question_comments, post_comments
+
+    - admin
+      - count similar to notifications
+      - show which admin (user) accepted/rejected content in accepted and rejected page views
+
+    - notifications
+      - is_read
+      - auto-expire notifications within x time
+      - auto-delete rejected posts within 24 hours
+
+    - counts
+      - # of followers,
+      - # of following,
+      - # of posts,
+      - # of questions,
+      - # of post comments,
+      - # of question comments,
+      - # of post likes
+      - # of question likes
+      - # of post comment likes,
+      - # of question comment likes,
+      - # of unique post views
+      - # of repeated post views
+      - # of unique question views
+      - # of repeated question views
+      - # of unique post comment views
+      - # of repeated post comment views
+      - # of unique question comment views
+      - # of repeated question comment views
+
     - pin posts
     - scheduled posts
     - expired posts
-    - boost questions to get them more attention - check to make sure you havent boosted a quesiton before doing so to avoid artificial inflation
     - search page when a user clicks on a suggested search/load more searches? + filters and sorts
     
     - allow user to select a video frame to set as their thumbnail
@@ -663,6 +721,7 @@ export default App;
     - make sure custom inputs can listen to important keys (enter, spacebar, etc.)
     - video play and pause with space bar
 
+    - delete account - remove all of a user's data
     - deactivate account - mark user as 'inactive' and keep all content, simply hide the user info from posts
     - verified users, banned users
     - captcha protection when signing up/logging in
@@ -672,8 +731,11 @@ export default App;
     - auth email templates configuration - https://supabase.com/docs/guides/auth/auth-email-templates
     - rate limit supabase requests for data and storage to avoid potential spam
 
+
+
+
     FUTURE:
-    - edit quesiton, post/files, comment + edit history
+    - all kinds of editing
     - notifications for activity by people you follow
     - explore: have a carousel at the top showcasing the best of the best posts as a way to reward users for high quality content
     - analytics page
@@ -682,8 +744,6 @@ export default App;
     - groups - title/description/posts + masonry view
     - reward system to encourage good, quality content and interactions
     - message and sharing
-    - post boosting - appears on everyone's feed
-    - ecommerce
     - livestreaming
     - email change page flow
 
@@ -693,33 +753,25 @@ export default App;
     - $20/year - Namecheap
     - 2.9% + 0.30C - Stripe
     - $5-25/month - SMTP Server Provider
-    --- ~ $100/month ($1,200/year)
-    --- goal: get 12 paying members to cover year 1 costs
+    - supabase additional storage and egress costs
 
     FREE
-    - $0 with ads
+    - $0
     - upload up to 5 files per post
     - max 2 GB per file
-    - review post within 24 hours
-    - no priority search (for post and user searches)
-    - no post and user boosting
+    - no priority review, 24 hours wait time
+    - no priority search
     - no analytics page
-    - no scheduled posts
-    - no expired posts
     - no priority support
     - no supporter badge
 
     PRO
-    - https://stripe.com/en-ca/payments/link
-    - $100 per year or pay $250 for 3 years (save $50) or $400 for 5 years (save $100) with no ads
+    - $4.99/month or $49.99/year (save $10)
     - upload up to 20 files per post (4x more!)
     - max 10GB per file (5x more!)
-    - review post within 12 hours (50% shorter!)
-    - priority search (for post and user searches)
-    - post and user boosting
+    - priority review, 2 hours wait time
+    - priority search
     - analytics page
-    - scheduled posts
-    - expired posts
     - priority support
     - supporter badge
   */

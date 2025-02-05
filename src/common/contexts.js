@@ -7,6 +7,7 @@ const ModalContext = createContext(null);
 const FullscreenContext = createContext(null);
 const ExploreContext = createContext(null);
 const NotificationsContext = createContext(null);
+const ScrollContext = createContext(null);
 
 export {
   ModalContext,
@@ -16,4 +17,5 @@ export {
   FullscreenContext,
   ExploreContext,
   NotificationsContext,
+  ScrollContext,
 };

@@ -5,7 +5,7 @@ import Loaded from '../components/Loaded';
 import Loading from '../components/Loading';
 import { getProfiles } from '../common/supabase';
 
-function ProfilesNestedLayout() {
+function ExploreProfilesNestedLayout() {
   const {
     profiles,
     setProfiles,
@@ -64,7 +64,7 @@ function ProfilesNestedLayout() {
           {profiles.map((profile, index) => (
             <Link
               key={index}
-              to={`/${profile.username}`}
+              to={`/profile/${profile.username}`}
               className="flex flex-col gap-4 rounded-lg border-2 border-neutral-700 p-2 hover:border-white focus:border-2 focus:border-white focus:outline-none focus:ring-0"
               ref={index === profiles.length - 1 ? elementRefProfiles : null}
               state={{ profile }}
@@ -81,4 +81,4 @@ function ProfilesNestedLayout() {
   );
 }
 
-export default ProfilesNestedLayout;
+export default ExploreProfilesNestedLayout;

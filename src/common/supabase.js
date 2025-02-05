@@ -1,11 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 import { ORDER_BY } from './enums';
 
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_PROJECT_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
+
 async function getPostById(postId) {
   try {
     const { data, error } = await supabase
       .from('posts')
-      .select('*, user_id(*)')
+      .select('*, user:user_id(*)')
+      .eq('is_archived', false)
       .eq('id', postId);
 
     if (error) throw error;
@@ -24,8 +30,9 @@ async function getAcceptedPostById(postId) {
   try {
     const { data, error } = await supabase
       .from('posts')
-      .select('*, user_id(*)')
+      .select('*, user:user_id(*)')
       .eq('status', 'ACCEPTED')
+      .eq('is_archived', false)
       .eq('id', postId);
 
     if (error) throw error;
@@ -77,7 +84,7 @@ async function getPendingPostsByProfileId(
   try {
     const { data, error } = await supabase
       .from('posts')
-      .select('*, user_id(*)')
+      .select('*, user:user_id(*)')
       .eq('status', 'PENDING')
       .eq('user_id', profileId)
       .order(orderBy.columnName, { ascending: orderBy.isAscending })
@@ -160,8 +167,9 @@ async function getAcceptedPosts(
   try {
     const { data, error } = await supabase
       .from('posts')
-      .select('*, user_id(*)')
+      .select('*, user:user_id(*)')
       .eq('status', 'ACCEPTED')
+      .eq('is_archived', false)
       .order(orderBy.columnName, { ascending: orderBy.isAscending })
       .range(startIndex, startIndex + limit - 1);
 
@@ -186,7 +194,7 @@ async function getPendingPosts(
   try {
     const { data, error } = await supabase
       .from('posts')
-      .select('*, user_id(*)')
+      .select('*, user:user_id(*)')
       .eq('status', 'PENDING')
       .order(orderBy.columnName, { ascending: orderBy.isAscending })
       .range(startIndex, startIndex + limit - 1);
@@ -230,6 +238,39 @@ async function getPostImagesVideos(posts) {
       }
     });
   });
+}
+
+async function removeStorageObjectsByPostId(postId) {
+  try {
+    const [resultImages, resultVideos] = await Promise.all([
+      supabase.from('images').select('name').eq('post_id', postId),
+      supabase.from('videos').select('name').eq('post_id', postId),
+    ]);
+
+    if (resultImages.error) throw resultImages.error;
+    if (resultVideos.error) throw resultVideos.error;
+
+    const imageFileNames = resultImages.data.map((image) => image.name);
+    const videoFileNames = resultVideos.data.map((video) => video.name);
+
+    if (imageFileNames.length > 0) {
+      const { data, error } = await supabase.storage
+        .from('images')
+        .remove(imageFileNames);
+
+      if (error) throw error;
+    }
+
+    if (videoFileNames.length > 0) {
+      const { data, error } = await supabase.storage
+        .from('videos')
+        .remove(videoFileNames);
+
+      if (error) throw error;
+    }
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function searchProfiles(
@@ -347,7 +388,8 @@ async function getQuestions(startIndex = 0, limit = 6, orderBy = ORDER_BY.NEW) {
   try {
     const { data, error } = await supabase
       .from('questions')
-      .select('*, user_id(*)')
+      .select('*, user:user_id(*)')
+      .eq('is_archived', false)
       .order(orderBy.columnName, { ascending: orderBy.isAscending })
       .range(startIndex, startIndex + limit - 1);
 
@@ -443,7 +485,8 @@ async function getQuestionById(questionId) {
   try {
     const { data, error } = await supabase
       .from('questions')
-      .select('*, user_id(*)')
+      .select('*, user:user_id(*)')
+      .eq('is_archived', false)
       .eq('id', questionId);
 
     if (error) throw error;
@@ -458,18 +501,38 @@ async function getQuestionById(questionId) {
 
 async function getQuestionComments(
   questionId,
+  parentQuestionCommentId = null,
   startIndex = 0,
   limit = 6,
   orderBy = ORDER_BY.NEW
 ) {
   try {
-    const { data, error } = await supabase
-      .from('question_comments')
-      .select('*')
-      .eq('question_id', questionId)
-      .is('parent_question_comment_id', null)
-      .order(orderBy.columnName, { ascending: orderBy.isAscending })
-      .range(startIndex, startIndex + limit - 1);
+    let result;
+
+    if (parentQuestionCommentId === null) {
+      result = await supabase
+        .from('question_comments')
+        .select(
+          '*, user:user_id(*), question:question_id(*, user:user_id(*)), parentQuestionComment:parent_question_comment_id(*, user:user_id(*))'
+        )
+        .eq('question_id', questionId)
+        .eq('is_archived', false)
+        .is('parent_question_comment_id', parentQuestionCommentId)
+        .order(orderBy.columnName, { ascending: orderBy.isAscending })
+        .range(startIndex, startIndex + limit - 1);
+    } else {
+      result = await supabase
+        .from('question_comments')
+        .select(
+          '*, user:user_id(*), question:question_id(*, user:user_id(*)), parentQuestionComment:parent_question_comment_id(*, user:user_id(*))'
+        )
+        .eq('question_id', questionId)
+        .eq('parent_question_comment_id', parentQuestionCommentId)
+        .order(orderBy.columnName, { ascending: orderBy.isAscending })
+        .range(startIndex, startIndex + limit - 1);
+    }
+
+    const { data, error } = result;
 
     if (error) throw error;
 
@@ -482,27 +545,20 @@ async function getQuestionComments(
   }
 }
 
-async function getReplyComments(
-  questionId,
-  parentQuestionCommentId,
-  startIndex = 0,
-  limit = 6,
-  orderBy = ORDER_BY.NEW
-) {
+async function getQuestionCommentById(questionCommentId) {
   try {
     const { data, error } = await supabase
       .from('question_comments')
-      .select('*')
-      .eq('question_id', questionId)
-      .eq('parent_question_comment_id', parentQuestionCommentId)
-      .order(orderBy.columnName, { ascending: orderBy.isAscending })
-      .range(startIndex, startIndex + limit - 1);
+      .select(
+        '*, user:user_id(*), question:question_id(*, user:user_id(*)), parentQuestionComment:parent_question_comment_id(*, user:user_id(*))'
+      )
+      .eq('is_archived', false)
+      .eq('id', questionCommentId);
 
     if (error) throw error;
 
     return {
       data,
-      hasMore: data.length === limit,
     };
   } catch (error) {
     console.log(error);
@@ -605,13 +661,194 @@ async function getRejectedPostsNotificationsByProfileId(
   }
 }
 
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_PROJECT_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+async function addQuestionLike(profileId, questionId) {
+  try {
+    const { data, error } = await supabase
+      .from('question_likes')
+      .insert({ user_id: profileId, question_id: questionId })
+      .select('*');
+
+    if (error) throw error;
+
+    return {
+      data,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function removeQuestionLike(id) {
+  try {
+    const { error } = await supabase
+      .from('question_likes')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function archiveQuestion(id) {
+  try {
+    const { data, error } = await supabase
+      .from('questions')
+      .update({ is_archived: true })
+      .eq('id', id)
+      .select('*, user:user_id(*)');
+
+    if (error) throw error;
+
+    return {
+      data,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function unarchiveQuestion(id) {
+  try {
+    const { data, error } = await supabase
+      .from('questions')
+      .update({ is_archived: false })
+      .eq('id', id)
+      .select('*, user:user_id(*)');
+
+    if (error) throw error;
+
+    return {
+      data,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function removeQuestion(id) {
+  try {
+    const { error } = await supabase.from('questions').delete().eq('id', id);
+
+    if (error) throw error;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getQuestionLike(profileId, questionId) {
+  try {
+    const { data, error } = await supabase
+      .from('question_likes')
+      .select('*')
+      .eq('user_id', profileId)
+      .eq('question_id', questionId);
+
+    if (error) throw error;
+
+    return {
+      data,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function addPostLike(profileId, postId) {
+  try {
+    const { data, error } = await supabase
+      .from('post_likes')
+      .insert({ user_id: profileId, post_id: postId })
+      .select('*');
+
+    if (error) throw error;
+
+    return {
+      data,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function removePostLike(id) {
+  try {
+    const { error } = await supabase.from('post_likes').delete().eq('id', id);
+
+    if (error) throw error;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function archivePost(id) {
+  try {
+    const { data, error } = await supabase
+      .from('posts')
+      .update({ is_archived: true })
+      .eq('id', id)
+      .select('*, user:user_id(*)');
+
+    if (error) throw error;
+
+    return {
+      data,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function unarchivePost(id) {
+  try {
+    const { data, error } = await supabase
+      .from('posts')
+      .update({ is_archived: false })
+      .eq('id', id)
+      .select('*, user:user_id(*)');
+
+    if (error) throw error;
+
+    return {
+      data,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function removePost(id) {
+  try {
+    const { error } = await supabase.from('posts').delete().eq('id', id);
+
+    if (error) throw error;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getPostLike(profileId, postId) {
+  try {
+    const { data, error } = await supabase
+      .from('post_likes')
+      .select('*')
+      .eq('user_id', profileId)
+      .eq('post_id', postId);
+
+    if (error) throw error;
+
+    return {
+      data,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 export {
   supabase,
+  removeStorageObjectsByPostId,
   getPostImagesVideos,
   getAcceptedPosts,
   getPendingPosts,
@@ -632,9 +869,21 @@ export {
   getAcceptedPostById,
   getQuestionById,
   getQuestionComments,
-  getReplyComments,
+  getQuestionCommentById,
   getAcceptedPostsNotificationsByProfileId,
   getPendingPostsNotificationsByProfileId,
   getNotificationsCountByProfileId,
   getRejectedPostsNotificationsByProfileId,
+  removeQuestion,
+  removeQuestionLike,
+  addQuestionLike,
+  archiveQuestion,
+  unarchiveQuestion,
+  getQuestionLike,
+  removePost,
+  removePostLike,
+  addPostLike,
+  archivePost,
+  unarchivePost,
+  getPostLike,
 };

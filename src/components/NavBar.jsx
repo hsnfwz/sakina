@@ -189,29 +189,29 @@ function NavBar({}) {
 
         {user && (
           <Link
-            to={`/${user.username}`}
+            to={`/profile/${user.username}`}
             state={{ profile: user }}
-            className={`${location.pathname.includes(`/${user.username}`) ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+            className={`${location.pathname.includes(`/profile/${user.username}`) ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
           >
-            {location.pathname.includes(`/${user.username}`) && (
+            {location.pathname.includes(`/profile/${user.username}`) && (
               <SVGSolidUser />
             )}
-            {!location.pathname.includes(`/${user.username}`) && (
+            {!location.pathname.includes(`/profile/${user.username}`) && (
               <SVGOutlineUser />
             )}
             <span
-              className={`${location.pathname.includes(`/${user.username}`) ? 'text-sky-500' : 'text-white'}`}
+              className={`${location.pathname.includes(`/profile/${user.username}`) ? 'text-sky-500' : 'text-white'}`}
             >
               Profile
             </span>
           </Link>
         )}
 
-        {user && location.pathname.includes(`/${user.username}`) && (
+        {user && location.pathname.includes(`/profile/${user.username}`) && (
           <div className="flex flex-col gap-4 rounded-lg bg-neutral-700 p-4">
             <Link
-              className={`${location.pathname === `/${user.username}` || location.pathname.includes('accepted-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/${user.username}/accepted-posts`}
+              className={`${location.pathname === `/profile/${user.username}` || location.pathname.includes('accepted-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
+              to={`/profile/${user.username}/accepted-posts`}
               state={{ profile: user }}
             >
               Posts
@@ -219,28 +219,28 @@ function NavBar({}) {
 
             <Link
               className={`${location.pathname.includes('pending-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/${user.username}/pending-posts`}
+              to={`/profile/${user.username}/pending-posts`}
               state={{ profile: user }}
             >
               Pending Posts
             </Link>
             <Link
               className={`${location.pathname.includes('rejected-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/${user.username}/rejected-posts`}
+              to={`/profile/${user.username}/rejected-posts`}
               state={{ profile: user }}
             >
               Rejected Posts
             </Link>
             <Link
               className={`${location.pathname.includes('archived-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/${user.username}/archived-posts`}
+              to={`/profile/${user.username}/archived-posts`}
               state={{ profile: user }}
             >
               Archived Posts
             </Link>
             <Link
               className={`${location.pathname.includes('viewed-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/${user.username}/viewed-posts`}
+              to={`/profile/${user.username}/viewed-posts`}
               state={{ profile: user }}
             >
               Viewed Posts
@@ -248,14 +248,14 @@ function NavBar({}) {
 
             <Link
               className={`${location.pathname.includes('followers') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/${user.username}/followers`}
+              to={`/profile/${user.username}/followers`}
               state={{ profile: user }}
             >
               Followers
             </Link>
             <Link
               className={`${location.pathname.includes('following') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/${user.username}/following`}
+              to={`/profile/${user.username}/following`}
               state={{ profile: user }}
             >
               Following

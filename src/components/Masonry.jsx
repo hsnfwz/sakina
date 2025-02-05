@@ -101,17 +101,17 @@ function Masonry({ elementRef, data }) {
                     <h1 className="text-white">{post.title}</h1>
                     {post.status === 'ACCEPTED' && (
                       <div className="flex items-center gap-2">
-                        {post.user_id.avatar_file && (
+                        {post.user.avatar_file && (
                           <img
                             className="aspect-square w-full max-w-[40px] rounded-full object-cover"
-                            src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/avatars/${post.user_id.avatar_file}`}
-                            alt={post.user_id.avatar_file}
+                            src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/avatars/${post.user.avatar_file}`}
+                            alt={post.user.avatar_file}
                           />
                         )}
                         <h2 className="text-xs text-white">
-                          By {post.user_id.username}
-                          {post.user_id.display_name && (
-                            <span> - {post.user_id.display_name}</span>
+                          By {post.user.username}
+                          {post.user.display_name && (
+                            <span> - {post.user.display_name}</span>
                           )}
                         </h2>
                       </div>

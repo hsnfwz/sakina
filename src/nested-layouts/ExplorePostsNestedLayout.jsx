@@ -1,18 +1,16 @@
 import { useEffect, useContext, useRef, useState } from 'react';
-import { ExploreContext } from '../common/contexts';
+import { ExploreContext, ScrollContext } from '../common/contexts';
 import Masonry from '../components/Masonry';
 import Loaded from '../components/Loaded';
 import Loading from '../components/Loading';
 import { getAcceptedPosts } from '../common/supabase';
 
-function PostsNestedLayout() {
+function ExplorePostsNestedLayout() {
   const {
     acceptedPosts,
     setAcceptedPosts,
     elementRefAcceptedPosts,
     intersectingElementAcceptedPosts,
-    scrollYAcceptedPosts,
-    setScrollYAcceptedPosts,
     hasMoreAcceptedPosts,
     setHasMoreAcceptedPosts,
     isLoadingAcceptedPosts,
@@ -21,21 +19,29 @@ function PostsNestedLayout() {
     setHasInitializedAcceptedPosts,
   } = useContext(ExploreContext);
 
-  const handleScroll = () => setScrollYAcceptedPosts(window.scrollY);
+  const { scrollRef } = useContext(ScrollContext);
+
+  const handleScroll = () =>
+    (scrollRef.current.exploreAcceptedPosts.scrollY = window.scrollY);
 
   useEffect(() => {
-    if (!hasInitializedAcceptedPosts) {
-      getExploreAcceptedPosts();
+    async function initialize() {
+      if (!hasInitializedAcceptedPosts) {
+        await getExploreAcceptedPosts();
+      }
+
+      window.scroll({
+        top: scrollRef.current.exploreAcceptedPosts.scrollY,
+        behavior: 'instant',
+      });
+      window.addEventListener('scroll', handleScroll);
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
     }
 
-    setTimeout(() => {
-      window.scroll({ top: scrollYAcceptedPosts, behavior: 'instant' });
-      window.addEventListener('scroll', handleScroll);
-    }, 0);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    initialize();
   }, []);
 
   useEffect(() => {
@@ -70,4 +76,4 @@ function PostsNestedLayout() {
   );
 }
 
-export default PostsNestedLayout;
+export default ExplorePostsNestedLayout;
