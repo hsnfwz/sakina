@@ -87,12 +87,12 @@ function NotificationsAcceptedPostNotificationsNestedLayout() {
   }
 
   async function refreshNotifications() {
-    setIsLoadingAcceptedPostNotificationsNotifications(true);
+    setIsLoading(true);
     setAcceptedPostNotifications([
       newNotification,
       ...acceptedPostNotifications,
     ]);
-    setIsLoadingAcceptedPostNotificationsNotifications(false);
+    setIsLoading(false);
     setNewNotification(null);
   }
 

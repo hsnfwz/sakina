@@ -73,7 +73,7 @@ function ExploreDiscussionPostsNestedLayout() {
   return (
     <div className="flex flex-col gap-4">
       {exploreAcceptedDiscussions.length > 0 && (
-        <div>
+        <div className="flex flex-col gap-4">
           {exploreAcceptedDiscussions.map((post, index) => (
             <Link
               key={index}
