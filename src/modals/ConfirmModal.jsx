@@ -4,7 +4,7 @@ import { ModalContext } from '../common/contexts';
 import Button from '../components/Button';
 import { BUTTON_COLOR } from '../common/enums';
 
-function QuestionArchiveModal() {
+function ConfirmModal() {
   const { showModal, setShowModal } = useContext(ModalContext);
 
   return (
@@ -39,4 +39,4 @@ function QuestionArchiveModal() {
   );
 }
 
-export default QuestionArchiveModal;
+export default ConfirmModal;

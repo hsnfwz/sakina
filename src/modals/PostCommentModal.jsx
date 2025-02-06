@@ -1,30 +1,30 @@
 import { useContext, useState } from 'react';
 import { ModalContext, UserContext } from '../common/contexts';
 import { supabase } from '../common/supabase';
-import Button from './Button';
-import Modal from './Modal';
-import Textarea from './Textarea';
-import Toggle from './Toggle';
+import Button from '../components/Button';
+import Modal from '../components/Modal';
+import Textarea from '../components/Textarea';
+import Toggle from '../components/Toggle';
 
 const descriptionCharacterLimit = 2000;
 
-function CommentModal() {
+function PostCommentModal() {
   const { user } = useContext(UserContext);
   const { showModal, setShowModal } = useContext(ModalContext);
 
-  const [isAddingQuestionComment, setIsAddingQuestionComment] = useState(false);
+  const [isAddingPostComment, setIsAddingPostComment] = useState(false);
 
   const [description, setDescription] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(true);
 
-  async function addQuestionComment() {
-    setIsAddingQuestionComment(true);
+  async function addPostComment() {
+    setIsAddingPostComment(true);
     const { data, error } = await supabase
-      .from('question_comments')
+      .from('post_comments')
       .insert({
         user_id: user.id,
-        question_id: showModal.data.questionId,
-        parent_question_comment_id: showModal.data.parentQuestionCommentId,
+        post_id: showModal.data.postId,
+        parent_post_comment_id: showModal.data.parentPostCommentId,
         description,
         is_anonymous: isAnonymous,
       })
@@ -34,15 +34,15 @@ function CommentModal() {
       console.log(error);
     } else {
       await supabase.rpc('increment', {
-        table_name: 'question_comments',
-        row_id: showModal.data.parentQuestionCommentId
-          ? showModal.data.parentQuestionCommentId
-          : showModal.data.questionId,
+        table_name: 'post_comments',
+        row_id: showModal.data.parentPostCommentId
+          ? showModal.data.parentPostCommentId
+          : showModal.data.postId,
         row_column: 'comments_count',
         increment_amount: 1,
       });
     }
-    setIsAddingQuestionComment(false);
+    setIsAddingPostComment(false);
     setDescription('');
     setIsAnonymous(true);
     setShowModal({
@@ -55,9 +55,9 @@ function CommentModal() {
     <Modal>
       <h1 className="text-2xl font-bold">New Comment</h1>
       <div className="flex flex-col gap-2">
-        <p>Question: {showModal.data.questionId}</p>
-        {showModal.data.parentQuestionCommentId && (
-          <p>Comment: {showModal.data.parentQuestionCommentId}</p>
+        <p>Post: {showModal.data.postId}</p>
+        {showModal.data.parentPostCommentId && (
+          <p>Comment: {showModal.data.parentPostCommentId}</p>
         )}
       </div>
       <Toggle
@@ -79,12 +79,12 @@ function CommentModal() {
         <Button handleClick={() => setDescription('')}>Clear</Button>
         <Button
           isDisabled={
-            isAddingQuestionComment ||
+            isAddingPostComment ||
             description === '' ||
             description.length > descriptionCharacterLimit
           }
-          isLoading={isAddingQuestionComment}
-          handleClick={async () => await addQuestionComment()}
+          isLoading={isAddingPostComment}
+          handleClick={async () => await addPostComment()}
           isOutline={true}
         >
           Submit
@@ -94,4 +94,4 @@ function CommentModal() {
   );
 }
 
-export default CommentModal;
+export default PostCommentModal;

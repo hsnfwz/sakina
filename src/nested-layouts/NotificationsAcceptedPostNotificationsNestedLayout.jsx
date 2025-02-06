@@ -1,6 +1,6 @@
 import { useEffect, useContext, useState, useRef } from 'react';
 import { Link, useOutletContext } from 'react-router';
-import { getAcceptedPostsNotificationsByProfileId } from '../common/supabase';
+import { getAcceptedPostsNotificationsByProfileId } from '../common/database/notifications';
 import { UserContext, NotificationsContext } from '../common/contexts';
 import { useElementIntersection } from '../common/hooks';
 import Loading from '../components/Loading';
@@ -10,46 +10,47 @@ import { getDate } from '../common/helpers';
 import SVGSolidCircle from '../components/svgs/solid/SVGSolidCircle';
 import SVGOutlineDoubleCheck from '../components/svgs/outline/SVGOutlineDoubleCheck';
 
-function NotificationsAcceptedPostsNestedLayout() {
+function NotificationsAcceptedPostNotificationsNestedLayout() {
   const { user } = useContext(UserContext);
-  const [elementRef, intersectingElement] = useElementIntersection();
-
-  const { newNotification } = useContext(NotificationsContext);
+  const { newNotification, setNewNotification } =
+    useContext(NotificationsContext);
 
   const {
-    isLoadingAcceptedPostsNotifications,
-    setIsLoadingAcceptedPostsNotifications,
-    acceptedPostsNotificationsHasInitialized,
-    setAcceptedPostsNotificationsHasInitialized,
-    acceptedPostsNotificationsHasMore,
-    setAcceptedPostsNotificationsHasMore,
-    acceptedPostsNotifications,
-    setAcceptedPostsNotifications,
-    acceptedPostsNotificationsScrollY,
-    setAcceptedPostsNotificationsScrollY,
+    acceptedPostNotifications,
+    setAcceptedPostNotifications,
+    hasMoreAcceptedPostNotifications,
+    setHasMoreAcceptedPostNotifications,
+    hasInitializedAcceptedPostNotifications,
+    setHasInitializedAcceptedPostNotifications,
+    scrollRef,
   } = useOutletContext();
 
-  const scrollYRef = useRef(0);
+  const [elementRef, intersectingElement] = useElementIntersection();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!acceptedPostsNotificationsHasInitialized) {
-      getNotifications();
-    }
+    async function initialize() {
+      await getNotifications();
 
-    setTimeout(() => {
       window.scroll({
-        top: acceptedPostsNotificationsScrollY,
+        top: scrollRef.current.acceptedPostNotifications.scrollY,
         behavior: 'instant',
       });
-    }, 0); // listens for the first 'tick' before scrolling - need this so we can scroll once masonry is loaded
+    }
 
-    window.addEventListener('scroll', () => {
-      scrollYRef.current = window.scrollY;
-    });
+    if (!hasInitializedAcceptedPostNotifications) {
+      initialize();
 
-    return () => {
-      setAcceptedPostsNotificationsScrollY(scrollYRef.current);
-    };
+      const handleScroll = () =>
+        (scrollRef.current.acceptedPostNotifications.scrollY = window.scrollY);
+
+      window.addEventListener('scroll', handleScroll);
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
   }, []);
 
   useEffect(() => {
@@ -59,50 +60,51 @@ function NotificationsAcceptedPostsNestedLayout() {
   }, [newNotification]);
 
   useEffect(() => {
-    if (intersectingElement && acceptedPostsNotificationsHasMore) {
+    if (intersectingElement && hasMoreAcceptedPostNotifications) {
       getNotifications();
     }
   }, [intersectingElement]);
 
   async function getNotifications() {
-    setIsLoadingAcceptedPostsNotifications(true);
+    setIsLoading(true);
 
     const { data, hasMore } = await getAcceptedPostsNotificationsByProfileId(
       user.id,
-      acceptedPostsNotifications.length
+      acceptedPostNotifications.length
     );
 
     if (data.length > 0) {
-      setAcceptedPostsNotifications([...acceptedPostsNotifications, ...data]);
+      setAcceptedPostNotifications([...acceptedPostNotifications, ...data]);
     }
 
-    setAcceptedPostsNotificationsHasMore(hasMore);
+    setHasMoreAcceptedPostNotifications(hasMore);
 
-    if (!acceptedPostsNotificationsHasInitialized) {
-      setAcceptedPostsNotificationsHasInitialized(true);
+    if (!hasInitializedAcceptedPostNotifications) {
+      setHasInitializedAcceptedPostNotifications(true);
     }
 
-    setIsLoadingAcceptedPostsNotifications(false);
+    setIsLoading(false);
   }
 
   async function refreshNotifications() {
-    setIsLoadingAcceptedPostsNotifications(true);
-    setAcceptedPostsNotifications([
+    setIsLoadingAcceptedPostNotificationsNotifications(true);
+    setAcceptedPostNotifications([
       newNotification,
-      ...acceptedPostsNotifications,
+      ...acceptedPostNotifications,
     ]);
-    setIsLoadingAcceptedPostsNotifications(false);
+    setIsLoadingAcceptedPostNotificationsNotifications(false);
+    setNewNotification(null);
   }
 
   return (
     <div>
-      {acceptedPostsNotifications.length > 0 && (
+      {acceptedPostNotifications.length > 0 && (
         <div className="flex flex-col divide-y-2 divide-neutral-700">
-          {acceptedPostsNotifications.map((notification, index) => (
+          {acceptedPostNotifications.map((notification, index) => (
             <div
               key={notification.id}
               ref={
-                index === acceptedPostsNotifications.length - 1
+                index === acceptedPostNotifications.length - 1
                   ? elementRef
                   : null
               }
@@ -132,10 +134,10 @@ function NotificationsAcceptedPostsNestedLayout() {
           ))}
         </div>
       )}
-      {isLoadingAcceptedPostsNotifications && <Loading />}
-      {!acceptedPostsNotificationsHasMore && <Loaded />}
+      {isLoading && <Loading />}
+      {!hasMoreAcceptedPostNotifications && <Loaded />}
     </div>
   );
 }
 
-export default NotificationsAcceptedPostsNestedLayout;
+export default NotificationsAcceptedPostNotificationsNestedLayout;

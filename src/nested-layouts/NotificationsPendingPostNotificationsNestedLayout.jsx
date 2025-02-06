@@ -1,6 +1,6 @@
 import { useEffect, useContext, useState, useRef } from 'react';
 import { Link, useOutletContext } from 'react-router';
-import { getPendingPostsNotificationsByProfileId } from '../common/supabase';
+import { getPendingPostsNotificationsByProfileId } from '../common/database/notifications';
 import { UserContext, NotificationsContext } from '../common/contexts';
 import { useElementIntersection } from '../common/hooks';
 import Loading from '../components/Loading';
@@ -10,46 +10,47 @@ import { getDate } from '../common/helpers';
 import SVGSolidCircle from '../components/svgs/solid/SVGSolidCircle';
 import SVGOutlineDoubleCheck from '../components/svgs/outline/SVGOutlineDoubleCheck';
 
-function NotificationsPendingPostsNestedLayout() {
+function NotificationsPendingPostNotificationsNestedLayout() {
   const { user } = useContext(UserContext);
-  const [elementRef, intersectingElement] = useElementIntersection();
-
-  const { newNotification } = useContext(NotificationsContext);
+  const { newNotification, setNewNotification } =
+    useContext(NotificationsContext);
 
   const {
-    isLoadingPendingPostsNotifications,
-    setIsLoadingPendingPostsNotifications,
-    pendingPostsNotificationsHasInitialized,
-    setPendingPostsNotificationsHasInitialized,
-    pendingPostsNotificationsHasMore,
-    setPendingPostsNotificationsHasMore,
-    pendingPostsNotifications,
-    setPendingPostsNotifications,
-    pendingPostsNotificationsScrollY,
-    setPendingPostsNotificationsScrollY,
+    pendingPostNotifications,
+    setPendingPostNotifications,
+    hasMorePendingPostNotifications,
+    setHasMorePendingPostNotifications,
+    hasInitializedPendingPostNotifications,
+    setHasInitializedPendingPostNotifications,
+    scrollRef,
   } = useOutletContext();
 
-  const scrollYRef = useRef(0);
+  const [elementRef, intersectingElement] = useElementIntersection();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!pendingPostsNotificationsHasInitialized) {
-      getNotifications();
-    }
+    async function initialize() {
+      await getNotifications();
 
-    setTimeout(() => {
       window.scroll({
-        top: pendingPostsNotificationsScrollY,
+        top: scrollRef.current.pendingPostNotifications.scrollY,
         behavior: 'instant',
       });
-    }, 0); // listens for the first 'tick' before scrolling - need this so we can scroll once masonry is loaded
+    }
 
-    window.addEventListener('scroll', () => {
-      scrollYRef.current = window.scrollY;
-    });
+    if (!hasInitializedPendingPostNotifications) {
+      initialize();
 
-    return () => {
-      setPendingPostsNotificationsScrollY(scrollYRef.current);
-    };
+      const handleScroll = () =>
+        (scrollRef.current.pendingPostNotifications.scrollY = window.scrollY);
+
+      window.addEventListener('scroll', handleScroll);
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
   }, []);
 
   useEffect(() => {
@@ -59,50 +60,48 @@ function NotificationsPendingPostsNestedLayout() {
   }, [newNotification]);
 
   useEffect(() => {
-    if (intersectingElement && pendingPostsNotificationsHasMore) {
+    if (intersectingElement && hasMorePendingPostNotifications) {
       getNotifications();
     }
   }, [intersectingElement]);
 
   async function getNotifications() {
-    setIsLoadingPendingPostsNotifications(true);
+    setIsLoading(true);
 
     const { data, hasMore } = await getPendingPostsNotificationsByProfileId(
       user.id,
-      pendingPostsNotifications.length
+      pendingPostNotifications.length
     );
 
     if (data.length > 0) {
-      setPendingPostsNotifications([...pendingPostsNotifications, ...data]);
+      setPendingPostNotifications([...pendingPostNotifications, ...data]);
     }
 
-    setPendingPostsNotificationsHasMore(hasMore);
+    setHasMorePendingPostNotifications(hasMore);
 
-    if (!pendingPostsNotificationsHasInitialized) {
-      setPendingPostsNotificationsHasInitialized(true);
+    if (!hasInitializedPendingPostNotifications) {
+      setHasInitializedPendingPostNotifications(true);
     }
 
-    setIsLoadingPendingPostsNotifications(false);
+    setIsLoading(false);
   }
 
   async function refreshNotifications() {
-    setIsLoadingPendingPostsNotifications(true);
-    setPendingPostsNotifications([
-      newNotification,
-      ...pendingPostsNotifications,
-    ]);
-    setIsLoadingPendingPostsNotifications(false);
+    setIsLoading(true);
+    setPendingPostNotifications([newNotification, ...pendingPostNotifications]);
+    setIsLoading(false);
+    setNewNotification(null);
   }
 
   return (
     <div>
-      {pendingPostsNotifications.length > 0 && (
+      {pendingPostNotifications.length > 0 && (
         <div className="flex flex-col divide-y-2 divide-neutral-700">
-          {pendingPostsNotifications.map((notification, index) => (
+          {pendingPostNotifications.map((notification, index) => (
             <div
               key={notification.id}
               ref={
-                index === pendingPostsNotifications.length - 1
+                index === pendingPostNotifications.length - 1
                   ? elementRef
                   : null
               }
@@ -129,16 +128,16 @@ function NotificationsPendingPostsNestedLayout() {
                 to={`/profile/${user.username}/pending-posts`}
                 className="underline hover:text-sky-500"
               >
-                View Post
+                View PostNotification
               </Link>
             </div>
           ))}
         </div>
       )}
-      {isLoadingPendingPostsNotifications && <Loading />}
-      {!pendingPostsNotificationsHasMore && <Loaded />}
+      {isLoading && <Loading />}
+      {!hasMorePendingPostNotifications && <Loaded />}
     </div>
   );
 }
 
-export default NotificationsPendingPostsNestedLayout;
+export default NotificationsPendingPostNotificationsNestedLayout;

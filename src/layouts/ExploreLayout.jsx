@@ -5,24 +5,30 @@ function ExploreLayout() {
 
   return (
     <div className="flex w-full flex-col gap-4">
-      <div className="flex flex-col gap-2 sm:hidden">
+      <div className="flex">
         <Link
-          to="posts"
-          className={`${location.pathname === '/explore' || location.pathname.includes('/explore/posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
+          to="images"
+          className={`${location.pathname === '/explore' || location.pathname.includes('images') ? 'border-b-sky-500' : 'border-b-transparent'} border-b-2 p-2 hover:border-b-sky-500`}
         >
-          <span>Posts</span>
+          Images
         </Link>
         <Link
-          to="questions"
-          className={`${location.pathname.includes('/explore/questions') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
+          to="videos"
+          className={`${location.pathname.includes('videos') ? 'border-b-sky-500' : 'border-b-transparent'} border-b-2 p-2 hover:border-b-sky-500`}
         >
-          <span>Questions</span>
+          Videos
+        </Link>
+        <Link
+          to="discussions"
+          className={`${location.pathname.includes('discussions') ? 'border-b-sky-500' : 'border-b-transparent'} border-b-2 p-2 hover:border-b-sky-500`}
+        >
+          Discussions
         </Link>
         <Link
           to="profiles"
-          className={`${location.pathname.includes('/explore/profiles') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
+          className={`${location.pathname.includes('profiles') ? 'border-b-sky-500' : 'border-b-transparent'} border-b-2 p-2 hover:border-b-sky-500`}
         >
-          <span>Profiles</span>
+          Profiles
         </Link>
       </div>
       <Outlet />

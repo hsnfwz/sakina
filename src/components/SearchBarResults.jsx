@@ -3,15 +3,7 @@ import parse from 'html-react-parser';
 import { useContext } from 'react';
 import { ModalContext } from '../common/contexts';
 
-function SearchBarResults({
-  searchTerm,
-  posts,
-  profiles,
-  questions,
-  clearSearchResults,
-}) {
-  const { setShowModal } = useContext(ModalContext);
-
+function SearchBarResults({ searchTerm, posts, profiles, clearSearchResults }) {
   function getHighlightText(text) {
     const lowercaseText = text.toLowerCase();
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
@@ -43,29 +35,6 @@ function SearchBarResults({
                 <p>{parse(getHighlightText(post.title))}</p>
                 {post.description && (
                   <p>{parse(getHighlightText(post.description))}</p>
-                )}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-      {questions.length > 0 && (
-        <div className="flex flex-col gap-2">
-          <h1 className="p-2 font-bold">Questions</h1>
-          <div className="flex flex-col gap-2">
-            {questions.map((question, index) => (
-              <Link
-                onClick={() => {
-                  clearSearchResults();
-                }}
-                key={index}
-                to={`/question/${question.id}`}
-                state={{ question }}
-                className="flex flex-col gap-2 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0"
-              >
-                <p>{parse(getHighlightText(question.title))}</p>
-                {question.description && (
-                  <p>{parse(getHighlightText(question.description))}</p>
                 )}
               </Link>
             ))}

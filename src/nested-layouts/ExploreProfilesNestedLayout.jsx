@@ -1,82 +1,89 @@
-import { useEffect, useContext, useRef } from 'react';
+import { useEffect, useContext, useRef, useState } from 'react';
 import { Link } from 'react-router';
-import { ExploreContext } from '../common/contexts';
+import { ExploreContext, ScrollContext } from '../common/contexts';
 import Loaded from '../components/Loaded';
 import Loading from '../components/Loading';
 import { getProfiles } from '../common/supabase';
+import { useElementIntersection } from '../common/hooks';
 
 function ExploreProfilesNestedLayout() {
   const {
-    profiles,
-    setProfiles,
-    elementRefProfiles,
-    intersectingElementProfiles,
-    scrollYProfiles,
-    setScrollYProfiles,
-    hasMoreProfiles,
-    setHasMoreProfiles,
-    isLoadingProfiles,
-    setIsLoadingProfiles,
-    hasInitializedProfiles,
-    setHasInitializedProfiles,
+    exploreProfiles,
+    setExploreProfiles,
+    exploreHasMoreProfiles,
+    setExploreHasMoreProfiles,
+    exploreHasInitializedProfiles,
+    setExploreHasInitializedProfiles,
   } = useContext(ExploreContext);
 
-  const scrollYRef = useRef(0);
+  const { scrollRef } = useContext(ScrollContext);
+  const [elementRef, intersectingElement] = useElementIntersection();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!hasInitializedProfiles) {
-      getExploreProfiles();
+    async function initialize() {
+      if (!exploreHasInitializedProfiles) {
+        await getExploreProfiles();
+      }
+
+      window.scroll({
+        top: scrollRef.current.exploreProfiles.scrollY,
+        behavior: 'instant',
+      });
+
+      const handleScroll = () =>
+        (scrollRef.current.exploreProfiles.scrollY = window.scrollY);
+
+      window.addEventListener('scroll', handleScroll);
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
     }
-    window.scroll({ top: scrollYProfiles, behavior: 'instant' });
 
-    window.addEventListener('scroll', () => {
-      scrollYRef.current = window.scrollY;
-    });
-
-    return () => {
-      setScrollYProfiles(scrollYRef.current);
-    };
+    initialize();
   }, []);
 
   useEffect(() => {
-    if (intersectingElementProfiles && hasMoreProfiles) {
+    if (intersectingElement && exploreHasMoreProfiles) {
       getExploreProfiles();
     }
-  }, [intersectingElementProfiles]);
+  }, [intersectingElement]);
 
   async function getExploreProfiles() {
-    setIsLoadingProfiles(true);
-    const { data, hasMore } = await getProfiles(profiles.length);
+    setIsLoading(true);
+    const { data, hasMore } = await getProfiles(exploreProfiles.length);
 
     if (data.length > 0) {
-      setProfiles([...profiles, ...data]);
+      setExploreProfiles([...exploreProfiles, ...data]);
     }
 
-    setHasMoreProfiles(hasMore);
-    setIsLoadingProfiles(false);
-    if (!hasInitializedProfiles) setHasInitializedProfiles(true);
+    setExploreHasMoreProfiles(hasMore);
+    setIsLoading(false);
+    if (!exploreHasInitializedProfiles) setExploreHasInitializedProfiles(true);
   }
 
   return (
-    <div>
-      {profiles.length > 0 && (
-        <div className="flex flex-col gap-4">
-          {profiles.map((profile, index) => (
+    <div className="flex flex-col gap-4">
+      {exploreProfiles.length > 0 && (
+        <>
+          {exploreProfiles.map((profile, index) => (
             <Link
               key={index}
               to={`/profile/${profile.username}`}
               className="flex flex-col gap-4 rounded-lg border-2 border-neutral-700 p-2 hover:border-white focus:border-2 focus:border-white focus:outline-none focus:ring-0"
-              ref={index === profiles.length - 1 ? elementRefProfiles : null}
+              ref={index === exploreProfiles.length - 1 ? elementRef : null}
               state={{ profile }}
             >
               <h1>{profile.username}</h1>
               {profile.display_name && <h2>{profile.display_name}</h2>}
             </Link>
           ))}
-          {!hasMoreProfiles && <Loaded />}
-        </div>
+        </>
       )}
-      {isLoadingProfiles && <Loading />}
+      {!exploreHasMoreProfiles && <Loaded />}
+      {isLoading && <Loading />}
     </div>
   );
 }

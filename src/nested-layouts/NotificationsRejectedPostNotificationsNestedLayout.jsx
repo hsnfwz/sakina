@@ -1,6 +1,6 @@
 import { useEffect, useContext, useState, useRef } from 'react';
 import { Link, useOutletContext } from 'react-router';
-import { getRejectedPostsNotificationsByProfileId } from '../common/supabase';
+import { getRejectedPostsNotificationsByProfileId } from '../common/database/notifications';
 import { UserContext, NotificationsContext } from '../common/contexts';
 import { useElementIntersection } from '../common/hooks';
 import Loading from '../components/Loading';
@@ -10,46 +10,47 @@ import { getDate } from '../common/helpers';
 import SVGSolidCircle from '../components/svgs/solid/SVGSolidCircle';
 import SVGOutlineDoubleCheck from '../components/svgs/outline/SVGOutlineDoubleCheck';
 
-function NotificationsRejectedPostsNestedLayout() {
+function NotificationsRejectedPostNotificationsNestedLayout() {
   const { user } = useContext(UserContext);
-  const [elementRef, intersectingElement] = useElementIntersection();
-
-  const { newNotification } = useContext(NotificationsContext);
+  const { newNotification, setNewNotification } =
+    useContext(NotificationsContext);
 
   const {
-    isLoadingRejectedPostsNotifications,
-    setIsLoadingRejectedPostsNotifications,
-    rejectedPostsNotificationsHasInitialized,
-    setRejectedPostsNotificationsHasInitialized,
-    rejectedPostsNotificationsHasMore,
-    setRejectedPostsNotificationsHasMore,
-    rejectedPostsNotifications,
-    setRejectedPostsNotifications,
-    rejectedPostsNotificationsScrollY,
-    setRejectedPostsNotificationsScrollY,
+    rejectedPostNotifications,
+    setRejectedPostNotifications,
+    hasMoreRejectedPostNotifications,
+    setHasMoreRejectedPostNotifications,
+    hasInitializedRejectedPostNotifications,
+    setHasInitializedRejectedPostNotifications,
+    scrollRef,
   } = useOutletContext();
 
-  const scrollYRef = useRef(0);
+  const [elementRef, intersectingElement] = useElementIntersection();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!rejectedPostsNotificationsHasInitialized) {
-      getNotifications();
-    }
+    async function initialize() {
+      await getNotifications();
 
-    setTimeout(() => {
       window.scroll({
-        top: rejectedPostsNotificationsScrollY,
+        top: scrollRef.current.rejectedPostNotifications.scrollY,
         behavior: 'instant',
       });
-    }, 0); // listens for the first 'tick' before scrolling - need this so we can scroll once masonry is loaded
+    }
 
-    window.addEventListener('scroll', () => {
-      scrollYRef.current = window.scrollY;
-    });
+    if (!hasInitializedRejectedPostNotifications) {
+      initialize();
 
-    return () => {
-      setRejectedPostsNotificationsScrollY(scrollYRef.current);
-    };
+      const handleScroll = () =>
+        (scrollRef.current.rejectedPostNotifications.scrollY = window.scrollY);
+
+      window.addEventListener('scroll', handleScroll);
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
   }, []);
 
   useEffect(() => {
@@ -59,50 +60,51 @@ function NotificationsRejectedPostsNestedLayout() {
   }, [newNotification]);
 
   useEffect(() => {
-    if (intersectingElement && rejectedPostsNotificationsHasMore) {
+    if (intersectingElement && hasMoreRejectedPostNotifications) {
       getNotifications();
     }
   }, [intersectingElement]);
 
   async function getNotifications() {
-    setIsLoadingRejectedPostsNotifications(true);
+    setIsLoading(true);
 
     const { data, hasMore } = await getRejectedPostsNotificationsByProfileId(
       user.id,
-      rejectedPostsNotifications.length
+      rejectedPostNotifications.length
     );
 
     if (data.length > 0) {
-      setRejectedPostsNotifications([...rejectedPostsNotifications, ...data]);
+      setRejectedPostNotifications([...rejectedPostNotifications, ...data]);
     }
 
-    setRejectedPostsNotificationsHasMore(hasMore);
+    setHasMoreRejectedPostNotifications(hasMore);
 
-    if (!rejectedPostsNotificationsHasInitialized) {
-      setRejectedPostsNotificationsHasInitialized(true);
+    if (!hasInitializedRejectedPostNotifications) {
+      setHasInitializedRejectedPostNotifications(true);
     }
 
-    setIsLoadingRejectedPostsNotifications(false);
+    setIsLoading(false);
   }
 
   async function refreshNotifications() {
-    setIsLoadingRejectedPostsNotifications(true);
-    setRejectedPostsNotifications([
+    setIsLoading(true);
+    setRejectedPostNotifications([
       newNotification,
-      ...rejectedPostsNotifications,
+      ...rejectedPostNotifications,
     ]);
-    setIsLoadingRejectedPostsNotifications(false);
+    setIsLoading(false);
+    setNewNotification(null);
   }
 
   return (
     <div>
-      {rejectedPostsNotifications.length > 0 && (
+      {rejectedPostNotifications.length > 0 && (
         <div className="flex flex-col divide-y-2 divide-neutral-700">
-          {rejectedPostsNotifications.map((notification, index) => (
+          {rejectedPostNotifications.map((notification, index) => (
             <div
               key={notification.id}
               ref={
-                index === rejectedPostsNotifications.length - 1
+                index === rejectedPostNotifications.length - 1
                   ? elementRef
                   : null
               }
@@ -137,10 +139,10 @@ function NotificationsRejectedPostsNestedLayout() {
           ))}
         </div>
       )}
-      {isLoadingRejectedPostsNotifications && <Loading />}
-      {!rejectedPostsNotificationsHasMore && <Loaded />}
+      {isLoading && <Loading />}
+      {!hasMoreRejectedPostNotifications && <Loaded />}
     </div>
   );
 }
 
-export default NotificationsRejectedPostsNestedLayout;
+export default NotificationsRejectedPostNotificationsNestedLayout;

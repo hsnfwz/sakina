@@ -1,10 +1,6 @@
 import { useRef, useState } from 'react';
-import {
-  supabase,
-  searchPosts,
-  searchProfiles,
-  searchQuestions,
-} from '../common/supabase.js';
+import { searchProfiles } from '../common/supabase.js';
+import { searchAcceptedPosts } from '../common/database/posts.js';
 import IconButton from './IconButton.jsx';
 import SearchBarResults from './SearchBarResults.jsx';
 import TextInput from './TextInput.jsx';
@@ -13,22 +9,21 @@ import SVGOutlineX from './svgs/outline/SVGOutlineX.jsx';
 function SearchBar() {
   const timerRef = useRef();
   const [searchTerm, setSearchTerm] = useState('');
-  const [posts, setPosts] = useState([]);
+
+  const [acceptedPosts, setAcceptedPosts] = useState([]);
+  const [isLoadingAcceptedPosts, setIsLoadingAcceptedPosts] = useState(false);
   const [profiles, setProfiles] = useState([]);
-  const [questions, setQuestions] = useState([]);
-  const [loadingPosts, setLoadingPosts] = useState(false);
   const [loadingProfiles, setLoadingProfiles] = useState(false);
-  const [loadingQuestions, setLoadingQuestions] = useState(false);
 
   async function findPosts(searchTerm) {
-    setLoadingPosts(true);
+    setIsLoadingAcceptedPosts(true);
 
-    const data = await searchPosts(searchTerm);
+    const data = await searchAcceptedPosts(searchTerm);
 
     if (data) {
-      setPosts(data);
+      setAcceptedPosts(data);
     }
-    setLoadingPosts(false);
+    setIsLoadingAcceptedPosts(false);
   }
 
   async function findProfiles(searchTerm) {
@@ -42,17 +37,6 @@ function SearchBar() {
     setLoadingProfiles(false);
   }
 
-  async function findQuestions(searchTerm) {
-    setLoadingQuestions(true);
-
-    const data = await searchQuestions(searchTerm);
-
-    if (data) {
-      setQuestions(data);
-    }
-    setLoadingQuestions(false);
-  }
-
   async function search(event) {
     setSearchTerm(event.target.value);
 
@@ -62,7 +46,6 @@ function SearchBar() {
         await Promise.all([
           findPosts(event.target.value),
           findProfiles(event.target.value),
-          findQuestions(event.target.value),
         ]);
       }, 1000);
     } else {
@@ -76,9 +59,8 @@ function SearchBar() {
   }
 
   function clearSearchResults() {
-    setPosts([]);
+    setAcceptedPosts([]);
     setProfiles([]);
-    setQuestions([]);
   }
 
   return (
@@ -93,12 +75,11 @@ function SearchBar() {
           <SVGOutlineX />
         </IconButton> */}
       </div>
-      {(posts.length > 0 || profiles.length > 0 || questions.length > 0) && (
+      {(acceptedPosts.length > 0 || profiles.length > 0) && (
         <SearchBarResults
           searchTerm={searchTerm}
-          posts={posts}
+          posts={acceptedPosts}
           profiles={profiles}
-          questions={questions}
           clearSearchResults={clearSearchResults}
         />
       )}

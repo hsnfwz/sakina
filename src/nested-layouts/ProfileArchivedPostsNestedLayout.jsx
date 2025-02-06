@@ -1,9 +1,7 @@
 import { useContext, useEffect, useState, useRef } from 'react';
 import { useLocation, useParams, useOutletContext } from 'react-router';
-import {
-  getArchivedPostsByProfileId,
-  getProfileByUsername,
-} from '../common/supabase.js';
+import { getProfileByUsername } from '../common/supabase.js';
+import { getArchivedPostsByProfileId } from '../common/database/posts.js';
 import { ExploreContext, UserContext } from '../common/contexts.js';
 
 import Loading from '../components/Loading.jsx';

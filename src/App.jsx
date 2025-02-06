@@ -9,15 +9,18 @@ import {
   ExploreContext,
   NotificationsContext,
   ScrollContext,
+  AdminContext,
 } from './common/contexts';
 import { useElementIntersection } from './common/hooks.js';
-import { supabase, getNotificationsCountByProfileId } from './common/supabase';
-import CommentModal from './components/CommentModal.jsx';
+import { supabase } from './common/supabase';
+import { getNotificationsCountByProfileId } from './common/database/notifications.js';
+import { getPendingPostsCount } from './common/database/posts.js';
+import PostCommentModal from './modals/PostCommentModal.jsx';
 import Loading from './components/Loading.jsx';
 import NavBar from './components/NavBar';
 import NavBarMobileTop from './components/NavBarMobileTop.jsx';
 import NavBarMobileBottom from './components/NavBarMobileBottom.jsx';
-import CreateModal from './components/CreateModal.jsx';
+import PostModal from './modals/PostModal.jsx';
 import AdminLayout from './layouts/AdminLayout.jsx';
 import ExploreLayout from './layouts/ExploreLayout.jsx';
 import ForbiddenLayout from './layouts/ForbiddenLayout.jsx';
@@ -31,12 +34,7 @@ import ResetPasswordLayout from './layouts/ResetPasswordLayout.jsx';
 import SettingsLayout from './layouts/SettingsLayout.jsx';
 import SignUpLayout from './layouts/SignUpLayout.jsx';
 
-import ExplorePostsNestedLayout from './nested-layouts/ExplorePostsNestedLayout.jsx';
-import ExploreQuestionsNestedLayout from './nested-layouts/ExploreQuestionsNestedLayout.jsx';
-import ExploreProfilesNestedLayout from './nested-layouts/ExploreProfilesNestedLayout.jsx';
-
-import PostNestedLayout from './nested-layouts/PostNestedLayout.jsx';
-import QuestionNestedLayout from './nested-layouts/QuestionNestedLayout.jsx';
+import PostLayout from './layouts/PostLayout.jsx';
 import ProfileNestedLayout from './nested-layouts/ProfileNestedLayout.jsx';
 
 import ProfileAcceptedPostsNestedLayout from './nested-layouts/ProfileAcceptedPostsNestedLayout.jsx';
@@ -47,15 +45,24 @@ import ProfileViewedPostsNestedLayout from './nested-layouts/ProfileViewedPostsN
 import ProfileFollowersNestedLayout from './nested-layouts/ProfileFollowersNestedLayout.jsx';
 import ProfileFollowingNestedLayout from './nested-layouts/ProfileFollowingNestedLayout.jsx';
 
-import NotificationsAcceptedPostsNestedLayout from './nested-layouts/NotificationsAcceptedPostsNestedLayout.jsx';
-import NotificationsPendingPostsNestedLayout from './nested-layouts/NotificationsPendingPostsNestedLayout.jsx';
-import NotificationsRejectedPostsNestedLayout from './nested-layouts/NotificationsRejectedPostsNestedLayout.jsx';
+import NotificationsAcceptedPostNotificationsNestedLayout from './nested-layouts/NotificationsAcceptedPostNotificationsNestedLayout.jsx';
+import NotificationsPendingPostNotificationsNestedLayout from './nested-layouts/NotificationsPendingPostNotificationsNestedLayout.jsx';
+import NotificationsRejectedPostNotificationsNestedLayout from './nested-layouts/NotificationsRejectedPostNotificationsNestedLayout.jsx';
 import NotificationsLikesNestedLayout from './nested-layouts/NotificationsLikesNestedLayout.jsx';
 import NotificationsViewsNestedLayout from './nested-layouts/NotificationsViewsNestedLayout.jsx';
 import NotificationsCommentsNestedLayout from './nested-layouts/NotificationsCommentsNestedLayout.jsx';
 import NotificationsFollowersNestedLayout from './nested-layouts/NotificationsFollowersNestedLayout.jsx';
 
-import QuestionCommentLayout from './layouts/QuestionCommentLayout.jsx';
+import PostCommentLayout from './layouts/PostCommentLayout.jsx';
+
+import AdminPendingPostsNestedLayout from './nested-layouts/AdminPendingPostsNestedLayout.jsx';
+import AdminAcceptedPostsNestedLayout from './nested-layouts/AdminAcceptedPostsNestedLayout.jsx';
+import AdminRejectedPostsNestedLayout from './nested-layouts/AdminRejectedPostsNestedLayout.jsx';
+
+import ExploreImagePostsNestedLayout from './nested-layouts/ExploreImagePostsNestedLayout.jsx';
+import ExploreVideoPostsNestedLayout from './nested-layouts/ExploreVideoPostsNestedLayout.jsx';
+import ExploreDiscussionPostsNestedLayout from './nested-layouts/ExploreDiscussionPostsNestedLayout.jsx';
+import ExploreProfilesNestedLayout from './nested-layouts/ExploreProfilesNestedLayout.jsx';
 
 import ConfirmModal from './modals/ConfirmModal.jsx';
 
@@ -69,46 +76,76 @@ function App() {
     data: null,
   });
   const [isFullscreen, setIsFullscreen] = useState(false);
+
   const [newNotification, setNewNotification] = useState(null);
   const [notificationsCount, setNotificationsCount] = useState(0);
   const [isLoadingNotificationsCount, setIsLoadingNotificationsCount] =
     useState(false);
 
+  const [newPendingPost, setNewPendingPost] = useState(null);
+  const [pendingPostsCount, setPendingPostsCount] = useState(0);
+  const [isLoadingPendingPostsCount, setIsLoadingPendingPostsCount] =
+    useState(false);
+
   const scrollRef = useRef({
-    exploreAcceptedPosts: {
+    exploreAcceptedImagePosts: {
       scrollX: 0,
       scrollY: 0,
     },
-    exploreQuestions: {
+    exploreAcceptedVideoPosts: {
+      scrollX: 0,
+      scrollY: 0,
+    },
+    exploreAcceptedDiscussionPosts: {
+      scrollX: 0,
+      scrollY: 0,
+    },
+    exploreProfiles: {
       scrollX: 0,
       scrollY: 0,
     },
   });
 
-  const [acceptedPosts, setAcceptedPosts] = useState([]);
-  const [isLoadingAcceptedPosts, setIsLoadingAcceptedPosts] = useState(false);
-  const [hasMoreAcceptedPosts, setHasMoreAcceptedPosts] = useState(true);
-  const [hasInitializedAcceptedPosts, setHasInitializedAcceptedPosts] =
+  const [exploreAcceptedImagePosts, setExploreAcceptedImagePosts] = useState(
+    []
+  );
+  const [
+    exploreHasMoreAcceptedImagePosts,
+    setExploreHasMoreAcceptedImagePosts,
+  ] = useState(true);
+  const [
+    exploreHasInitializedAcceptedImagePosts,
+    setExploreHasInitializedAcceptedImagePosts,
+  ] = useState(false);
+
+  const [exploreAcceptedVideoPosts, setExploreAcceptedVideoPosts] = useState(
+    []
+  );
+  const [
+    exploreHasMoreAcceptedVideoPosts,
+    setExploreHasMoreAcceptedVideoPosts,
+  ] = useState(true);
+  const [
+    exploreHasInitializedAcceptedVideoPosts,
+    setExploreHasInitializedAcceptedVideoPosts,
+  ] = useState(false);
+
+  const [exploreAcceptedDiscussions, setExploreAcceptedDiscussions] = useState(
+    []
+  );
+  const [
+    exploreHasMoreAcceptedDiscussions,
+    setExploreHasMoreAcceptedDiscussions,
+  ] = useState(true);
+  const [
+    exploreHasInitializedAcceptedDiscussions,
+    setExploreHasInitializedAcceptedDiscussions,
+  ] = useState(false);
+
+  const [exploreProfiles, setExploreProfiles] = useState([]);
+  const [exploreHasMoreProfiles, setExploreHasMoreProfiles] = useState(true);
+  const [exploreHasInitializedProfiles, setExploreHasInitializedProfiles] =
     useState(false);
-  const [scrollYAcceptedPosts, setScrollYAcceptedPosts] = useState(0);
-  const [elementRefAcceptedPosts, intersectingElementAcceptedPosts] =
-    useElementIntersection();
-
-  const [questions, setQuestions] = useState([]);
-  const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
-  const [hasMoreQuestions, setHasMoreQuestions] = useState(true);
-  const [hasInitializedQuestions, setHasInitializedQuestions] = useState(false);
-  const [scrollYQuestions, setScrollYQuestions] = useState(0);
-  const [elementRefQuestions, intersectingElementQuestions] =
-    useElementIntersection();
-
-  const [profiles, setProfiles] = useState([]);
-  const [isLoadingProfiles, setIsLoadingProfiles] = useState(false);
-  const [hasMoreProfiles, setHasMoreProfiles] = useState(true);
-  const [hasInitializedProfiles, setHasInitializedProfiles] = useState(false);
-  const [scrollYProfiles, setScrollYProfiles] = useState(0);
-  const [elementRefProfiles, intersectingElementProfiles] =
-    useElementIntersection();
 
   const [profileAcceptedPosts, setProfileAcceptedPosts] = useState([]);
   const [profileIsLoadingAcceptedPosts, setProfileIsLoadingAcceptedPosts] =
@@ -260,7 +297,34 @@ function App() {
   }, [newNotification]);
 
   useEffect(() => {
-    async function initializeNotifications() {
+    async function initialize() {
+      setIsLoadingPendingPostsCount(true);
+      const { count } = await getPendingPostsCount();
+      setPendingPostsCount(count);
+      setIsLoadingPendingPostsCount(false);
+
+      const postsInsertChannel = supabase
+        .channel('posts-insert')
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'posts' },
+          (payload) => {
+            setNewPendingPost(payload.new);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        postsInsertChannel.unsubscribe();
+      };
+    }
+    if (user && user.user_role === 'SUPER_ADMIN') {
+      initialize();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    async function initialize() {
       setIsLoadingNotificationsCount(true);
       const { count } = await getNotificationsCountByProfileId(user.id);
       setNotificationsCount(count);
@@ -286,7 +350,7 @@ function App() {
     }
 
     if (user) {
-      initializeNotifications();
+      initialize();
     }
   }, [user]);
 
@@ -310,351 +374,372 @@ function App() {
     <BrowserRouter>
       <SessionContext.Provider value={{ session, setSession }}>
         <UserContext.Provider value={{ loadingUser, user, setUser }}>
-          <ModalContext.Provider value={{ showModal, setShowModal }}>
-            <ScreenResizeContext.Provider value={{ screenResize }}>
-              <FullscreenContext.Provider
-                value={{ isFullscreen, setIsFullscreen }}
-              >
-                <ExploreContext.Provider
-                  value={{
-                    acceptedPosts,
-                    setAcceptedPosts,
-                    elementRefAcceptedPosts,
-                    intersectingElementAcceptedPosts,
-                    scrollYAcceptedPosts,
-                    setScrollYAcceptedPosts,
-                    hasMoreAcceptedPosts,
-                    setHasMoreAcceptedPosts,
-                    isLoadingAcceptedPosts,
-                    setIsLoadingAcceptedPosts,
-                    hasInitializedAcceptedPosts,
-                    setHasInitializedAcceptedPosts,
-                    questions,
-                    setQuestions,
-                    elementRefQuestions,
-                    intersectingElementQuestions,
-                    scrollYQuestions,
-                    setScrollYQuestions,
-                    hasMoreQuestions,
-                    setHasMoreQuestions,
-                    isLoadingQuestions,
-                    setIsLoadingQuestions,
-                    hasInitializedQuestions,
-                    setHasInitializedQuestions,
-                    profiles,
-                    setProfiles,
-                    elementRefProfiles,
-                    intersectingElementProfiles,
-                    scrollYProfiles,
-                    setScrollYProfiles,
-                    hasMoreProfiles,
-                    setHasMoreProfiles,
-                    isLoadingProfiles,
-                    setIsLoadingProfiles,
-                    hasInitializedProfiles,
-                    setHasInitializedProfiles,
-                    profileAcceptedPosts,
-                    setProfileAcceptedPosts,
-                    profileIsLoadingAcceptedPosts,
-                    setProfileIsLoadingAcceptedPosts,
-                    profileHasMoreAcceptedPosts,
-                    setProfileHasMoreAcceptedPosts,
-                    profileHasInitializedAcceptedPosts,
-                    setProfileHasInitializedAcceptedPosts,
-                    profileScrollYAcceptedPosts,
-                    setProfileScrollYAcceptedPosts,
-                    profileElementRefAcceptedPosts,
-                    profileIntersectingElementAcceptedPosts,
-                    profilePendingPosts,
-                    setProfilePendingPosts,
-                    profileIsLoadingPendingPosts,
-                    setProfileIsLoadingPendingPosts,
-                    profileHasMorePendingPosts,
-                    setProfileHasMorePendingPosts,
-                    profileHasInitializedPendingPosts,
-                    setProfileHasInitializedPendingPosts,
-                    profileScrollYPendingPosts,
-                    setProfileScrollYPendingPosts,
-                    profileElementRefPendingPosts,
-                    profileIntersectingElementPendingPosts,
-                    profileRejectedPosts,
-                    setProfileRejectedPosts,
-                    profileIsLoadingRejectedPosts,
-                    setProfileIsLoadingRejectedPosts,
-                    profileHasMoreRejectedPosts,
-                    setProfileHasMoreRejectedPosts,
-                    profileHasInitializedRejectedPosts,
-                    setProfileHasInitializedRejectedPosts,
-                    profileScrollYRejectedPosts,
-                    setProfileScrollYRejectedPosts,
-                    profileElementRefRejectedPosts,
-                    profileIntersectingElementRejectedPosts,
-                    profileArchivedPosts,
-                    setProfileArchivedPosts,
-                    profileIsLoadingArchivedPosts,
-                    setProfileIsLoadingArchivedPosts,
-                    profileHasMoreArchivedPosts,
-                    setProfileHasMoreArchivedPosts,
-                    profileHasInitializedArchivedPosts,
-                    setProfileHasInitializedArchivedPosts,
-                    profileScrollYArchivedPosts,
-                    setProfileScrollYArchivedPosts,
-                    profileElementRefArchivedPosts,
-                    profileIntersectingElementArchivedPosts,
-                    profileViewedPosts,
-                    setProfileViewedPosts,
-                    profileIsLoadingViewedPosts,
-                    setProfileIsLoadingViewedPosts,
-                    profileHasMoreViewedPosts,
-                    setProfileHasMoreViewedPosts,
-                    profileHasInitializedViewedPosts,
-                    setProfileHasInitializedViewedPosts,
-                    profileScrollYViewedPosts,
-                    setProfileScrollYViewedPosts,
-                    profileElementRefViewedPosts,
-                    profileIntersectingElementViewedPosts,
-                    profileFollowers,
-                    setProfileFollowers,
-                    profileIsLoadingFollowers,
-                    setProfileIsLoadingFollowers,
-                    profileHasMoreFollowers,
-                    setProfileHasMoreFollowers,
-                    profileHasInitializedFollowers,
-                    setProfileHasInitializedFollowers,
-                    profileScrollYFollowers,
-                    setProfileScrollYFollowers,
-                    profileElementRefFollowers,
-                    profileIntersectingElementFollowers,
-                    profileFollowing,
-                    setProfileFollowing,
-                    profileIsLoadingFollowing,
-                    setProfileIsLoadingFollowing,
-                    profileHasMoreFollowing,
-                    setProfileHasMoreFollowing,
-                    profileHasInitializedFollowing,
-                    setProfileHasInitializedFollowing,
-                    profileScrollYFollowing,
-                    setProfileScrollYFollowing,
-                    profileElementRefFollowing,
-                    profileIntersectingElementFollowing,
-                  }}
-                >
-                  <NotificationsContext.Provider
-                    value={{
-                      newNotification,
-                      setNewNotification,
-                      notificationsCount,
-                      setNotificationsCount,
-                      isLoadingNotificationsCount,
-                      setIsLoadingNotificationsCount,
-                    }}
+          <AdminContext.Provider
+            value={{
+              newPendingPost,
+              setNewPendingPost,
+              pendingPostsCount,
+              setPendingPostsCount,
+              isLoadingPendingPostsCount,
+              setIsLoadingPendingPostsCount,
+            }}
+          >
+            <NotificationsContext.Provider
+              value={{
+                newNotification,
+                setNewNotification,
+                notificationsCount,
+                setNotificationsCount,
+                isLoadingNotificationsCount,
+                setIsLoadingNotificationsCount,
+              }}
+            >
+              <ModalContext.Provider value={{ showModal, setShowModal }}>
+                <ScreenResizeContext.Provider value={{ screenResize }}>
+                  <FullscreenContext.Provider
+                    value={{ isFullscreen, setIsFullscreen }}
                   >
-                    <ScrollContext.Provider value={{ scrollRef }}>
-                      {loadingUser && <Loading />}
+                    <ExploreContext.Provider
+                      value={{
+                        exploreAcceptedImagePosts,
+                        setExploreAcceptedImagePosts,
+                        exploreHasMoreAcceptedImagePosts,
+                        setExploreHasMoreAcceptedImagePosts,
+                        exploreHasInitializedAcceptedImagePosts,
+                        setExploreHasInitializedAcceptedImagePosts,
 
-                      {!loadingUser && (
-                        <>
-                          <NavBar />
-                          <NavBarMobileBottom />
-                          <NavBarMobileTop />
+                        exploreAcceptedVideoPosts,
+                        setExploreAcceptedVideoPosts,
+                        exploreHasMoreAcceptedVideoPosts,
+                        setExploreHasMoreAcceptedVideoPosts,
+                        exploreHasInitializedAcceptedVideoPosts,
+                        setExploreHasInitializedAcceptedVideoPosts,
 
-                          {showModal.type === 'CREATE_MODAL' && <CreateModal />}
+                        exploreAcceptedDiscussions,
+                        setExploreAcceptedDiscussions,
+                        exploreHasMoreAcceptedDiscussions,
+                        setExploreHasMoreAcceptedDiscussions,
+                        exploreHasInitializedAcceptedDiscussions,
+                        setExploreHasInitializedAcceptedDiscussions,
 
-                          {showModal.type === 'COMMENT_MODAL' && (
-                            <CommentModal />
-                          )}
+                        exploreProfiles,
+                        setExploreProfiles,
+                        exploreHasMoreProfiles,
+                        setExploreHasMoreProfiles,
+                        exploreHasInitializedProfiles,
+                        setExploreHasInitializedProfiles,
 
-                          {showModal.type === 'CONFIRM_MODAL' && (
-                            <ConfirmModal />
-                          )}
-                        </>
-                      )}
-                      {!loadingUser && (
-                        <main
-                          className={`relative left-0 top-0 mb-[76px] flex min-h-screen w-full flex-col gap-4 p-4 sm:mb-0 sm:pl-[300px]`}
-                        >
-                          <Routes>
-                            <Route path="/" element={<HomeLayout />} />
-                            <Route
-                              path="log-in"
-                              element={
-                                user ? <NoContentLayout /> : <LogInLayout />
-                              }
-                            />
-                            <Route
-                              path="sign-up"
-                              element={
-                                user ? <NoContentLayout /> : <SignUpLayout />
-                              }
-                            />
-                            <Route
-                              path="forgot-password"
-                              element={<ForgotPasswordLayout />}
-                            />
-                            <Route
-                              path="reset-password"
-                              element={
-                                user ? (
-                                  <ResetPasswordLayout />
-                                ) : (
-                                  <NoContentLayout />
-                                )
-                              }
-                            />
+                        profileAcceptedPosts,
+                        setProfileAcceptedPosts,
+                        profileIsLoadingAcceptedPosts,
+                        setProfileIsLoadingAcceptedPosts,
+                        profileHasMoreAcceptedPosts,
+                        setProfileHasMoreAcceptedPosts,
+                        profileHasInitializedAcceptedPosts,
+                        setProfileHasInitializedAcceptedPosts,
+                        profileScrollYAcceptedPosts,
+                        setProfileScrollYAcceptedPosts,
+                        profileElementRefAcceptedPosts,
+                        profileIntersectingElementAcceptedPosts,
+                        profilePendingPosts,
+                        setProfilePendingPosts,
+                        profileIsLoadingPendingPosts,
+                        setProfileIsLoadingPendingPosts,
+                        profileHasMorePendingPosts,
+                        setProfileHasMorePendingPosts,
+                        profileHasInitializedPendingPosts,
+                        setProfileHasInitializedPendingPosts,
+                        profileScrollYPendingPosts,
+                        setProfileScrollYPendingPosts,
+                        profileElementRefPendingPosts,
+                        profileIntersectingElementPendingPosts,
+                        profileRejectedPosts,
+                        setProfileRejectedPosts,
+                        profileIsLoadingRejectedPosts,
+                        setProfileIsLoadingRejectedPosts,
+                        profileHasMoreRejectedPosts,
+                        setProfileHasMoreRejectedPosts,
+                        profileHasInitializedRejectedPosts,
+                        setProfileHasInitializedRejectedPosts,
+                        profileScrollYRejectedPosts,
+                        setProfileScrollYRejectedPosts,
+                        profileElementRefRejectedPosts,
+                        profileIntersectingElementRejectedPosts,
+                        profileArchivedPosts,
+                        setProfileArchivedPosts,
+                        profileIsLoadingArchivedPosts,
+                        setProfileIsLoadingArchivedPosts,
+                        profileHasMoreArchivedPosts,
+                        setProfileHasMoreArchivedPosts,
+                        profileHasInitializedArchivedPosts,
+                        setProfileHasInitializedArchivedPosts,
+                        profileScrollYArchivedPosts,
+                        setProfileScrollYArchivedPosts,
+                        profileElementRefArchivedPosts,
+                        profileIntersectingElementArchivedPosts,
+                        profileViewedPosts,
+                        setProfileViewedPosts,
+                        profileIsLoadingViewedPosts,
+                        setProfileIsLoadingViewedPosts,
+                        profileHasMoreViewedPosts,
+                        setProfileHasMoreViewedPosts,
+                        profileHasInitializedViewedPosts,
+                        setProfileHasInitializedViewedPosts,
+                        profileScrollYViewedPosts,
+                        setProfileScrollYViewedPosts,
+                        profileElementRefViewedPosts,
+                        profileIntersectingElementViewedPosts,
+                        profileFollowers,
+                        setProfileFollowers,
+                        profileIsLoadingFollowers,
+                        setProfileIsLoadingFollowers,
+                        profileHasMoreFollowers,
+                        setProfileHasMoreFollowers,
+                        profileHasInitializedFollowers,
+                        setProfileHasInitializedFollowers,
+                        profileScrollYFollowers,
+                        setProfileScrollYFollowers,
+                        profileElementRefFollowers,
+                        profileIntersectingElementFollowers,
+                        profileFollowing,
+                        setProfileFollowing,
+                        profileIsLoadingFollowing,
+                        setProfileIsLoadingFollowing,
+                        profileHasMoreFollowing,
+                        setProfileHasMoreFollowing,
+                        profileHasInitializedFollowing,
+                        setProfileHasInitializedFollowing,
+                        profileScrollYFollowing,
+                        setProfileScrollYFollowing,
+                        profileElementRefFollowing,
+                        profileIntersectingElementFollowing,
+                      }}
+                    >
+                      <ScrollContext.Provider value={{ scrollRef }}>
+                        {loadingUser && <Loading />}
 
-                            <Route path="explore" element={<ExploreLayout />}>
+                        {!loadingUser && (
+                          <>
+                            <NavBar />
+                            <NavBarMobileBottom />
+                            <NavBarMobileTop />
+
+                            {showModal.type === 'POST_MODAL' && <PostModal />}
+
+                            {showModal.type === 'POST_COMMENT_MODAL' && (
+                              <PostCommentModal />
+                            )}
+
+                            {showModal.type === 'CONFIRM_MODAL' && (
+                              <ConfirmModal />
+                            )}
+                          </>
+                        )}
+                        {!loadingUser && (
+                          <main
+                            className={`relative left-0 top-0 mb-[76px] flex min-h-screen w-full flex-col gap-4 p-4 sm:mb-0 sm:pl-[300px]`}
+                          >
+                            <Routes>
+                              <Route path="/" element={<HomeLayout />} />
                               <Route
-                                index
-                                element={<ExplorePostsNestedLayout />}
+                                path="log-in"
+                                element={
+                                  user ? <NoContentLayout /> : <LogInLayout />
+                                }
                               />
                               <Route
-                                path="posts"
-                                element={<ExplorePostsNestedLayout />}
+                                path="sign-up"
+                                element={
+                                  user ? <NoContentLayout /> : <SignUpLayout />
+                                }
                               />
                               <Route
-                                path="questions"
-                                element={<ExploreQuestionsNestedLayout />}
+                                path="forgot-password"
+                                element={<ForgotPasswordLayout />}
                               />
                               <Route
-                                path="profiles"
-                                element={<ExploreProfilesNestedLayout />}
+                                path="reset-password"
+                                element={
+                                  user ? (
+                                    <ResetPasswordLayout />
+                                  ) : (
+                                    <NoContentLayout />
+                                  )
+                                }
                               />
+
+                              <Route path="explore" element={<ExploreLayout />}>
+                                <Route
+                                  index
+                                  element={<ExploreImagePostsNestedLayout />}
+                                />
+                                <Route
+                                  path="images"
+                                  element={<ExploreImagePostsNestedLayout />}
+                                />
+                                <Route
+                                  path="videos"
+                                  element={<ExploreVideoPostsNestedLayout />}
+                                />
+                                <Route
+                                  path="discussions"
+                                  element={
+                                    <ExploreDiscussionPostsNestedLayout />
+                                  }
+                                />
+                                <Route
+                                  path="profiles"
+                                  element={<ExploreProfilesNestedLayout />}
+                                />
+                                <Route path="*" element={<NotFoundLayout />} />
+                              </Route>
+
+                              <Route path="post/:id" element={<PostLayout />} />
+                              <Route
+                                path="post/comment/:id"
+                                element={<PostCommentLayout />}
+                              />
+
+                              <Route
+                                path="/profile/:username"
+                                element={<ProfileNestedLayout />}
+                              >
+                                <Route
+                                  index
+                                  element={<ProfileAcceptedPostsNestedLayout />}
+                                />
+                                <Route
+                                  path="accepted-posts"
+                                  element={<ProfileAcceptedPostsNestedLayout />}
+                                />
+                                <Route
+                                  path="pending-posts"
+                                  element={<ProfilePendingPostsNestedLayout />}
+                                />
+                                <Route
+                                  path="rejected-posts"
+                                  element={<ProfileRejectedPostsNestedLayout />}
+                                />
+                                <Route
+                                  path="archived-posts"
+                                  element={<ProfileArchivedPostsNestedLayout />}
+                                />
+                                <Route
+                                  path="viewed-posts"
+                                  element={<ProfileViewedPostsNestedLayout />}
+                                />
+                                <Route
+                                  path="followers"
+                                  element={<ProfileFollowersNestedLayout />}
+                                />
+                                <Route
+                                  path="following"
+                                  element={<ProfileFollowingNestedLayout />}
+                                />
+                                <Route path="*" element={<NotFoundLayout />} />
+                              </Route>
+
+                              <Route
+                                path="notifications"
+                                element={
+                                  user ? (
+                                    <NotificationsLayout />
+                                  ) : (
+                                    <NoContentLayout />
+                                  )
+                                }
+                              >
+                                <Route
+                                  index
+                                  element={
+                                    <NotificationsPendingPostNotificationsNestedLayout />
+                                  }
+                                />
+                                <Route
+                                  path="accepted-posts"
+                                  element={
+                                    <NotificationsAcceptedPostNotificationsNestedLayout />
+                                  }
+                                />
+                                <Route
+                                  path="pending-posts"
+                                  element={
+                                    <NotificationsPendingPostNotificationsNestedLayout />
+                                  }
+                                />
+                                <Route
+                                  path="rejected-posts"
+                                  element={
+                                    <NotificationsRejectedPostNotificationsNestedLayout />
+                                  }
+                                />
+                                <Route
+                                  path="likes"
+                                  element={<NotificationsLikesNestedLayout />}
+                                />
+                                <Route
+                                  path="views"
+                                  element={<NotificationsViewsNestedLayout />}
+                                />
+                                <Route
+                                  path="followers"
+                                  element={
+                                    <NotificationsFollowersNestedLayout />
+                                  }
+                                />
+                                <Route
+                                  path="comments"
+                                  element={
+                                    <NotificationsCommentsNestedLayout />
+                                  }
+                                />
+                                <Route path="*" element={<NotFoundLayout />} />
+                              </Route>
+
+                              <Route
+                                path="settings"
+                                element={<SettingsLayout />}
+                              />
+
+                              <Route
+                                path="admin"
+                                element={
+                                  user && user.user_role === 'SUPER_ADMIN' ? (
+                                    <AdminLayout />
+                                  ) : (
+                                    <ForbiddenLayout />
+                                  )
+                                }
+                              >
+                                <Route
+                                  index
+                                  element={<AdminPendingPostsNestedLayout />}
+                                />
+                                <Route
+                                  path="pending-posts"
+                                  element={<AdminPendingPostsNestedLayout />}
+                                />
+                                <Route
+                                  path="accepted-posts"
+                                  element={<AdminAcceptedPostsNestedLayout />}
+                                />
+                                <Route
+                                  path="rejected-posts"
+                                  element={<AdminRejectedPostsNestedLayout />}
+                                />
+                              </Route>
+
                               <Route path="*" element={<NotFoundLayout />} />
-                            </Route>
-
-                            <Route
-                              path="post/:id"
-                              element={<PostNestedLayout />}
-                            />
-                            <Route
-                              path="post/comment/:id"
-                              element={<PostNestedLayout />}
-                            />
-                            <Route
-                              path="question/:id"
-                              element={<QuestionNestedLayout />}
-                            />
-                            <Route
-                              path="question/comment/:id"
-                              element={<QuestionCommentLayout />}
-                            />
-
-                            <Route
-                              path="/profile/:username"
-                              element={<ProfileNestedLayout />}
-                            >
-                              <Route
-                                index
-                                element={<ProfileAcceptedPostsNestedLayout />}
-                              />
-                              <Route
-                                path="accepted-posts"
-                                element={<ProfileAcceptedPostsNestedLayout />}
-                              />
-                              <Route
-                                path="pending-posts"
-                                element={<ProfilePendingPostsNestedLayout />}
-                              />
-                              <Route
-                                path="rejected-posts"
-                                element={<ProfileRejectedPostsNestedLayout />}
-                              />
-                              <Route
-                                path="archived-posts"
-                                element={<ProfileArchivedPostsNestedLayout />}
-                              />
-                              <Route
-                                path="viewed-posts"
-                                element={<ProfileViewedPostsNestedLayout />}
-                              />
-                              <Route
-                                path="followers"
-                                element={<ProfileFollowersNestedLayout />}
-                              />
-                              <Route
-                                path="following"
-                                element={<ProfileFollowingNestedLayout />}
-                              />
-                              <Route path="*" element={<NotFoundLayout />} />
-                            </Route>
-
-                            <Route
-                              path="notifications"
-                              element={
-                                user ? (
-                                  <NotificationsLayout />
-                                ) : (
-                                  <NoContentLayout />
-                                )
-                              }
-                            >
-                              <Route
-                                index
-                                element={
-                                  <NotificationsAcceptedPostsNestedLayout />
-                                }
-                              />
-                              <Route
-                                path="accepted-posts"
-                                element={
-                                  <NotificationsAcceptedPostsNestedLayout />
-                                }
-                              />
-                              <Route
-                                path="pending-posts"
-                                element={
-                                  <NotificationsPendingPostsNestedLayout />
-                                }
-                              />
-                              <Route
-                                path="rejected-posts"
-                                element={
-                                  <NotificationsRejectedPostsNestedLayout />
-                                }
-                              />
-                              <Route
-                                path="likes"
-                                element={<NotificationsLikesNestedLayout />}
-                              />
-                              <Route
-                                path="views"
-                                element={<NotificationsViewsNestedLayout />}
-                              />
-                              <Route
-                                path="followers"
-                                element={<NotificationsFollowersNestedLayout />}
-                              />
-                              <Route
-                                path="comments"
-                                element={<NotificationsCommentsNestedLayout />}
-                              />
-                              <Route path="*" element={<NotFoundLayout />} />
-                            </Route>
-
-                            <Route
-                              path="settings"
-                              element={<SettingsLayout />}
-                            />
-                            <Route
-                              path="admin"
-                              element={
-                                user && user.user_role === 'SUPER_ADMIN' ? (
-                                  <AdminLayout />
-                                ) : (
-                                  <ForbiddenLayout />
-                                )
-                              }
-                            />
-                            <Route path="*" element={<NotFoundLayout />} />
-                          </Routes>
-                        </main>
-                      )}
-                    </ScrollContext.Provider>
-                  </NotificationsContext.Provider>
-                </ExploreContext.Provider>
-              </FullscreenContext.Provider>
-            </ScreenResizeContext.Provider>
-          </ModalContext.Provider>
+                            </Routes>
+                          </main>
+                        )}
+                      </ScrollContext.Provider>
+                    </ExploreContext.Provider>
+                  </FullscreenContext.Provider>
+                </ScreenResizeContext.Provider>
+              </ModalContext.Provider>
+            </NotificationsContext.Provider>
+          </AdminContext.Provider>
         </UserContext.Provider>
       </SessionContext.Provider>
     </BrowserRouter>
@@ -665,24 +750,24 @@ export default App;
 
 /* 
     BACKLOG:
+    - delete post_comment
+    - archive, unarchive post_comment
+    - like, unlike post_comment
+
+    - admin - how which admin (user) accepted/rejected content in accepted and rejected page views
+
+    - FIX: add gap between navbar and main page
     - FIX: make sure all state and url state is up to date whenever changes are made - we do not want stale data
     - FIX: explore posts page overflows x
     - FIX: image and video views are glitchy when being rendered
-    - FIX: scrollY across pages eventually resets to 0 after a few navigations, need to add infinite scrolling on question page
+    - FIX: scrollY across pages eventually resets to 0 after a few navigations, need to add infinite scrolling on each discussion page
     - FIX: make sure only the user can access their archived comments and posts through url and selection
     - FIX: make sure users cannot access archived content - check between page navigations, page refreshes, etc.
+    - FIX: make sure custom inputs can listen to important keys (enter, spacebar, etc.)
 
+    - unarchive post
+    - database functions for fetching archived content - since by default all functions only get unarchived content
     - views - a user can see their own only once, but can see others multiple times
-    - post comments
-    - unarchive question, post
-    - delete post_comment, question_comment
-    - archive, unarchive post_comment, question_comment
-    - like, unlike post_comment, question_comment
-    - accept, pending, reject, views, notifications for questions, question_comments, post_comments
-
-    - admin
-      - count similar to notifications
-      - show which admin (user) accepted/rejected content in accepted and rejected page views
 
     - notifications
       - is_read
@@ -693,33 +778,21 @@ export default App;
       - # of followers,
       - # of following,
       - # of posts,
-      - # of questions,
       - # of post comments,
-      - # of question comments,
       - # of post likes
-      - # of question likes
       - # of post comment likes,
-      - # of question comment likes,
       - # of unique post views
       - # of repeated post views
-      - # of unique question views
-      - # of repeated question views
       - # of unique post comment views
       - # of repeated post comment views
-      - # of unique question comment views
-      - # of repeated question comment views
 
-    - pin posts
-    - scheduled posts
-    - expired posts
+    - home - count for newly released content to show in the navbar
     - search page when a user clicks on a suggested search/load more searches? + filters and sorts
     
     - allow user to select a video frame to set as their thumbnail
     - allow image reordering
     - show preview of post before submission
-    - hashtags # and mentions @ and annotations for videos (ex: 0:30 plays video from that point) and formatted links w/ preview option - dont forget to check for title before submission!!!
-    - make sure custom inputs can listen to important keys (enter, spacebar, etc.)
-    - video play and pause with space bar
+    - @ mentions
 
     - delete account - remove all of a user's data
     - deactivate account - mark user as 'inactive' and keep all content, simply hide the user info from posts
@@ -729,20 +802,24 @@ export default App;
     - stripe subscriptions configuration - https://stripe.com/en-ca/payments
     - SMTP server configuration - https://supabase.com/docs/guides/auth/auth-smtp
     - auth email templates configuration - https://supabase.com/docs/guides/auth/auth-email-templates
-    - rate limit supabase requests for data and storage to avoid potential spam
+    - rate limit supabase requests for data and storage to avoid potential spam - ex: when a user constantly refreshes the page
 
 
 
 
     FUTURE:
-    - all kinds of editing
+    - allow post/question creators to moderate their question_comments/post_comments
+    - video play and pause with space bar
+    - pin content
+    - scheduled content
+    - expired content
+    - edit content
     - notifications for activity by people you follow
-    - explore: have a carousel at the top showcasing the best of the best posts as a way to reward users for high quality content
     - analytics page
     - stories (24 hours) + archived stories
     - video timestamps similar to youtube
-    - groups - title/description/posts + masonry view
-    - reward system to encourage good, quality content and interactions
+    - groups (similar to albums and playlists)
+    - rewards and promotion/spotlight system
     - message and sharing
     - livestreaming
     - email change page flow

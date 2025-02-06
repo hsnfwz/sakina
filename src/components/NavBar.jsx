@@ -5,6 +5,7 @@ import {
   ModalContext,
   UserContext,
   NotificationsContext,
+  AdminContext,
 } from '../common/contexts';
 import Footer from './Footer';
 import Button from './Button';
@@ -33,8 +34,11 @@ function NavBar({}) {
   const { user } = useContext(UserContext);
   const { setShowModal } = useContext(ModalContext);
   const location = useLocation();
+
   const { notificationsCount, isLoadingNotificationsCount } =
     useContext(NotificationsContext);
+  const { pendingPostsCount, isLoadingPendingPostsCount } =
+    useContext(AdminContext);
 
   return (
     <div className="fixed left-0 top-0 z-40 hidden h-full w-full max-w-[300px] bg-black p-4 sm:block">
@@ -43,12 +47,28 @@ function NavBar({}) {
         {user && user.user_role === 'SUPER_ADMIN' && (
           <Link
             to="/admin"
-            className={`${location.pathname === '/admin' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+            className={`${location.pathname.includes('/admin') ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
           >
-            {location.pathname === '/admin' && <SVGSolidShield />}
-            {location.pathname !== '/admin' && <SVGOutlineShield />}
+            <div className="relative left-0 top-0">
+              {location.pathname.includes('/admin') && (
+                <div className="relative left-0 top-0">
+                  <SVGSolidShield />
+                </div>
+              )}
+              {!location.pathname.includes('/admin') && (
+                <div className="relative left-0 top-0">
+                  <SVGOutlineShield />
+                </div>
+              )}
+              {!isLoadingPendingPostsCount && pendingPostsCount > 0 && (
+                <span className="absolute -right-2 -top-2 rounded-full bg-rose-500 p-1 text-xs text-white">
+                  {formatCount(pendingPostsCount)}
+                </span>
+              )}
+            </div>
+
             <span
-              className={`${location.pathname === '/admin' ? 'text-sky-500' : 'text-white'}`}
+              className={`${location.pathname.includes('/admin') ? 'text-sky-500' : 'text-white'}`}
             >
               Admin
             </span>
@@ -78,30 +98,6 @@ function NavBar({}) {
             Explore
           </span>
         </Link>
-
-        {location.pathname.includes('/explore') && (
-          <div className="flex flex-col gap-4 rounded-lg bg-neutral-700 p-4">
-            <Link
-              to="/explore/posts"
-              className={`${location.pathname === '/explore' || location.pathname.includes('/explore/posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-            >
-              <span>Posts</span>
-            </Link>
-            <Link
-              to="/explore/questions"
-              className={`${location.pathname.includes('/explore/questions') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-            >
-              <span>Questions</span>
-            </Link>
-            <Link
-              to="/explore/profiles"
-              className={`${location.pathname.includes('/explore/profiles') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-            >
-              <span>Profiles</span>
-            </Link>
-          </div>
-        )}
-
         {user && (
           <Link
             to="/notifications"
@@ -132,61 +128,6 @@ function NavBar({}) {
             </span>
           </Link>
         )}
-
-        {user && location.pathname.includes('/notifications') && (
-          <div className="flex flex-col gap-4 rounded-lg bg-neutral-700 p-4">
-            <Link
-              className={`${location.pathname === `/notifications` || location.pathname.includes('accepted-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/notifications/accepted-posts`}
-              state={{ profile: user }}
-            >
-              Accepted Posts
-            </Link>
-            <Link
-              className={`${location.pathname.includes('pending-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/notifications/pending-posts`}
-              state={{ profile: user }}
-            >
-              Pending Posts
-            </Link>
-            <Link
-              className={`${location.pathname.includes('rejected-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/notifications/rejected-posts`}
-              state={{ profile: user }}
-            >
-              Rejected Posts
-            </Link>
-            <Link
-              className={`${location.pathname.includes('views') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/notifications/views`}
-              state={{ profile: user }}
-            >
-              Views
-            </Link>
-            <Link
-              className={`${location.pathname.includes('likes') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/notifications/likes`}
-              state={{ profile: user }}
-            >
-              Likes
-            </Link>
-            <Link
-              className={`${location.pathname.includes('followers') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/notifications/followers`}
-              state={{ profile: user }}
-            >
-              Followers
-            </Link>
-            <Link
-              className={`${location.pathname.includes('comments') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/notifications/comments`}
-              state={{ profile: user }}
-            >
-              Comments
-            </Link>
-          </div>
-        )}
-
         {user && (
           <Link
             to={`/profile/${user.username}`}
@@ -206,63 +147,6 @@ function NavBar({}) {
             </span>
           </Link>
         )}
-
-        {user && location.pathname.includes(`/profile/${user.username}`) && (
-          <div className="flex flex-col gap-4 rounded-lg bg-neutral-700 p-4">
-            <Link
-              className={`${location.pathname === `/profile/${user.username}` || location.pathname.includes('accepted-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/profile/${user.username}/accepted-posts`}
-              state={{ profile: user }}
-            >
-              Posts
-            </Link>
-
-            <Link
-              className={`${location.pathname.includes('pending-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/profile/${user.username}/pending-posts`}
-              state={{ profile: user }}
-            >
-              Pending Posts
-            </Link>
-            <Link
-              className={`${location.pathname.includes('rejected-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/profile/${user.username}/rejected-posts`}
-              state={{ profile: user }}
-            >
-              Rejected Posts
-            </Link>
-            <Link
-              className={`${location.pathname.includes('archived-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/profile/${user.username}/archived-posts`}
-              state={{ profile: user }}
-            >
-              Archived Posts
-            </Link>
-            <Link
-              className={`${location.pathname.includes('viewed-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/profile/${user.username}/viewed-posts`}
-              state={{ profile: user }}
-            >
-              Viewed Posts
-            </Link>
-
-            <Link
-              className={`${location.pathname.includes('followers') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/profile/${user.username}/followers`}
-              state={{ profile: user }}
-            >
-              Followers
-            </Link>
-            <Link
-              className={`${location.pathname.includes('following') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`/profile/${user.username}/following`}
-              state={{ profile: user }}
-            >
-              Following
-            </Link>
-          </div>
-        )}
-
         <Link
           to="/settings"
           className={`${location.pathname === '/settings' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
@@ -275,10 +159,9 @@ function NavBar({}) {
             Settings
           </span>
         </Link>
-
         {user && (
           <Button
-            handleClick={() => setShowModal({ type: 'CREATE_MODAL' })}
+            handleClick={() => setShowModal({ type: 'POST_MODAL' })}
             buttonColor={BUTTON_COLOR.GREEN}
           >
             <SVGOutlinePlus />
@@ -325,7 +208,6 @@ function NavBar({}) {
             </Link>
           </>
         )}
-
         <Footer />
       </nav>
     </div>

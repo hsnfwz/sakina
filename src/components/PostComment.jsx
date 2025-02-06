@@ -8,14 +8,13 @@ import SVGOutlineCornerDownRightArrow from './svgs/outline/SVGOutlineCornerDownR
 import { BUTTON_COLOR } from '../common/enums';
 import { Link } from 'react-router';
 
-function QuestionComment({
-  questionComment,
+function PostComment({
+  postComment,
   elementRef,
-  questionCommentsList,
-  expandCollapseComments,
-  showMoreComments,
+  postCommentsTracker,
+  expandCollapsePostComments,
+  showMorePostComments,
   showLink,
-  isInteract,
 }) {
   const { user } = useContext(UserContext);
   const { setShowModal } = useContext(ModalContext);
@@ -25,36 +24,36 @@ function QuestionComment({
       <div className="flex w-full flex-col gap-4 whitespace-nowrap sm:whitespace-normal">
         {showLink && (
           <Link
-            to={`/question/comment/${questionComment.id}`}
+            to={`/post/comment/${postComment.id}`}
             className="flex w-full flex-col gap-4 whitespace-nowrap rounded-lg border-2 border-neutral-700 p-2 hover:border-white focus:border-2 focus:border-white focus:outline-none focus:ring-0 sm:whitespace-normal"
-            state={{ questionComment }}
+            state={{ postComment }}
           >
             <div className="flex w-full gap-4">
               <p className="text-xs">
-                {questionComment.is_anonymous
+                {postComment.is_anonymous
                   ? 'Anonymous'
-                  : questionComment.user.username}
+                  : postComment.user.username}
               </p>
               <p className="text-xs text-neutral-700">
-                {getDate(questionComment.created_at, true)}
+                {getDate(postComment.created_at, true)}
               </p>
             </div>
-            <p>{questionComment.description}</p>
+            <p>{postComment.description}</p>
           </Link>
         )}
         {!showLink && (
           <div className="flex w-full flex-col gap-4 whitespace-nowrap sm:whitespace-normal">
             <div className="flex w-full gap-4">
               <p className="text-xs">
-                {questionComment.is_anonymous
+                {postComment.is_anonymous
                   ? 'Anonymous'
-                  : questionComment.user.username}
+                  : postComment.user.username}
               </p>
               <p className="text-xs text-neutral-700">
-                {getDate(questionComment.created_at, true)}
+                {getDate(postComment.created_at, true)}
               </p>
             </div>
-            <p>{questionComment.description}</p>
+            <p>{postComment.description}</p>
           </div>
         )}
         {user && (
@@ -63,10 +62,10 @@ function QuestionComment({
               buttonColor={BUTTON_COLOR.BLUE}
               handleClick={() => {
                 setShowModal({
-                  type: 'COMMENT_MODAL',
+                  type: 'POST_COMMENT_MODAL',
                   data: {
-                    parentQuestionCommentId: questionComment.id,
-                    questionId: questionComment.question.id,
+                    parentPostCommentId: postComment.id,
+                    postId: postComment.post.id,
                   },
                 });
               }}
@@ -75,57 +74,57 @@ function QuestionComment({
             </Button>
           </div>
         )}
-        {questionComment.comments_count > 0 && (
+        {postComment.comments_count > 0 && (
           <div className="self-start">
             <Button
               handleClick={async () => {
-                await expandCollapseComments(questionComment.id);
+                await expandCollapsePostComments(postComment.id);
               }}
             >
-              {!questionCommentsList[questionComment.id] && (
+              {!postCommentsTracker[postComment.id] && (
                 <>
                   <SVGOulineArrowDown />
                 </>
               )}
-              {questionCommentsList[questionComment.id] &&
-                questionCommentsList[questionComment.id].isExpand && (
+              {postCommentsTracker[postComment.id] &&
+                postCommentsTracker[postComment.id].isExpand && (
                   <>
                     <SVGOutlineArrowUp />
                   </>
                 )}
-              {questionCommentsList[questionComment.id] &&
-                !questionCommentsList[questionComment.id].isExpand && (
+              {postCommentsTracker[postComment.id] &&
+                !postCommentsTracker[postComment.id].isExpand && (
                   <>
                     <SVGOulineArrowDown />
                   </>
                 )}
               <span>
-                {questionComment.comments_count}{' '}
-                {questionComment.comments_count > 1 ? 'replies' : 'reply'}
+                {postComment.comments_count}{' '}
+                {postComment.comments_count > 1 ? 'replies' : 'reply'}
               </span>
             </Button>
           </div>
         )}
       </div>
-      {questionCommentsList[questionComment.id] &&
-        questionCommentsList[questionComment.id].isExpand && (
+      {postCommentsTracker[postComment.id] &&
+        postCommentsTracker[postComment.id].isExpand && (
           <div className={`flex w-full flex-col gap-4 pl-4`}>
-            {questionCommentsList[questionComment.id].comments.map(
-              (_questionComment, index) => (
-                <QuestionComment
+            {postCommentsTracker[postComment.id].comments.map(
+              (_postComment, index) => (
+                <PostComment
                   key={index}
-                  questionComment={_questionComment}
-                  questionCommentsList={questionCommentsList}
-                  expandCollapseComments={expandCollapseComments}
-                  showLink={_questionComment.id !== questionComment.id}
+                  postComment={_postComment}
+                  postCommentsTracker={postCommentsTracker}
+                  expandCollapsePostComments={expandCollapsePostComments}
+                  showLink={_postComment.id !== postComment.id}
                 />
               )
             )}
-            {questionCommentsList[questionComment.id].hasMore && (
+            {postCommentsTracker[postComment.id].hasMore && (
               <div className="self-start">
                 <Button
                   handleClick={async () =>
-                    await showMoreComments(questionComment.id)
+                    await showMorePostComments(postComment.id)
                   }
                 >
                   <SVGOutlineCornerDownRightArrow />
@@ -139,4 +138,4 @@ function QuestionComment({
   );
 }
 
-export default QuestionComment;
+export default PostComment;

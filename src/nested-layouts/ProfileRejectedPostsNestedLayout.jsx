@@ -1,9 +1,7 @@
 import { useContext, useEffect, useState, useRef } from 'react';
 import { useLocation, useParams, useOutletContext } from 'react-router';
-import {
-  getRejectedPostsByProfileId,
-  getProfileByUsername,
-} from '../common/supabase.js';
+import { getProfileByUsername } from '../common/supabase.js';
+import { getRejectedPostsByProfileId } from '../common/database/posts.js';
 import { ExploreContext, UserContext } from '../common/contexts.js';
 
 import Loading from '../components/Loading.jsx';
