@@ -8,12 +8,12 @@ import SVGOutlineCornerDownRightArrow from './svgs/outline/SVGOutlineCornerDownR
 import { BUTTON_COLOR } from '../common/enums';
 import { Link } from 'react-router';
 
-function PostComment({
-  postComment,
+function Comment({
+  comment,
   elementRef,
-  postCommentsTracker,
-  expandCollapsePostComments,
-  showMorePostComments,
+  commentsTracker,
+  expandCollapseComments,
+  showMoreComments,
   showLink,
 }) {
   const { user } = useContext(UserContext);
@@ -24,36 +24,36 @@ function PostComment({
       <div className="flex w-full flex-col gap-4 whitespace-nowrap sm:whitespace-normal">
         {showLink && (
           <Link
-            to={`/post/comment/${postComment.id}`}
+            to={`comment/${comment.id}`}
             className="flex w-full flex-col gap-4 whitespace-nowrap rounded-lg border-2 border-neutral-700 p-2 hover:border-white focus:border-2 focus:border-white focus:outline-none focus:ring-0 sm:whitespace-normal"
-            state={{ postComment }}
+            state={{ comment }}
           >
             <div className="flex w-full gap-4">
               <p className="text-xs">
-                {postComment.is_anonymous
+                {comment.is_anonymous
                   ? 'Anonymous'
-                  : postComment.user.username}
+                  : comment.user.username}
               </p>
               <p className="text-xs text-neutral-700">
-                {getDate(postComment.created_at, true)}
+                {getDate(comment.created_at, true)}
               </p>
             </div>
-            <p>{postComment.description}</p>
+            <p>{comment.description}</p>
           </Link>
         )}
         {!showLink && (
           <div className="flex w-full flex-col gap-4 whitespace-nowrap sm:whitespace-normal">
             <div className="flex w-full gap-4">
               <p className="text-xs">
-                {postComment.is_anonymous
+                {comment.is_anonymous
                   ? 'Anonymous'
-                  : postComment.user.username}
+                  : comment.user.username}
               </p>
               <p className="text-xs text-neutral-700">
-                {getDate(postComment.created_at, true)}
+                {getDate(comment.created_at, true)}
               </p>
             </div>
-            <p>{postComment.description}</p>
+            <p>{comment.description}</p>
           </div>
         )}
         {user && (
@@ -62,10 +62,10 @@ function PostComment({
               buttonColor={BUTTON_COLOR.BLUE}
               handleClick={() => {
                 setShowModal({
-                  type: 'POST_COMMENT_MODAL',
+                  type: 'COMMENT_MODAL',
                   data: {
-                    parentPostCommentId: postComment.id,
-                    postId: postComment.post.id,
+                    parentCommentId: comment.id,
+                    postId: comment.post.id,
                   },
                 });
               }}
@@ -74,57 +74,57 @@ function PostComment({
             </Button>
           </div>
         )}
-        {postComment.comments_count > 0 && (
+        {comment.comments_count > 0 && (
           <div className="self-start">
             <Button
               handleClick={async () => {
-                await expandCollapsePostComments(postComment.id);
+                await expandCollapseComments(comment.id);
               }}
             >
-              {!postCommentsTracker[postComment.id] && (
+              {!commentsTracker[comment.id] && (
                 <>
                   <SVGOulineArrowDown />
                 </>
               )}
-              {postCommentsTracker[postComment.id] &&
-                postCommentsTracker[postComment.id].isExpand && (
+              {commentsTracker[comment.id] &&
+                commentsTracker[comment.id].isExpand && (
                   <>
                     <SVGOutlineArrowUp />
                   </>
                 )}
-              {postCommentsTracker[postComment.id] &&
-                !postCommentsTracker[postComment.id].isExpand && (
+              {commentsTracker[comment.id] &&
+                !commentsTracker[comment.id].isExpand && (
                   <>
                     <SVGOulineArrowDown />
                   </>
                 )}
               <span>
-                {postComment.comments_count}{' '}
-                {postComment.comments_count > 1 ? 'replies' : 'reply'}
+                {comment.comments_count}{' '}
+                {comment.comments_count > 1 ? 'replies' : 'reply'}
               </span>
             </Button>
           </div>
         )}
       </div>
-      {postCommentsTracker[postComment.id] &&
-        postCommentsTracker[postComment.id].isExpand && (
+      {commentsTracker[comment.id] &&
+        commentsTracker[comment.id].isExpand && (
           <div className={`flex w-full flex-col gap-4 pl-4`}>
-            {postCommentsTracker[postComment.id].comments.map(
-              (_postComment, index) => (
-                <PostComment
+            {commentsTracker[comment.id].comments.map(
+              (_comment, index) => (
+                <Comment
                   key={index}
-                  postComment={_postComment}
-                  postCommentsTracker={postCommentsTracker}
-                  expandCollapsePostComments={expandCollapsePostComments}
-                  showLink={_postComment.id !== postComment.id}
+                  comment={_comment}
+                  commentsTracker={commentsTracker}
+                  expandCollapseComments={expandCollapseComments}
+                  showLink={_comment.id !== comment.id}
                 />
               )
             )}
-            {postCommentsTracker[postComment.id].hasMore && (
+            {commentsTracker[comment.id].hasMore && (
               <div className="self-start">
                 <Button
                   handleClick={async () =>
-                    await showMorePostComments(postComment.id)
+                    await showMoreComments(comment.id)
                   }
                 >
                   <SVGOutlineCornerDownRightArrow />
@@ -138,4 +138,4 @@ function PostComment({
   );
 }
 
-export default PostComment;
+export default Comment;

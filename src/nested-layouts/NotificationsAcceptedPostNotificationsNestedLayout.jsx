@@ -125,7 +125,7 @@ function NotificationsAcceptedPostNotificationsNestedLayout() {
               </p>
               <p>Your post has been accepted!</p>
               <Link
-                to={`/post/${notification.post_id.id}`}
+                to={`/post/${notification.post.id}`}
                 className="underline hover:text-sky-500"
               >
                 View Post

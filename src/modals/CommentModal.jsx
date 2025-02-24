@@ -8,23 +8,23 @@ import Toggle from '../components/Toggle';
 
 const descriptionCharacterLimit = 2000;
 
-function PostCommentModal() {
+function CommentModal() {
   const { user } = useContext(UserContext);
   const { showModal, setShowModal } = useContext(ModalContext);
 
-  const [isAddingPostComment, setIsAddingPostComment] = useState(false);
+  const [isAddingComment, setIsAddingComment] = useState(false);
 
   const [description, setDescription] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(true);
 
-  async function addPostComment() {
-    setIsAddingPostComment(true);
+  async function addComment() {
+    setIsAddingComment(true);
     const { data, error } = await supabase
-      .from('post_comments')
+      .from('comments')
       .insert({
         user_id: user.id,
         post_id: showModal.data.postId,
-        parent_post_comment_id: showModal.data.parentPostCommentId,
+        parent_comment_id: showModal.data.parentCommentId,
         description,
         is_anonymous: isAnonymous,
       })
@@ -34,15 +34,15 @@ function PostCommentModal() {
       console.log(error);
     } else {
       await supabase.rpc('increment', {
-        table_name: 'post_comments',
-        row_id: showModal.data.parentPostCommentId
-          ? showModal.data.parentPostCommentId
+        table_name: 'comments',
+        row_id: showModal.data.parentCommentId
+          ? showModal.data.parentCommentId
           : showModal.data.postId,
         row_column: 'comments_count',
         increment_amount: 1,
       });
     }
-    setIsAddingPostComment(false);
+    setIsAddingComment(false);
     setDescription('');
     setIsAnonymous(true);
     setShowModal({
@@ -56,8 +56,8 @@ function PostCommentModal() {
       <h1 className="text-2xl font-bold">New Comment</h1>
       <div className="flex flex-col gap-2">
         <p>Post: {showModal.data.postId}</p>
-        {showModal.data.parentPostCommentId && (
-          <p>Comment: {showModal.data.parentPostCommentId}</p>
+        {showModal.data.parentCommentId && (
+          <p>Comment: {showModal.data.parentCommentId}</p>
         )}
       </div>
       <Toggle
@@ -79,12 +79,12 @@ function PostCommentModal() {
         <Button handleClick={() => setDescription('')}>Clear</Button>
         <Button
           isDisabled={
-            isAddingPostComment ||
+            isAddingComment ||
             description === '' ||
             description.length > descriptionCharacterLimit
           }
-          isLoading={isAddingPostComment}
-          handleClick={async () => await addPostComment()}
+          isLoading={isAddingComment}
+          handleClick={async () => await addComment()}
           isOutline={true}
         >
           Submit
@@ -94,4 +94,4 @@ function PostCommentModal() {
   );
 }
 
-export default PostCommentModal;
+export default CommentModal;

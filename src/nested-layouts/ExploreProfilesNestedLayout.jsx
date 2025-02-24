@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import { ExploreContext, ScrollContext } from '../common/contexts';
 import Loaded from '../components/Loaded';
 import Loading from '../components/Loading';
-import { getProfiles } from '../common/supabase';
+import { getProfiles } from '../common/database/profiles';
 import { useElementIntersection } from '../common/hooks';
 
 function ExploreProfilesNestedLayout() {

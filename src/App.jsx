@@ -15,7 +15,7 @@ import { useElementIntersection } from './common/hooks.js';
 import { supabase } from './common/supabase';
 import { getNotificationsCountByProfileId } from './common/database/notifications.js';
 import { getPendingPostsCount } from './common/database/posts.js';
-import PostCommentModal from './modals/PostCommentModal.jsx';
+import CommentModal from './modals/CommentModal.jsx';
 import Loading from './components/Loading.jsx';
 import NavBar from './components/NavBar';
 import NavBarMobileTop from './components/NavBarMobileTop.jsx';
@@ -35,7 +35,7 @@ import SettingsLayout from './layouts/SettingsLayout.jsx';
 import SignUpLayout from './layouts/SignUpLayout.jsx';
 
 import PostLayout from './layouts/PostLayout.jsx';
-import ProfileNestedLayout from './nested-layouts/ProfileNestedLayout.jsx';
+import ProfileLayout from './layouts/ProfileLayout.jsx';
 
 import ProfileAcceptedPostsNestedLayout from './nested-layouts/ProfileAcceptedPostsNestedLayout.jsx';
 import ProfilePendingPostsNestedLayout from './nested-layouts/ProfilePendingPostsNestedLayout.jsx';
@@ -53,7 +53,7 @@ import NotificationsViewsNestedLayout from './nested-layouts/NotificationsViewsN
 import NotificationsCommentsNestedLayout from './nested-layouts/NotificationsCommentsNestedLayout.jsx';
 import NotificationsFollowersNestedLayout from './nested-layouts/NotificationsFollowersNestedLayout.jsx';
 
-import PostCommentLayout from './layouts/PostCommentLayout.jsx';
+import CommentLayout from './layouts/CommentLayout.jsx';
 
 import AdminPendingPostsNestedLayout from './nested-layouts/AdminPendingPostsNestedLayout.jsx';
 import AdminAcceptedPostsNestedLayout from './nested-layouts/AdminAcceptedPostsNestedLayout.jsx';
@@ -70,22 +70,6 @@ function App() {
   const [session, setSession] = useState(null);
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
-  const [screenResize, setScreenResize] = useState(0);
-  const [showModal, setShowModal] = useState({
-    type: null,
-    data: null,
-  });
-  const [isFullscreen, setIsFullscreen] = useState(false);
-
-  const [newNotification, setNewNotification] = useState(null);
-  const [notificationsCount, setNotificationsCount] = useState(0);
-  const [isLoadingNotificationsCount, setIsLoadingNotificationsCount] =
-    useState(false);
-
-  const [newPendingPost, setNewPendingPost] = useState(null);
-  const [pendingPostsCount, setPendingPostsCount] = useState(0);
-  const [isLoadingPendingPostsCount, setIsLoadingPendingPostsCount] =
-    useState(false);
 
   const scrollRef = useRef({
     exploreAcceptedImagePosts: {
@@ -104,7 +88,74 @@ function App() {
       scrollX: 0,
       scrollY: 0,
     },
+    profile: {
+      pendingPosts: {
+        scrollX: 0,
+        scrollY: 0,
+      },
+      acceptedPosts: {
+        scrollX: 0,
+        scrollY: 0,
+      },
+      rejectedPosts: {
+        scrollX: 0,
+        scrollY: 0,
+      },
+      archivedPosts: {
+        scrollX: 0,
+        scrollY: 0,
+      },
+      viewedPosts: {
+        scrollX: 0,
+        scrollY: 0,
+      },
+      pendingComments: {
+        scrollX: 0,
+        scrollY: 0,
+      },
+      acceptedComments: {
+        scrollX: 0,
+        scrollY: 0,
+      },
+      rejectedComments: {
+        scrollX: 0,
+        scrollY: 0,
+      },
+      archivedComments: {
+        scrollX: 0,
+        scrollY: 0,
+      },
+      viewedComments: {
+        scrollX: 0,
+        scrollY: 0,
+      },
+      followers: {
+        scrollX: 0,
+        scrollY: 0,
+      },
+      following: {
+        scrollX: 0,
+        scrollY: 0,
+      },
+    }
   });
+
+  const [screenResize, setScreenResize] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showModal, setShowModal] = useState({
+    type: null,
+    data: null,
+  });
+
+  const [newNotification, setNewNotification] = useState(null);
+  const [notificationsCount, setNotificationsCount] = useState(0);
+  const [isLoadingNotificationsCount, setIsLoadingNotificationsCount] =
+    useState(false);
+
+  const [newPendingPost, setNewPendingPost] = useState(null);
+  const [pendingPostsCount, setPendingPostsCount] = useState(0);
+  const [isLoadingPendingPostsCount, setIsLoadingPendingPostsCount] =
+    useState(false);
 
   const [exploreAcceptedImagePosts, setExploreAcceptedImagePosts] = useState(
     []
@@ -146,6 +197,12 @@ function App() {
   const [exploreHasMoreProfiles, setExploreHasMoreProfiles] = useState(true);
   const [exploreHasInitializedProfiles, setExploreHasInitializedProfiles] =
     useState(false);
+
+
+
+
+
+
 
   const [profileAcceptedPosts, setProfileAcceptedPosts] = useState([]);
   const [profileIsLoadingAcceptedPosts, setProfileIsLoadingAcceptedPosts] =
@@ -224,6 +281,85 @@ function App() {
   const [profileElementRefViewedPosts, profileIntersectingElementViewedPosts] =
     useElementIntersection();
 
+
+
+    const [profileAcceptedComments, setProfileAcceptedComments] = useState([]);
+  const [profileIsLoadingAcceptedComments, setProfileIsLoadingAcceptedComments] =
+    useState(false);
+  const [profileHasMoreAcceptedComments, setProfileHasMoreAcceptedComments] =
+    useState(true);
+  const [
+    profileHasInitializedAcceptedComments,
+    setProfileHasInitializedAcceptedComments,
+  ] = useState(false);
+  const [profileScrollYAcceptedComments, setProfileScrollYAcceptedComments] =
+    useState(0);
+  const [
+    profileElementRefAcceptedComments,
+    profileIntersectingElementAcceptedComments,
+  ] = useElementIntersection();
+
+  const [profilePendingComments, setProfilePendingComments] = useState([]);
+  const [profileIsLoadingPendingComments, setProfileIsLoadingPendingComments] =
+    useState(false);
+  const [profileHasMorePendingComments, setProfileHasMorePendingComments] =
+    useState(true);
+  const [
+    profileHasInitializedPendingComments,
+    setProfileHasInitializedPendingComments,
+  ] = useState(false);
+  const [profileScrollYPendingComments, setProfileScrollYPendingComments] =
+    useState(0);
+  const [
+    profileElementRefPendingComments,
+    profileIntersectingElementPendingComments,
+  ] = useElementIntersection();
+
+  const [profileRejectedComments, setProfileRejectedComments] = useState([]);
+  const [profileIsLoadingRejectedComments, setProfileIsLoadingRejectedComments] =
+    useState(false);
+  const [profileHasMoreRejectedComments, setProfileHasMoreRejectedComments] =
+    useState(true);
+  const [
+    profileHasInitializedRejectedComments,
+    setProfileHasInitializedRejectedComments,
+  ] = useState(false);
+  const [profileScrollYRejectedComments, setProfileScrollYRejectedComments] =
+    useState(0);
+  const [
+    profileElementRefRejectedComments,
+    profileIntersectingElementRejectedComments,
+  ] = useElementIntersection();
+
+  const [profileArchivedComments, setProfileArchivedComments] = useState([]);
+  const [profileIsLoadingArchivedComments, setProfileIsLoadingArchivedComments] =
+    useState(false);
+  const [profileHasMoreArchivedComments, setProfileHasMoreArchivedComments] =
+    useState(true);
+  const [
+    profileHasInitializedArchivedComments,
+    setProfileHasInitializedArchivedComments,
+  ] = useState(false);
+  const [profileScrollYArchivedComments, setProfileScrollYArchivedComments] =
+    useState(0);
+  const [
+    profileElementRefArchivedComments,
+    profileIntersectingElementArchivedComments,
+  ] = useElementIntersection();
+
+  const [profileViewedComments, setProfileViewedComments] = useState([]);
+  const [profileIsLoadingViewedComments, setProfileIsLoadingViewedComments] =
+    useState(false);
+  const [profileHasMoreViewedComments, setProfileHasMoreViewedComments] =
+    useState(true);
+  const [
+    profileHasInitializedViewedComments,
+    setProfileHasInitializedViewedComments,
+  ] = useState(false);
+  const [profileScrollYViewedComments, setProfileScrollYViewedComments] = useState(0);
+  const [profileElementRefViewedComments, profileIntersectingElementViewedComments] =
+    useElementIntersection();
+
   const [profileFollowers, setProfileFollowers] = useState([]);
   const [profileIsLoadingFollowers, setProfileIsLoadingFollowers] =
     useState(false);
@@ -243,6 +379,12 @@ function App() {
   const [profileScrollYFollowing, setProfileScrollYFollowing] = useState(0);
   const [profileElementRefFollowing, profileIntersectingElementFollowing] =
     useElementIntersection();
+
+
+
+
+
+
 
   async function getUser(session, abortController) {
     const { data, error } = await supabase
@@ -295,6 +437,10 @@ function App() {
   useEffect(() => {
     setNotificationsCount(notificationsCount + 1);
   }, [newNotification]);
+
+  useEffect(() => {
+    setPendingPostsCount(pendingPostsCount + 1);
+  }, [newPendingPost]);
 
   useEffect(() => {
     async function initialize() {
@@ -489,6 +635,68 @@ function App() {
                         setProfileScrollYViewedPosts,
                         profileElementRefViewedPosts,
                         profileIntersectingElementViewedPosts,
+
+                        profileAcceptedComments,
+                        setProfileAcceptedComments,
+                        profileIsLoadingAcceptedComments,
+                        setProfileIsLoadingAcceptedComments,
+                        profileHasMoreAcceptedComments,
+                        setProfileHasMoreAcceptedComments,
+                        profileHasInitializedAcceptedComments,
+                        setProfileHasInitializedAcceptedComments,
+                        profileScrollYAcceptedComments,
+                        setProfileScrollYAcceptedComments,
+                        profileElementRefAcceptedComments,
+                        profileIntersectingElementAcceptedComments,
+                        profilePendingComments,
+                        setProfilePendingComments,
+                        profileIsLoadingPendingComments,
+                        setProfileIsLoadingPendingComments,
+                        profileHasMorePendingComments,
+                        setProfileHasMorePendingComments,
+                        profileHasInitializedPendingComments,
+                        setProfileHasInitializedPendingComments,
+                        profileScrollYPendingComments,
+                        setProfileScrollYPendingComments,
+                        profileElementRefPendingComments,
+                        profileIntersectingElementPendingComments,
+                        profileRejectedComments,
+                        setProfileRejectedComments,
+                        profileIsLoadingRejectedComments,
+                        setProfileIsLoadingRejectedComments,
+                        profileHasMoreRejectedComments,
+                        setProfileHasMoreRejectedComments,
+                        profileHasInitializedRejectedComments,
+                        setProfileHasInitializedRejectedComments,
+                        profileScrollYRejectedComments,
+                        setProfileScrollYRejectedComments,
+                        profileElementRefRejectedComments,
+                        profileIntersectingElementRejectedComments,
+                        profileArchivedComments,
+                        setProfileArchivedComments,
+                        profileIsLoadingArchivedComments,
+                        setProfileIsLoadingArchivedComments,
+                        profileHasMoreArchivedComments,
+                        setProfileHasMoreArchivedComments,
+                        profileHasInitializedArchivedComments,
+                        setProfileHasInitializedArchivedComments,
+                        profileScrollYArchivedComments,
+                        setProfileScrollYArchivedComments,
+                        profileElementRefArchivedComments,
+                        profileIntersectingElementArchivedComments,
+                        profileViewedComments,
+                        setProfileViewedComments,
+                        profileIsLoadingViewedComments,
+                        setProfileIsLoadingViewedComments,
+                        profileHasMoreViewedComments,
+                        setProfileHasMoreViewedComments,
+                        profileHasInitializedViewedComments,
+                        setProfileHasInitializedViewedComments,
+                        profileScrollYViewedComments,
+                        setProfileScrollYViewedComments,
+                        profileElementRefViewedComments,
+                        profileIntersectingElementViewedComments,
+
                         profileFollowers,
                         setProfileFollowers,
                         profileIsLoadingFollowers,
@@ -526,8 +734,8 @@ function App() {
 
                             {showModal.type === 'POST_MODAL' && <PostModal />}
 
-                            {showModal.type === 'POST_COMMENT_MODAL' && (
-                              <PostCommentModal />
+                            {showModal.type === 'COMMENT_MODAL' && (
+                              <CommentModal />
                             )}
 
                             {showModal.type === 'CONFIRM_MODAL' && (
@@ -540,6 +748,33 @@ function App() {
                             className={`relative left-0 top-0 mb-[76px] flex min-h-screen w-full flex-col gap-4 p-4 sm:mb-0 sm:pl-[300px]`}
                           >
                             <Routes>
+                              <Route
+                                path="admin"
+                                element={
+                                  user && user.user_role === 'SUPER_ADMIN' ? (
+                                    <AdminLayout />
+                                  ) : (
+                                    <ForbiddenLayout />
+                                  )
+                                }
+                              >
+                                <Route
+                                  index
+                                  element={<AdminPendingPostsNestedLayout />}
+                                />
+                                <Route
+                                  path="pending-posts"
+                                  element={<AdminPendingPostsNestedLayout />}
+                                />
+                                <Route
+                                  path="accepted-posts"
+                                  element={<AdminAcceptedPostsNestedLayout />}
+                                />
+                                <Route
+                                  path="rejected-posts"
+                                  element={<AdminRejectedPostsNestedLayout />}
+                                />
+                              </Route>
                               <Route path="/" element={<HomeLayout />} />
                               <Route
                                 path="log-in"
@@ -567,7 +802,6 @@ function App() {
                                   )
                                 }
                               />
-
                               <Route path="explore" element={<ExploreLayout />}>
                                 <Route
                                   index
@@ -593,16 +827,15 @@ function App() {
                                 />
                                 <Route path="*" element={<NotFoundLayout />} />
                               </Route>
-
                               <Route path="post/:id" element={<PostLayout />} />
                               <Route
-                                path="post/comment/:id"
-                                element={<PostCommentLayout />}
+                                path="comment/:id"
+                                element={<CommentLayout />}
                               />
 
                               <Route
-                                path="/profile/:username"
-                                element={<ProfileNestedLayout />}
+                                path="profile/:username"
+                                element={<ProfileLayout />}
                               >
                                 <Route
                                   index
@@ -638,7 +871,6 @@ function App() {
                                 />
                                 <Route path="*" element={<NotFoundLayout />} />
                               </Route>
-
                               <Route
                                 path="notifications"
                                 element={
@@ -695,40 +927,10 @@ function App() {
                                 />
                                 <Route path="*" element={<NotFoundLayout />} />
                               </Route>
-
                               <Route
                                 path="settings"
                                 element={<SettingsLayout />}
                               />
-
-                              <Route
-                                path="admin"
-                                element={
-                                  user && user.user_role === 'SUPER_ADMIN' ? (
-                                    <AdminLayout />
-                                  ) : (
-                                    <ForbiddenLayout />
-                                  )
-                                }
-                              >
-                                <Route
-                                  index
-                                  element={<AdminPendingPostsNestedLayout />}
-                                />
-                                <Route
-                                  path="pending-posts"
-                                  element={<AdminPendingPostsNestedLayout />}
-                                />
-                                <Route
-                                  path="accepted-posts"
-                                  element={<AdminAcceptedPostsNestedLayout />}
-                                />
-                                <Route
-                                  path="rejected-posts"
-                                  element={<AdminRejectedPostsNestedLayout />}
-                                />
-                              </Route>
-
                               <Route path="*" element={<NotFoundLayout />} />
                             </Routes>
                           </main>
@@ -750,12 +952,21 @@ export default App;
 
 /* 
     BACKLOG:
-    - delete post_comment
-    - archive, unarchive post_comment
-    - like, unlike post_comment
 
-    - admin - how which admin (user) accepted/rejected content in accepted and rejected page views
+    - profile page
+    - avatars table and uploads
 
+    - comment views
+    - comment likes
+
+
+
+    - delete comment
+    - archive, unarchive comment
+
+    - admin - show which admin (user) accepted/rejected content in accepted and rejected page views
+
+    - FIX: convert any contexts that are used in very few places to state and pass as props instead
     - FIX: add gap between navbar and main page
     - FIX: make sure all state and url state is up to date whenever changes are made - we do not want stale data
     - FIX: explore posts page overflows x
@@ -794,6 +1005,9 @@ export default App;
     - show preview of post before submission
     - @ mentions
 
+
+
+    FUTURE:
     - delete account - remove all of a user's data
     - deactivate account - mark user as 'inactive' and keep all content, simply hide the user info from posts
     - verified users, banned users
@@ -803,12 +1017,8 @@ export default App;
     - SMTP server configuration - https://supabase.com/docs/guides/auth/auth-smtp
     - auth email templates configuration - https://supabase.com/docs/guides/auth/auth-email-templates
     - rate limit supabase requests for data and storage to avoid potential spam - ex: when a user constantly refreshes the page
-
-
-
-
-    FUTURE:
-    - allow post/question creators to moderate their question_comments/post_comments
+    ---
+    - allow post/question creators to moderate their question_comments/comments
     - video play and pause with space bar
     - pin content
     - scheduled content

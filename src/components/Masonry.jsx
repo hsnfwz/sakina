@@ -90,7 +90,7 @@ function Masonry({ elementRef, data }) {
                       autoPlayCarousel={true}
                     />
                   )}
-                  {post.type !== 'IMAGE' && (
+                  {post.type === 'VIDEO' && (
                     <VideoView
                       images={post.images}
                       videos={post.videos}
@@ -99,7 +99,6 @@ function Masonry({ elementRef, data }) {
                   )}
                   <div className="z-3 absolute bottom-0 flex w-full flex-col justify-end gap-4 rounded-b-lg bg-black/50 p-4 opacity-0 backdrop-blur group-hover:opacity-100">
                     <h1 className="text-white">{post.title}</h1>
-                    {post.status === 'ACCEPTED' && (
                       <div className="flex items-center gap-2">
                         {post.user.avatar_file && (
                           <img
@@ -115,7 +114,6 @@ function Masonry({ elementRef, data }) {
                           )}
                         </h2>
                       </div>
-                    )}
                   </div>
                 </Link>
               ))}

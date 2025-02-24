@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { searchProfiles } from '../common/supabase.js';
+import { searchProfiles } from '../common/database/profiles.js';
 import { searchAcceptedPosts } from '../common/database/posts.js';
 import IconButton from './IconButton.jsx';
 import SearchBarResults from './SearchBarResults.jsx';

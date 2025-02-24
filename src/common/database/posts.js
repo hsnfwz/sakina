@@ -192,7 +192,7 @@ async function getAcceptedPostsByProfileId(
   try {
     const { data, error } = await supabase
       .from('posts')
-      .select('*, user_id(*)')
+      .select('*, user:user_id(*)')
       .eq('status', 'ACCEPTED')
       .eq('is_archived', false)
       .eq('user_id', profileId)
@@ -250,7 +250,7 @@ async function getRejectedPostsByProfileId(
   try {
     const { data, error } = await supabase
       .from('posts')
-      .select('*, user_id(*)')
+      .select('*, user:user_id(*)')
       .eq('status', 'REJECTED')
       .eq('is_archived', false)
       .eq('user_id', profileId)
@@ -279,7 +279,7 @@ async function getArchivedPostsByProfileId(
   try {
     const { data, error } = await supabase
       .from('posts')
-      .select('*, user_id(*)')
+      .select('*, user:user_id(*)')
       .eq('is_archived', false)
       .eq('user_id', profileId)
       .order(orderBy.columnName, { ascending: orderBy.isAscending })

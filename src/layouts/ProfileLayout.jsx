@@ -1,12 +1,14 @@
 import { useContext, useEffect, useState } from 'react';
-import { Link, Outlet, useLocation, useParams } from 'react-router';
-import { getProfileByUsername, supabase } from '../common/supabase.js';
+import { Outlet, useLocation, useParams } from 'react-router';
+import { supabase } from '../common/supabase.js';
+import { getProfileByUsername } from '../common/database/profiles.js'
 import { UserContext } from '../common/contexts.js';
 import Loading from '../components/Loading.jsx';
 import Button from '../components/Button.jsx';
 import { useElementIntersection } from '../common/hooks.js';
+import NavPanel from '../components/NavPanel.jsx';
 
-function ProfileNestedLayout() {
+function ProfileLayout() {
   const { user } = useContext(UserContext);
   const location = useLocation();
   const { username } = useParams();
@@ -91,6 +93,83 @@ function ProfileNestedLayout() {
   const [profileElementRefViewedPosts, profileIntersectingElementViewedPosts] =
     useElementIntersection();
 
+    const [profileAcceptedComments, setProfileAcceptedComments] = useState([]);
+  const [profileIsLoadingAcceptedComments, setProfileIsLoadingAcceptedComments] =
+    useState(false);
+  const [profileHasMoreAcceptedComments, setProfileHasMoreAcceptedComments] =
+    useState(true);
+  const [
+    profileHasInitializedAcceptedComments,
+    setProfileHasInitializedAcceptedComments,
+  ] = useState(false);
+  const [profileScrollYAcceptedComments, setProfileScrollYAcceptedComments] =
+    useState(0);
+  const [
+    profileElementRefAcceptedComments,
+    profileIntersectingElementAcceptedComments,
+  ] = useElementIntersection();
+
+  const [profilePendingComments, setProfilePendingComments] = useState([]);
+  const [profileIsLoadingPendingComments, setProfileIsLoadingPendingComments] =
+    useState(false);
+  const [profileHasMorePendingComments, setProfileHasMorePendingComments] =
+    useState(true);
+  const [
+    profileHasInitializedPendingComments,
+    setProfileHasInitializedPendingComments,
+  ] = useState(false);
+  const [profileScrollYPendingComments, setProfileScrollYPendingComments] =
+    useState(0);
+  const [
+    profileElementRefPendingComments,
+    profileIntersectingElementPendingComments,
+  ] = useElementIntersection();
+
+  const [profileRejectedComments, setProfileRejectedComments] = useState([]);
+  const [profileIsLoadingRejectedComments, setProfileIsLoadingRejectedComments] =
+    useState(false);
+  const [profileHasMoreRejectedComments, setProfileHasMoreRejectedComments] =
+    useState(true);
+  const [
+    profileHasInitializedRejectedComments,
+    setProfileHasInitializedRejectedComments,
+  ] = useState(false);
+  const [profileScrollYRejectedComments, setProfileScrollYRejectedComments] =
+    useState(0);
+  const [
+    profileElementRefRejectedComments,
+    profileIntersectingElementRejectedComments,
+  ] = useElementIntersection();
+
+  const [profileArchivedComments, setProfileArchivedComments] = useState([]);
+  const [profileIsLoadingArchivedComments, setProfileIsLoadingArchivedComments] =
+    useState(false);
+  const [profileHasMoreArchivedComments, setProfileHasMoreArchivedComments] =
+    useState(true);
+  const [
+    profileHasInitializedArchivedComments,
+    setProfileHasInitializedArchivedComments,
+  ] = useState(false);
+  const [profileScrollYArchivedComments, setProfileScrollYArchivedComments] =
+    useState(0);
+  const [
+    profileElementRefArchivedComments,
+    profileIntersectingElementArchivedComments,
+  ] = useElementIntersection();
+
+  const [profileViewedComments, setProfileViewedComments] = useState([]);
+  const [profileIsLoadingViewedComments, setProfileIsLoadingViewedComments] =
+    useState(false);
+  const [profileHasMoreViewedComments, setProfileHasMoreViewedComments] =
+    useState(true);
+  const [
+    profileHasInitializedViewedComments,
+    setProfileHasInitializedViewedComments,
+  ] = useState(false);
+  const [profileScrollYViewedComments, setProfileScrollYViewedComments] = useState(0);
+  const [profileElementRefViewedComments, profileIntersectingElementViewedComments] =
+    useElementIntersection();
+
   const [profileFollowers, setProfileFollowers] = useState([]);
   const [profileIsLoadingFollowers, setProfileIsLoadingFollowers] =
     useState(false);
@@ -169,61 +248,65 @@ function ProfileNestedLayout() {
               </Button>
             )}
           </div>
-          <div className="flex flex-col gap-2 sm:hidden">
-            <Link
-              className={`${location.pathname === `/profile/${username}` || location.pathname.includes('accepted-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`accepted-posts`}
-              state={{ profile }}
-            >
-              Posts
-            </Link>
-            {user && profile.id === user.id && (
-              <>
-                <Link
-                  className={`${location.pathname.includes('pending-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-                  to={`pending-posts`}
-                  state={{ profile }}
-                >
-                  Pending Posts
-                </Link>
-                <Link
-                  className={`${location.pathname.includes('rejected-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-                  to={`rejected-posts`}
-                  state={{ profile }}
-                >
-                  Rejected Posts
-                </Link>
-                <Link
-                  className={`${location.pathname.includes('archived-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-                  to={`archived-posts`}
-                  state={{ profile }}
-                >
-                  Archived Posts
-                </Link>
-                <Link
-                  className={`${location.pathname.includes('viewed-posts') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-                  to={`viewed-posts`}
-                  state={{ profile }}
-                >
-                  Viewed Posts
-                </Link>
-              </>
-            )}
-            <Link
-              className={`${location.pathname.includes('followers') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`followers`}
-              state={{ profile }}
-            >
-              Followers
-            </Link>
-            <Link
-              className={`${location.pathname.includes('following') ? 'bg-sky-500 text-white' : 'bg-transparent text-sky-500'} rounded-lg border-2 border-transparent p-2 hover:border-sky-500`}
-              to={`following`}
-              state={{ profile }}
-            >
-              Following
-            </Link>
-          </div>
+          <NavPanel links={[
+            {
+              pathname: `/profile/${username}`,
+              to: 'accepted-posts',
+              state: {
+                profile,
+              },
+              label: 'Accepted Posts',
+              show: true,
+            },
+            {
+              to: 'pending-posts',
+              state: {
+                profile,
+              },
+              label: 'Pending Posts',
+              show: user && profile.id === user.id,
+            },
+            {
+              to: 'rejected-posts',
+              state: {
+                profile,
+              },
+              label: 'Rejected Posts',
+              show: user && profile.id === user.id,
+            },
+            {
+              to: 'archived-posts',
+              state: {
+                profile,
+              },
+              label: 'Archived Posts',
+              show: user && profile.id === user.id,
+            },
+            {
+              to: 'viewed-posts',
+              state: {
+                profile,
+              },
+              label: 'Viewed Posts',
+              show: user && profile.id === user.id,
+            },
+            {
+              to: 'followers',
+              state: {
+                profile,
+              },
+              label: 'Followers',
+              show: true,
+            },
+            {
+              to: 'following',
+              state: {
+                profile,
+              },
+              label: 'Following',
+              show: true,
+            },
+          ]} />
           <Outlet
             context={{
               profileAcceptedPosts,
@@ -286,6 +369,68 @@ function ProfileNestedLayout() {
               setProfileScrollYViewedPosts,
               profileElementRefViewedPosts,
               profileIntersectingElementViewedPosts,
+
+              profileAcceptedComments,
+                        setProfileAcceptedComments,
+                        profileIsLoadingAcceptedComments,
+                        setProfileIsLoadingAcceptedComments,
+                        profileHasMoreAcceptedComments,
+                        setProfileHasMoreAcceptedComments,
+                        profileHasInitializedAcceptedComments,
+                        setProfileHasInitializedAcceptedComments,
+                        profileScrollYAcceptedComments,
+                        setProfileScrollYAcceptedComments,
+                        profileElementRefAcceptedComments,
+                        profileIntersectingElementAcceptedComments,
+                        profilePendingComments,
+                        setProfilePendingComments,
+                        profileIsLoadingPendingComments,
+                        setProfileIsLoadingPendingComments,
+                        profileHasMorePendingComments,
+                        setProfileHasMorePendingComments,
+                        profileHasInitializedPendingComments,
+                        setProfileHasInitializedPendingComments,
+                        profileScrollYPendingComments,
+                        setProfileScrollYPendingComments,
+                        profileElementRefPendingComments,
+                        profileIntersectingElementPendingComments,
+                        profileRejectedComments,
+                        setProfileRejectedComments,
+                        profileIsLoadingRejectedComments,
+                        setProfileIsLoadingRejectedComments,
+                        profileHasMoreRejectedComments,
+                        setProfileHasMoreRejectedComments,
+                        profileHasInitializedRejectedComments,
+                        setProfileHasInitializedRejectedComments,
+                        profileScrollYRejectedComments,
+                        setProfileScrollYRejectedComments,
+                        profileElementRefRejectedComments,
+                        profileIntersectingElementRejectedComments,
+                        profileArchivedComments,
+                        setProfileArchivedComments,
+                        profileIsLoadingArchivedComments,
+                        setProfileIsLoadingArchivedComments,
+                        profileHasMoreArchivedComments,
+                        setProfileHasMoreArchivedComments,
+                        profileHasInitializedArchivedComments,
+                        setProfileHasInitializedArchivedComments,
+                        profileScrollYArchivedComments,
+                        setProfileScrollYArchivedComments,
+                        profileElementRefArchivedComments,
+                        profileIntersectingElementArchivedComments,
+                        profileViewedComments,
+                        setProfileViewedComments,
+                        profileIsLoadingViewedComments,
+                        setProfileIsLoadingViewedComments,
+                        profileHasMoreViewedComments,
+                        setProfileHasMoreViewedComments,
+                        profileHasInitializedViewedComments,
+                        setProfileHasInitializedViewedComments,
+                        profileScrollYViewedComments,
+                        setProfileScrollYViewedComments,
+                        profileElementRefViewedComments,
+                        profileIntersectingElementViewedComments,
+
               profileFollowers,
               setProfileFollowers,
               profileIsLoadingFollowers,
@@ -318,4 +463,4 @@ function ProfileNestedLayout() {
   );
 }
 
-export default ProfileNestedLayout;
+export default ProfileLayout;

@@ -1,9 +1,8 @@
 import { useState, useRef } from 'react';
-import { Link, useLocation, Outlet } from 'react-router';
+import { Outlet } from 'react-router';
+import NavPanel from '../components/NavPanel';
 
 function AdminLayout() {
-  const location = useLocation();
-
   const [pendingPosts, setPendingPosts] = useState([]);
   const [hasMorePendingPosts, setHasMorePendingPosts] = useState(true);
   const [pendingPostsHasInitialized, setPendingPostsHasInitialized] =
@@ -26,26 +25,24 @@ function AdminLayout() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex">
-        <Link
-          className={`${location.pathname === `/admin` || location.pathname.includes('pending-posts') ? 'border-b-sky-500' : 'border-b-transparent'} border-b-2 p-2 hover:border-b-sky-500`}
-          to={`pending-posts`}
-        >
-          Pending Posts
-        </Link>
-        <Link
-          className={`${location.pathname.includes('accepted-posts') ? 'border-b-sky-500' : 'border-b-transparent'} border-b-2 p-2 hover:border-b-sky-500`}
-          to={`accepted-posts`}
-        >
-          Accepted Posts
-        </Link>
-        <Link
-          className={`${location.pathname.includes('rejected-posts') ? 'border-b-sky-500' : 'border-b-transparent'} border-b-2 p-2 hover:border-b-sky-500`}
-          to={`rejected-posts`}
-        >
-          Rejected Posts
-        </Link>
-      </div>
+      <NavPanel links={[
+        {
+          pathname: '/admin',
+          to: 'pending-posts',
+          label: 'Pending Posts',
+          show: true,
+        },
+        {
+          to: 'accepted-posts',
+          label: 'Accepted Posts',
+          show: true,
+        },
+        {
+          to: 'rejected-posts',
+          label: 'Rejected Posts',
+          show: true,
+        },
+      ]} />
       <Outlet
         context={{
           pendingPosts,

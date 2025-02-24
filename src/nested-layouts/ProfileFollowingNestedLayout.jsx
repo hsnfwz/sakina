@@ -3,7 +3,7 @@ import { useLocation, useParams, useOutletContext } from 'react-router';
 import {
   getFollowingByProfileId,
   getProfileByUsername,
-} from '../common/supabase.js';
+} from '../common/database/profiles.js';
 import { ExploreContext, UserContext } from '../common/contexts.js';
 
 import Loading from '../components/Loading.jsx';

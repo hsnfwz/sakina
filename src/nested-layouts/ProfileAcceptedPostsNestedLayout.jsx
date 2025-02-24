@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, useRef } from 'react';
 import { useLocation, useParams, useOutletContext } from 'react-router';
-import { getProfileByUsername } from '../common/supabase.js';
+import { getProfileByUsername } from '../common/database/profiles.js';
 import { getAcceptedPostsByProfileId } from '../common/database/posts.js';
 import { ExploreContext, UserContext } from '../common/contexts.js';
 

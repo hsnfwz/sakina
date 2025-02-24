@@ -21,9 +21,6 @@ function VideoView({ images, videos, isMasonryView }) {
   const { isFullscreen } = useContext(FullscreenContext);
   const [isLoadingFile, setIsLoadingFile] = useState(true);
 
-  const fileThumbnail = images[0];
-  const fileVideo = videos[0];
-
   const [isPaused, setIsPaused] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [isDone, setIsDone] = useState(false);
@@ -71,7 +68,7 @@ function VideoView({ images, videos, isMasonryView }) {
   }, [isFullscreen]);
 
   useEffect(() => {
-    const progress = (elapsedDuration / fileVideo.duration) * 100;
+    const progress = (elapsedDuration / videos[0].duration) * 100;
     if (sliderRef.current) {
       sliderRef.current.style.background = `linear-gradient(to right, var(--color-rose-500) ${progress}%, var(--color-neutral-700) ${progress}%)`;
     }
@@ -87,8 +84,8 @@ function VideoView({ images, videos, isMasonryView }) {
       {isLoadingFile && (
         <ImageVideoViewSkeleton
           isMasonryView={isMasonryView}
-          width={fileVideo.width}
-          height={fileVideo.height}
+          width={videos[0].width}
+          height={videos[0].height}
         />
       )}
       <video
@@ -96,8 +93,8 @@ function VideoView({ images, videos, isMasonryView }) {
         width=""
         height=""
         controls={false}
-        poster={`${!isMasonryView && fileThumbnail ? `https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/images/${fileThumbnail.name}` : ''}`}
-        style={{ aspectRatio: `${fileVideo.width}/${fileVideo.height}` }}
+        poster={`${!isMasonryView && images[0] ? `https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/images/${images[0].name}` : ''}`}
+        style={{ aspectRatio: `${videos[0].width}/${videos[0].height}` }}
         className={`rounded-lg bg-black ${isLoadingFile ? 'hidden' : 'block'} full relative`}
         autoPlay={isMasonryView ? false : true}
         loop={isMasonryView ? true : false}
@@ -127,15 +124,15 @@ function VideoView({ images, videos, isMasonryView }) {
         }}
       >
         <source
-          src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/videos/${fileVideo.name}`}
+          src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/videos/${videos[0].name}`}
           type="video/mp4"
         />
         <source
-          src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/videos/${fileVideo.name}`}
+          src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/videos/${videos[0].name}`}
           type="video/m4v"
         />
         <source
-          src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/videos/${fileVideo.name}`}
+          src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/videos/${videos[0].name}`}
           type="video/mov"
         />
       </video>
@@ -144,7 +141,7 @@ function VideoView({ images, videos, isMasonryView }) {
           className={`absolute bottom-0 left-0 flex w-full flex-col gap-4 rounded-b-lg bg-black/50 p-4 backdrop-blur ${showControlsView ? 'opacity-100' : 'opacity-0'}`}
         >
           <Slider
-            max={fileVideo.duration}
+            max={videos[0].duration}
             value={elapsedDuration}
             handleInput={(event) => {
               setElapsedDuration(event.target.value);
@@ -202,7 +199,7 @@ function VideoView({ images, videos, isMasonryView }) {
             </div>
             <p>
               {formatDuration(elapsedDuration)} /{' '}
-              {formatDuration(fileVideo.duration)}
+              {formatDuration(videos[0].duration)}
             </p>
             <div className="self-end">
               <IconButton

@@ -1,10 +1,10 @@
 import { supabase } from '../supabase';
 import { ORDER_BY } from '../enums';
 
-async function getPostLike(profileId, postId) {
+async function getLike(profileId, postId) {
   try {
     const { data, error } = await supabase
-      .from('post_likes')
+      .from('likes')
       .select('*')
       .eq('user_id', profileId)
       .eq('post_id', postId);
@@ -19,10 +19,10 @@ async function getPostLike(profileId, postId) {
   }
 }
 
-async function addPostLike(profileId, postId) {
+async function addLike(profileId, postId) {
   try {
     const { data, error } = await supabase
-      .from('post_likes')
+      .from('likes')
       .insert({ user_id: profileId, post_id: postId })
       .select('*');
 
@@ -36,9 +36,9 @@ async function addPostLike(profileId, postId) {
   }
 }
 
-async function removePostLike(id) {
+async function removeLike(id) {
   try {
-    const { error } = await supabase.from('post_likes').delete().eq('id', id);
+    const { error } = await supabase.from('likes').delete().eq('id', id);
 
     if (error) throw error;
   } catch (error) {
@@ -46,4 +46,4 @@ async function removePostLike(id) {
   }
 }
 
-export { getPostLike, addPostLike, removePostLike };
+export { getLike, addLike, removeLike };

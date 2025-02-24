@@ -1,11 +1,11 @@
 import { useEffect, useContext, useRef, useState } from 'react';
-import { useLocation, useParams } from 'react-router';
+import { useLocation, useParams, Link } from 'react-router';
 import { ExploreContext, ModalContext, UserContext } from '../common/contexts';
 import {
-  getPostLike,
-  addPostLike,
-  removePostLike,
-} from '../common/database/post-likes';
+  getLike,
+  addLike,
+  removeLike,
+} from '../common/database/likes.js';
 import {
   getAcceptedPostById,
   removePost,
@@ -13,16 +13,16 @@ import {
   removeStorageObjectsByPostId,
 } from '../common/database/posts';
 import {
-  getPostCommentsByParentPostCommentId,
-  getPostCommentsByPostId,
-} from '../common/database/post-comments';
+  getCommentsByParentCommentId,
+  getCommentsByPostId,
+} from '../common/database/comments.js';
 import ImageView from '../components/ImageView';
 import Loading from '../components/Loading';
 import VideoView from '../components/VideoView';
 import Button from '../components/Button';
 import { BUTTON_COLOR } from '../common/enums';
 import { useElementIntersection } from '../common/hooks';
-import PostComment from '../components/PostComment';
+import Comment from '../components/Comment';
 import { getDate } from '../common/helpers';
 import Loaded from '../components/Loaded';
 
@@ -36,14 +36,14 @@ function PostLayout() {
   const [post, setPost] = useState(null);
   const [isLoadingPost, setIsLoadingPost] = useState(false);
 
-  const [postLike, setPostLike] = useState(null);
-  const [isLoadingPostLike, setIsLoadingPostLike] = useState(false);
+  const [like, setLike] = useState(null);
+  const [isLoadingLike, setIsLoadingLike] = useState(false);
 
-  const [postComments, setPostComments] = useState([]);
-  const [isLoadingPostComments, setIsLoadingPostComments] = useState(false);
-  const [hasMorePostComments, setHasMorePostComments] = useState(true);
+  const [comments, setComments] = useState([]);
+  const [isLoadingComments, setIsLoadingComments] = useState(false);
+  const [hasMoreComments, setHasMoreComments] = useState(true);
 
-  const [postCommentsTracker, setPostCommentsTracker] = useState({});
+  const [commentsTracker, setCommentsTracker] = useState({});
 
   const [elementRef, intersectingElement] = useElementIntersection();
 
@@ -79,14 +79,14 @@ function PostLayout() {
 
   useEffect(() => {
     if (post) {
-      _getPostLike();
-      _getPostComments();
+      _getLike();
+      _getComments();
     }
   }, [post]);
 
   useEffect(() => {
-    if (intersectingElement && hasMorePostComments) {
-      _getPostComments();
+    if (intersectingElement && hasMoreComments) {
+      _getComments();
     }
   }, [intersectingElement]);
 
@@ -97,78 +97,78 @@ function PostLayout() {
     setIsLoadingPost(false);
   }
 
-  async function _getPostLike() {
-    setIsLoadingPostLike(true);
-    const { data } = await getPostLike(user.id, post.id);
-    setPostLike(data[0]);
-    setIsLoadingPostLike(false);
+  async function _getLike() {
+    setIsLoadingLike(true);
+    const { data } = await getLike(user.id, post.id);
+    setLike(data[0]);
+    setIsLoadingLike(false);
   }
 
-  async function _getPostComments() {
-    setIsLoadingPostComments(true);
-    const { data, hasMore } = await getPostCommentsByPostId(
+  async function _getComments() {
+    setIsLoadingComments(true);
+    const { data, hasMore } = await getCommentsByPostId(
       post.id,
-      postComments.length
+      comments.length
     );
     if (data.length > 0) {
-      setPostComments([...postComments, ...data]);
+      setComments([...comments, ...data]);
     }
-    setHasMorePostComments(hasMore);
-    setIsLoadingPostComments(false);
+    setHasMoreComments(hasMore);
+    setIsLoadingComments(false);
   }
 
-  async function expandCollapsePostComments(parentPostCommentId) {
-    if (postCommentsTracker[parentPostCommentId]) {
-      const _postCommentsTrackerItem = {
-        ...postCommentsTracker[parentPostCommentId],
+  async function expandCollapseComments(parentCommentId) {
+    if (commentsTracker[parentCommentId]) {
+      const _commentsTrackerItem = {
+        ...commentsTracker[parentCommentId],
       };
 
-      _postCommentsTrackerItem.isExpand = !_postCommentsTrackerItem.isExpand;
+      _commentsTrackerItem.isExpand = !_commentsTrackerItem.isExpand;
 
-      const _postCommentsTracker = { ...postCommentsTracker };
-      _postCommentsTracker[parentPostCommentId] = _postCommentsTrackerItem;
+      const _commentsTracker = { ...commentsTracker };
+      _commentsTracker[parentCommentId] = _commentsTrackerItem;
 
-      setPostCommentsTracker(_postCommentsTracker);
+      setCommentsTracker(_commentsTracker);
     } else {
-      await showMorePostComments(parentPostCommentId);
+      await showMoreComments(parentCommentId);
     }
   }
 
-  async function showMorePostComments(parentPostCommentId) {
-    setIsLoadingPostComments(true);
+  async function showMoreComments(parentCommentId) {
+    setIsLoadingComments(true);
 
-    let _postCommentsTrackerItem;
+    let _commentsTrackerItem;
 
-    if (postCommentsTracker[parentPostCommentId]) {
-      _postCommentsTrackerItem = {
-        ...postCommentsTracker[parentPostCommentId],
+    if (commentsTracker[parentCommentId]) {
+      _commentsTrackerItem = {
+        ...commentsTracker[parentCommentId],
       };
     } else {
-      _postCommentsTrackerItem = {
+      _commentsTrackerItem = {
         comments: [],
         isExpand: true,
         hasMore: true,
       };
     }
 
-    const { data, hasMore } = await getPostCommentsByParentPostCommentId(
-      parentPostCommentId,
-      _postCommentsTrackerItem.comments.length
+    const { data, hasMore } = await getCommentsByParentCommentId(
+      parentCommentId,
+      _commentsTrackerItem.comments.length
     );
 
     if (data.length > 0) {
-      _postCommentsTrackerItem.comments = [
-        ..._postCommentsTrackerItem.comments,
+      _commentsTrackerItem.comments = [
+        ..._commentsTrackerItem.comments,
         ...data,
       ];
     }
-    _postCommentsTrackerItem.hasMore = hasMore;
+    _commentsTrackerItem.hasMore = hasMore;
 
-    const _postCommentsTracker = { ...postCommentsTracker };
-    _postCommentsTracker[parentPostCommentId] = _postCommentsTrackerItem;
-    setPostCommentsTracker(_postCommentsTracker);
+    const _commentsTracker = { ...commentsTracker };
+    _commentsTracker[parentCommentId] = _commentsTrackerItem;
+    setCommentsTracker(_commentsTracker);
 
-    setIsLoadingPostComments(false);
+    setIsLoadingComments(false);
   }
 
   return (
@@ -223,9 +223,9 @@ function PostLayout() {
                 buttonColor={BUTTON_COLOR.BLUE}
                 handleClick={() => {
                   setShowModal({
-                    type: 'POST_COMMENT_MODAL',
+                    type: 'COMMENT_MODAL',
                     data: {
-                      parentPostCommentId: null,
+                      parentCommentId: null,
                       postId: post.id,
                     },
                   });
@@ -240,17 +240,17 @@ function PostLayout() {
               <Button
                 buttonColor={BUTTON_COLOR.BLUE}
                 handleClick={async () => {
-                  if (postLike) {
-                    await removePostLike(postLike.id);
-                    setPostLike(null);
+                  if (like) {
+                    await removeLike(like.id);
+                    setLike(null);
                   } else {
-                    const { data } = await addPostLike(user.id, post.id);
-                    setPostLike(data[0]);
+                    const { data } = await addLike(user.id, post.id);
+                    setLike(data[0]);
                   }
                 }}
               >
-                {isLoadingPostLike && <Loading />}
-                {!isLoadingPostLike && <>{postLike ? 'Unlike' : 'Like'}</>}
+                {isLoadingLike && <Loading />}
+                {!isLoadingLike && <>{like ? 'Unlike' : 'Like'}</>}
               </Button>
               <Button
                 buttonColor={BUTTON_COLOR.RED}
@@ -305,25 +305,25 @@ function PostLayout() {
           )}
 
           <div className="flex w-full flex-col gap-4">
-            {postComments.length > 0 && (
+            {comments.length > 0 && (
               <div className={`flex w-full flex-col gap-4 overflow-auto`}>
-                {postComments.map((postComment, index) => (
-                  <PostComment
+                {comments.map((comment, index) => (
+                  <Comment
                     key={index}
-                    postComment={postComment}
-                    postCommentsTracker={postCommentsTracker}
+                    comment={comment}
+                    commentsTracker={commentsTracker}
                     elementRef={
-                      index === postComments.length - 1 ? elementRef : null
+                      index === comments.length - 1 ? elementRef : null
                     }
-                    expandCollapsePostComments={expandCollapsePostComments}
-                    showMorePostComments={showMorePostComments}
+                    expandCollapseComments={expandCollapseComments}
+                    showMoreComments={showMoreComments}
                     showLink={true}
                   />
                 ))}
               </div>
             )}
-            {isLoadingPostComments && <Loading />}
-            {postComments.length === 0 && <Loaded />}
+            {isLoadingComments && <Loading />}
+            {comments.length === 0 && <Loaded />}
           </div>
         </div>
       )}

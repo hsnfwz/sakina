@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState, useRef } from 'react';
 import { UserContext } from '../common/contexts.js';
-import { Link, Outlet, useLocation } from 'react-router';
+import { Outlet } from 'react-router';
+import NavPanel from '../components/NavPanel.jsx';
 
 function NotificationsLayout() {
   const { user } = useContext(UserContext);
-  const location = useLocation();
 
   const [acceptedPostNotifications, setAcceptedPostNotifications] = useState(
     []
@@ -59,57 +59,65 @@ function NotificationsLayout() {
 
   return (
     <div className="flex w-full flex-col gap-4">
-      <div className="flex">
-        <Link
-          className={`${location.pathname === `/notifications` || location.pathname.includes('pending-posts') ? 'border-b-sky-500' : 'border-b-transparent'} border-b-2 p-2 hover:border-b-sky-500`}
-          to={`pending-posts`}
-          state={{ profile: user }}
-        >
-          Pending Posts
-        </Link>
-        <Link
-          className={`${location.pathname.includes('accepted-posts') ? 'border-b-sky-500' : 'border-b-transparent'} border-b-2 p-2 hover:border-b-sky-500`}
-          to={`accepted-posts`}
-          state={{ profile: user }}
-        >
-          Accepted Posts
-        </Link>
-        <Link
-          className={`${location.pathname.includes('rejected-posts') ? 'border-b-sky-500' : 'border-b-transparent'} border-b-2 p-2 hover:border-b-sky-500`}
-          to={`rejected-posts`}
-          state={{ profile: user }}
-        >
-          Rejected Posts
-        </Link>
-        <Link
-          className={`${location.pathname.includes('views') ? 'border-b-sky-500' : 'border-b-transparent'} border-b-2 p-2 hover:border-b-sky-500`}
-          to={`views`}
-          state={{ profile: user }}
-        >
-          Views
-        </Link>
-        <Link
-          className={`${location.pathname.includes('likes') ? 'border-b-sky-500' : 'border-b-transparent'} border-b-2 p-2 hover:border-b-sky-500`}
-          to={`likes`}
-          state={{ profile: user }}
-        >
-          Likes
-        </Link>
-        <Link
-          className={`${location.pathname.includes('followers') ? 'border-b-sky-500' : 'border-b-transparent'} border-b-2 p-2 hover:border-b-sky-500`}
-          to={`followers`}
-          state={{ profile: user }}
-        >
-          Followers
-        </Link>
-        <Link
-          className={`${location.pathname.includes('comments') ? 'border-b-sky-500' : 'border-b-transparent'} border-b-2 p-2 hover:border-b-sky-500`}
-          to={`comments`}
-          state={{ profile: user }}
-        >
-          Comments
-        </Link>
-      </div>
+      <NavPanel links={[
+        {
+          pathname: '/notifications',
+          to: 'pending-posts',
+          state: {
+            profile: user,
+          },
+          label: 'Pending Posts',
+          show: true,
+        },
+        {
+          to: 'accepted-posts',
+          state: {
+            profile: user,
+          },
+          label: 'Accepted Posts',
+          show: true,
+        },
+        {
+          to: 'rejected-posts',
+          state: {
+            profile: user,
+          },
+          label: 'Rejected Posts',
+          show: true,
+        },
+        {
+          to: 'views',
+          state: {
+            profile: user,
+          },
+          label: 'Views',
+          show: true,
+        },
+        {
+          to: 'likes',
+          state: {
+            profile: user,
+          },
+          label: 'Likes',
+          show: true,
+        },
+        {
+          to: 'followers',
+          state: {
+            profile: user,
+          },
+          label: 'Followers',
+          show: true,
+        },
+        {
+          to: 'comments',
+          state: {
+            profile: user,
+          },
+          label: 'Comments',
+          show: true,
+        },
+      ]} />
       <Outlet
         context={{
           acceptedPostNotifications,
