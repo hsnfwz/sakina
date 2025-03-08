@@ -1,130 +1,59 @@
-import { useContext, useEffect, useState, useRef } from 'react';
-import { useLocation, useParams, useOutletContext } from 'react-router';
-import { getProfileByUsername } from '../common/database/profiles.js';
+import { useContext, useEffect, useState } from 'react';
 import { getArchivedPostsByProfileId } from '../common/database/posts.js';
-import { ExploreContext, UserContext } from '../common/contexts.js';
+import { DataContext } from '../common/contexts.js';
 
 import Loading from '../components/Loading.jsx';
-import Masonry from '../components/Masonry.jsx';
+import Post from '../components/Post.jsx';
 import Loaded from '../components/Loaded.jsx';
 
 function ProfileArchivedPostsNestedLayout() {
-  const { username } = useParams();
-  const location = useLocation();
-  const { user } = useContext(UserContext);
+  const { activeProfile } = useContext(DataContext);
 
-  const scrollYRef = useRef(0);
+  const [isLoading, setIsLoading] = useState(false);
 
-  let contextValues;
-  if (username === user.username) {
-    contextValues = useContext(ExploreContext);
-  } else {
-    contextValues = useOutletContext();
-  }
-
-  const {
-    profileArchivedPosts,
-    setProfileArchivedPosts,
-    profileIsLoadingArchivedPosts,
-    setProfileIsLoadingArchivedPosts,
-    profileHasMoreArchivedPosts,
-    setProfileHasMoreArchivedPosts,
-    profileHasInitializedArchivedPosts,
-    setProfileHasInitializedArchivedPosts,
-    profileScrollYArchivedPosts,
-    setProfileScrollYArchivedPosts,
-    profileElementRefArchivedPosts,
-    profileIntersectingElementArchivedPosts,
-  } = contextValues;
-
-  const [profile, setProfile] = useState(null);
-  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+  const { profileArchivedPosts, setProfileArchivedPosts } =
+    useContext(DataContext);
 
   useEffect(() => {
-    if (location.state?.profile) {
-      setProfile(location.state.profile);
-    } else if (!location.state?.profile && !profile) {
-      getProfile();
-    }
-  }, [location]);
-
-  useEffect(() => {
-    if (profile && user && profile.id === user.id) {
-      if (!profileHasInitializedArchivedPosts) {
+    if (activeProfile) {
+      if (!profileArchivedPosts.hasInitializedData) {
         getArchivedPosts();
       }
-
-      setTimeout(() => {
-        window.scroll({
-          top: profileScrollYArchivedPosts,
-          behavior: 'instant',
-        });
-      }, 0); // listens for the first 'tick' before scrolling - need this so we can scroll once masonry is loaded
-
-      window.addEventListener('scroll', () => {
-        scrollYRef.current = window.scrollY;
-      });
-
-      return () => {
-        setProfileScrollYArchivedPosts(scrollYRef.current);
-      };
     }
-  }, [profile]);
-
-  useEffect(() => {
-    if (
-      profileIntersectingElementArchivedPosts &&
-      profileHasMoreArchivedPosts
-    ) {
-      getArchivedPosts();
-    }
-  }, [profileIntersectingElementArchivedPosts]);
-
-  async function getProfile() {
-    setIsLoadingProfile(true);
-    const { data } = await getProfileByUsername(username);
-    setProfile(data[0]);
-    setIsLoadingProfile(false);
-  }
+  }, [activeProfile]);
 
   async function getArchivedPosts() {
-    setProfileIsLoadingArchivedPosts(true);
+    setIsLoading(true);
+
     const { data, hasMore } = await getArchivedPostsByProfileId(
-      profile.id,
-      profileArchivedPosts.length
+      activeProfile.id,
+      profileArchivedPosts.data.length
     );
+
+    const _profileArchivedPosts = { ...profileArchivedPosts };
+
     if (data.length > 0) {
-      setProfileArchivedPosts([...profileArchivedPosts, ...data]);
+      _profileArchivedPosts.data = [...profileArchivedPosts.data, ...data];
     }
-    setProfileHasMoreArchivedPosts(hasMore);
-    setProfileIsLoadingArchivedPosts(false);
-    if (!profileHasInitializedArchivedPosts) {
-      setProfileHasInitializedArchivedPosts(true);
+
+    _profileArchivedPosts.hasMoreData = hasMore;
+
+    if (!profileArchivedPosts.hasInitializedData) {
+      _profileArchivedPosts.hasInitializedData = true;
     }
+
+    setProfileArchivedPosts(_profileArchivedPosts);
+
+    setIsLoading(false);
   }
 
   return (
-    <div>
-      {isLoadingProfile && <Loading />}
-      {!isLoadingProfile && profile && user && profile.id === user.id && (
-        <>
-          {profileArchivedPosts.length > 0 && (
-            <>
-              <Masonry
-                data={profileArchivedPosts}
-                elementRef={profileElementRefArchivedPosts}
-                scrollY={profileScrollYArchivedPosts}
-                setScrollY={setProfileScrollYArchivedPosts}
-              />
-
-              {!profileHasMoreArchivedPosts && <Loaded />}
-            </>
-          )}
-          {profileIsLoadingArchivedPosts && <Loading />}
-          {!profileIsLoadingArchivedPosts &&
-            profileArchivedPosts.length === 0 && <Loaded />}
-        </>
-      )}
+    <div className="flex w-full flex-col gap-4">
+      {profileArchivedPosts.data.map((post, index) => (
+        <Post key={index} post={post} isPreview={true} />
+      ))}
+      {!profileArchivedPosts.hasMoreData && <Loaded />}
+      {isLoading && <Loading />}
     </div>
   );
 }

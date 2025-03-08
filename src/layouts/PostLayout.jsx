@@ -1,11 +1,7 @@
 import { useEffect, useContext, useRef, useState } from 'react';
 import { useLocation, useParams, Link } from 'react-router';
-import { ExploreContext, ModalContext, UserContext } from '../common/contexts';
-import {
-  getLike,
-  addLike,
-  removeLike,
-} from '../common/database/likes.js';
+import { DataContext, ModalContext, UserContext } from '../common/contexts';
+import { getLike, addLike, removeLike } from '../common/database/likes.js';
 import {
   getAcceptedPostById,
   removePost,
@@ -16,18 +12,20 @@ import {
   getCommentsByParentCommentId,
   getCommentsByPostId,
 } from '../common/database/comments.js';
-import ImageView from '../components/ImageView';
+import PostImage from '../components/PostImage';
 import Loading from '../components/Loading';
-import VideoView from '../components/VideoView';
+import PostVideo from '../components/PostVideo';
 import Button from '../components/Button';
 import { BUTTON_COLOR } from '../common/enums';
 import { useElementIntersection } from '../common/hooks';
 import Comment from '../components/Comment';
 import { getDate } from '../common/helpers';
 import Loaded from '../components/Loaded';
+import { addPostView } from '../common/database/views.js';
+import { addNotification } from '../common/database/notifications.js';
 
 function PostLayout() {
-  const { acceptedPosts, setAcceptedPosts } = useContext(ExploreContext);
+  const { acceptedPosts, setAcceptedPosts } = useContext(DataContext);
   const { setShowModal } = useContext(ModalContext);
   const { user } = useContext(UserContext);
   const { id } = useParams();
@@ -47,27 +45,20 @@ function PostLayout() {
 
   const [elementRef, intersectingElement] = useElementIntersection();
 
-  // const [disabled, setDisabled] = useState(false);
-  // const timerRef = useRef();
+  useEffect(() => {
+    async function initialize() {
+      if (user.id !== post.user.id) {
+        setTimeout(async () => {
+          await addPostView(user.id, post.id);
+          await addNotification(user.id, post.user.id, 'VIEW_POST');
+        }, 3000);
+      }
+    }
 
-  // const viewsResult = await supabase
-  //   .from("views")
-  //   .select("id", { head: true, count: "estimated" })
-  //   .eq("user_id", user.id)
-  //   .eq("post_id", post.id);
-
-  // if (viewsResult.error) {
-  //   console.log(viewsResult.error);
-  // } else {
-  //   if (viewsResult.count === 0 && user.id !== post.user_id.id) {
-  //     clearTimeout(timerRef.current);
-  //     timerRef.current = setTimeout(async () => {
-  //       await supabase
-  //         .from("views")
-  //         .insert({ user_id: user.id, post_id: post.id });
-  //     }, 3000);
-  //   }
-  // }
+    if (post) {
+      initialize();
+    }
+  }, [post]);
 
   useEffect(() => {
     if (location.state?.post) {
@@ -193,14 +184,14 @@ function PostLayout() {
           </div>
 
           {post.type === 'IMAGE' && (
-            <ImageView
+            <PostImage
               images={post.images}
               isMasonryView={false}
               autoPlayCarousel={false}
             />
           )}
           {post.type === 'VIDEO' && (
-            <VideoView
+            <PostVideo
               images={post.images}
               videos={post.videos}
               isMasonryView={false}
@@ -235,7 +226,7 @@ function PostLayout() {
               </Button>
             </div>
           )}
-          {user.id === post.user.id && (
+          {user && user.id === post.user.id && (
             <div className="flex gap-2 self-start">
               <Button
                 buttonColor={BUTTON_COLOR.BLUE}
@@ -246,6 +237,7 @@ function PostLayout() {
                   } else {
                     const { data } = await addLike(user.id, post.id);
                     setLike(data[0]);
+                    await addNotification(user.id, post.user.id, 'LIKE_POST');
                   }
                 }}
               >

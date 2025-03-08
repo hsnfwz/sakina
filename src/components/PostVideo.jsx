@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, useContext } from 'react';
-import ImageVideoViewSkeleton from './ImageVideoViewSkeleton';
 import IconButton from './IconButton';
 import SVGOutlineReset from './svgs/outline/SVGOutlineReset';
 import SVGOutlineCollapseArrow from './svgs/outline/SVGOutlineCollapseArrow';
@@ -8,17 +7,16 @@ import SVGOutlineMute from './svgs/outline/SVGOutlineMute';
 import SVGOutlineUnmute from './svgs/outline/SVGOutlineUnmute';
 import SVGOutlinePlay from './svgs/outline/SVGOutlinePlay';
 import SVGOutlinePause from './svgs/outline/SVGOutlinePause';
-import { FullscreenContext } from '../common/contexts';
 import Slider from './Slider';
 import { formatDuration } from '../common/helpers';
 
-function VideoView({ images, videos, isMasonryView }) {
+function PostVideo({ images, videos, isPreview }) {
   const ref = useRef();
   const parentRef = useRef();
   const sliderRef = useRef();
   const timeoutRef = useRef();
 
-  const { isFullscreen } = useContext(FullscreenContext);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoadingFile, setIsLoadingFile] = useState(true);
 
   const [isPaused, setIsPaused] = useState(false);
@@ -53,13 +51,31 @@ function VideoView({ images, videos, isMasonryView }) {
   }
 
   function handleVideoEnd() {
-    if (!isMasonryView) {
+    if (!isPreview) {
       clearTimeout(timeoutRef.current);
       setIsPaused(true);
       setIsDone(true);
       setShowControlsView(true);
     }
   }
+
+  useEffect(() => {
+    if (!isPreview) {
+      const handleEvent = () => {
+        if (document.fullscreenElement) {
+          setIsFullscreen(true);
+        } else {
+          setIsFullscreen(false);
+        }
+      };
+
+      document.addEventListener('fullscreenchange', handleEvent);
+
+      return () => {
+        document.removeEventListener('fullscreenchange', handleEvent);
+      };
+    }
+  }, []);
 
   useEffect(() => {
     if (!isFullscreen && isDone) {
@@ -77,27 +93,20 @@ function VideoView({ images, videos, isMasonryView }) {
   return (
     <div
       className={`relative flex justify-center`}
-      onMouseMove={isMasonryView ? null : () => handleMouseMove()}
-      onMouseLeave={isMasonryView ? null : () => handleMouseLeave()}
+      onMouseMove={isPreview ? null : () => handleMouseMove()}
+      onMouseLeave={isPreview ? null : () => handleMouseLeave()}
       ref={parentRef}
     >
-      {isLoadingFile && (
-        <ImageVideoViewSkeleton
-          isMasonryView={isMasonryView}
-          width={videos[0].width}
-          height={videos[0].height}
-        />
-      )}
       <video
         ref={ref}
-        width=""
-        height=""
+        width={videos[0].width}
+        height={videos[0].height}
         controls={false}
-        poster={`${!isMasonryView && images[0] ? `https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/images/${images[0].name}` : ''}`}
+        poster={`${!isPreview && images[0] ? `https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/images/${images[0].name}` : ''}`}
         style={{ aspectRatio: `${videos[0].width}/${videos[0].height}` }}
         className={`rounded-lg bg-black ${isLoadingFile ? 'hidden' : 'block'} full relative`}
-        autoPlay={isMasonryView ? false : true}
-        loop={isMasonryView ? true : false}
+        autoPlay={isPreview ? false : true}
+        loop={isPreview ? true : false}
         muted={isMuted}
         onEnded={handleVideoEnd}
         onCanPlay={handleVideoStart}
@@ -225,4 +234,4 @@ function VideoView({ images, videos, isMasonryView }) {
   );
 }
 
-export default VideoView;
+export default PostVideo;

@@ -1,20 +1,17 @@
 import { useEffect, useContext, useRef, useState } from 'react';
-import { ExploreContext, ScrollContext } from '../common/contexts';
-import Masonry from '../components/Masonry';
+import { DataContext, ScrollContext } from '../common/contexts';
 import Loaded from '../components/Loaded';
 import Loading from '../components/Loading';
 import { getAcceptedVideoPosts } from '../common/database/posts';
 import { useElementIntersection } from '../common/hooks';
+import SearchBar from '../components/SearchBar';
+import { SEARCH_TYPE } from '../common/enums';
+import { searchAcceptedVideoPosts } from '../common/database/posts';
+import PostVideoPreview from '../components/PostVideoPreview';
 
 function ExploreVideoPostsNestedLayout() {
-  const {
-    exploreAcceptedVideoPosts,
-    setExploreAcceptedVideoPosts,
-    exploreHasMoreAcceptedVideoPosts,
-    setExploreHasMoreAcceptedVideoPosts,
-    exploreHasInitializedAcceptedVideoPosts,
-    setExploreHasInitializedAcceptedVideoPosts,
-  } = useContext(ExploreContext);
+  const { exploreAcceptedVideoPosts, setExploreAcceptedVideoPosts } =
+    useContext(DataContext);
 
   const { scrollRef } = useContext(ScrollContext);
   const [elementRef, intersectingElement] = useElementIntersection();
@@ -23,7 +20,7 @@ function ExploreVideoPostsNestedLayout() {
 
   useEffect(() => {
     async function initialize() {
-      if (!exploreHasInitializedAcceptedVideoPosts) {
+      if (!exploreAcceptedVideoPosts.hasInitializedData) {
         await getExploreAcceptedPosts();
       }
 
@@ -46,33 +43,48 @@ function ExploreVideoPostsNestedLayout() {
   }, []);
 
   useEffect(() => {
-    if (intersectingElement && exploreHasMoreAcceptedVideoPosts) {
+    if (intersectingElement && exploreAcceptedVideoPosts.hasMoreData) {
       getExploreAcceptedPosts();
     }
   }, [intersectingElement]);
 
   async function getExploreAcceptedPosts() {
     setIsLoading(true);
+
     const { data, hasMore } = await getAcceptedVideoPosts(
-      exploreAcceptedVideoPosts.length
+      exploreAcceptedVideoPosts.data.length
     );
 
+    const _exploreAcceptedVideoPosts = { ...exploreAcceptedVideoPosts };
+
     if (data.length > 0) {
-      setExploreAcceptedVideoPosts([...exploreAcceptedVideoPosts, ...data]);
+      _exploreAcceptedVideoPosts.data = [
+        ...exploreAcceptedVideoPosts.data,
+        ...data,
+      ];
     }
 
-    setExploreHasMoreAcceptedVideoPosts(hasMore);
+    _exploreAcceptedVideoPosts.hasMoreData = hasMore;
+
+    if (!exploreAcceptedVideoPosts.hasInitializedData) {
+      _exploreAcceptedVideoPosts.hasInitializedData = true;
+    }
+
+    setExploreAcceptedVideoPosts(_exploreAcceptedVideoPosts);
+
     setIsLoading(false);
-    if (!exploreHasInitializedAcceptedVideoPosts)
-      setExploreHasInitializedAcceptedVideoPosts(true);
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      {exploreAcceptedVideoPosts.length > 0 && (
-        <Masonry elementRef={elementRef} data={exploreAcceptedVideoPosts} />
-      )}
-      {!exploreHasMoreAcceptedVideoPosts && <Loaded />}
+    <div className="flex w-full flex-col gap-4">
+      <SearchBar
+        searchType={SEARCH_TYPE.POST_VIDEOS}
+        search={searchAcceptedVideoPosts}
+      />
+      {exploreAcceptedVideoPosts.data.map((post, index) => (
+        <PostVideoPreview key={index} postVideo={post} />
+      ))}
+      {!exploreAcceptedVideoPosts.hasMoreData && <Loaded />}
       {isLoading && <Loading />}
     </div>
   );

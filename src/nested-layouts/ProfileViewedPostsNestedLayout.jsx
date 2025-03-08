@@ -1,10 +1,8 @@
 import { useContext, useEffect, useState, useRef } from 'react';
 import { useLocation, useParams } from 'react-router';
-import {
-  getViewedPostsByProfileId,
-  getProfileByUsername,
-} from '../common/database/profiles.js';
-import { ExploreContext, UserContext } from '../common/contexts.js';
+import { getProfileByUsername } from '../common/database/profiles.js';
+import { getViewedPostsByProfileId } from '../common/database/posts.js';
+import { DataContext, UserContext } from '../common/contexts.js';
 
 import Loading from '../components/Loading.jsx';
 import Masonry from '../components/Masonry.jsx';
@@ -30,7 +28,7 @@ function ProfileViewedPostsNestedLayout() {
     setProfileScrollYViewedPosts,
     profileElementRefViewedPosts,
     profileIntersectingElementViewedPosts,
-  } = useContext(ExploreContext);
+  } = useContext(DataContext);
 
   const [profile, setProfile] = useState(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
@@ -97,7 +95,7 @@ function ProfileViewedPostsNestedLayout() {
       {isLoadingProfile && <Loading />}
       {!isLoadingProfile && profile && user && profile.id === user.id && (
         <>
-          {profileViewedPosts.length > 0 && (
+          {/* {profileViewedPosts.length > 0 && (
             <>
               <Masonry
                 data={profileViewedPosts}
@@ -108,7 +106,7 @@ function ProfileViewedPostsNestedLayout() {
 
               {!profileHasMoreViewedPosts && <Loaded />}
             </>
-          )}
+          )} */}
           {profileIsLoadingViewedPosts && <Loading />}
           {!profileIsLoadingViewedPosts && profileViewedPosts.length === 0 && (
             <Loaded />

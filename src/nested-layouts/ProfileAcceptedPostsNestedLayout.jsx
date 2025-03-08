@@ -1,128 +1,65 @@
-import { useContext, useEffect, useState, useRef } from 'react';
-import { useLocation, useParams, useOutletContext } from 'react-router';
-import { getProfileByUsername } from '../common/database/profiles.js';
+import { useContext, useEffect, useState } from 'react';
 import { getAcceptedPostsByProfileId } from '../common/database/posts.js';
-import { ExploreContext, UserContext } from '../common/contexts.js';
+import { DataContext, UserContext } from '../common/contexts.js';
 
 import Loading from '../components/Loading.jsx';
-import Masonry from '../components/Masonry.jsx';
 import Loaded from '../components/Loaded.jsx';
+import Post from '../components/Post.jsx';
 
 function ProfileAcceptedPostsNestedLayout() {
-  const { username } = useParams();
-  const location = useLocation();
+  const { activeProfile } = useContext(DataContext);
   const { user } = useContext(UserContext);
 
-  const scrollYRef = useRef(0);
+  const [isLoading, setIsLoading] = useState(false);
 
-  let contextValues;
-  if (username === user.username) {
-    contextValues = useContext(ExploreContext);
-  } else {
-    contextValues = useOutletContext();
-  }
-
-  const {
-    profileAcceptedPosts,
-    setProfileAcceptedPosts,
-    profileIsLoadingAcceptedPosts,
-    setProfileIsLoadingAcceptedPosts,
-    profileHasMoreAcceptedPosts,
-    setProfileHasMoreAcceptedPosts,
-    profileHasInitializedAcceptedPosts,
-    setProfileHasInitializedAcceptedPosts,
-    profileScrollYAcceptedPosts,
-    setProfileScrollYAcceptedPosts,
-    profileElementRefAcceptedPosts,
-    profileIntersectingElementAcceptedPosts,
-  } = contextValues;
-
-  const [profile, setProfile] = useState(null);
-  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+  const { profileAcceptedPosts, setProfileAcceptedPosts } =
+    useContext(DataContext);
 
   useEffect(() => {
-    if (location.state?.profile) {
-      setProfile(location.state.profile);
-    } else if (!location.state?.profile && !profile) {
-      getProfile();
-    }
-  }, [location]);
-
-  useEffect(() => {
-    if (profile) {
-      if (!profileHasInitializedAcceptedPosts) {
+    if (activeProfile) {
+      if (!profileAcceptedPosts.hasInitializedData) {
         getAcceptedPosts();
       }
-
-      setTimeout(() => {
-        window.scroll({
-          top: profileScrollYAcceptedPosts,
-          behavior: 'instant',
-        });
-      }, 0); // listens for the first 'tick' before scrolling - need this so we can scroll once masonry is loaded
-
-      window.addEventListener('scroll', () => {
-        scrollYRef.current = window.scrollY;
-      });
-
-      return () => {
-        setProfileScrollYAcceptedPosts(scrollYRef.current);
-      };
     }
-  }, [profile]);
-
-  useEffect(() => {
-    if (
-      profileIntersectingElementAcceptedPosts &&
-      profileHasMoreAcceptedPosts
-    ) {
-      getAcceptedPosts();
-    }
-  }, [profileIntersectingElementAcceptedPosts]);
-
-  async function getProfile() {
-    setIsLoadingProfile(true);
-    const { data } = await getProfileByUsername(username);
-    setProfile(data[0]);
-    setIsLoadingProfile(false);
-  }
+  }, [activeProfile]);
 
   async function getAcceptedPosts() {
-    setProfileIsLoadingAcceptedPosts(true);
+    setIsLoading(true);
+
     const { data, hasMore } = await getAcceptedPostsByProfileId(
-      profile.id,
-      profileAcceptedPosts.length
+      activeProfile.id,
+      profileAcceptedPosts.data.length
     );
+
+    const _profileAcceptedPosts = { ...profileAcceptedPosts };
+
     if (data.length > 0) {
-      setProfileAcceptedPosts([...profileAcceptedPosts, ...data]);
+      _profileAcceptedPosts.data = [...profileAcceptedPosts.data, ...data];
     }
-    setProfileHasMoreAcceptedPosts(hasMore);
-    setProfileIsLoadingAcceptedPosts(false);
-    if (!profileHasInitializedAcceptedPosts) {
-      setProfileHasInitializedAcceptedPosts(true);
+
+    _profileAcceptedPosts.hasMoreData = hasMore;
+
+    if (!profileAcceptedPosts.hasInitializedData) {
+      _profileAcceptedPosts.hasInitializedData = true;
     }
+
+    setProfileAcceptedPosts(_profileAcceptedPosts);
+
+    setIsLoading(false);
   }
 
   return (
-    <div>
-      {isLoadingProfile && <Loading />}
-      {!isLoadingProfile && profile && (
-        <>
-          {profileAcceptedPosts.length > 0 && (
-            <>
-              <Masonry
-                data={profileAcceptedPosts}
-                elementRef={profileElementRefAcceptedPosts}
-              />
-
-              {!profileHasMoreAcceptedPosts && <Loaded />}
-            </>
+    <div className="flex w-full flex-col gap-4">
+      {profileAcceptedPosts.data.map((post, index) => (
+        <div key={index}>
+          {!post.is_anonymous && <Post post={post} isPreview={true} />}
+          {post.is_anonymous && user.id === post.user.id && (
+            <Post post={post} isPreview={true} />
           )}
-          {profileIsLoadingAcceptedPosts && <Loading />}
-          {!profileIsLoadingAcceptedPosts &&
-            profileAcceptedPosts.length === 0 && <Loaded />}
-        </>
-      )}
+        </div>
+      ))}
+      {!profileAcceptedPosts.hasMoreData && <Loaded />}
+      {isLoading && <Loading />}
     </div>
   );
 }

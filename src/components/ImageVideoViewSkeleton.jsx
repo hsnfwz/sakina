@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-function ImageVideoViewSkeleton({ isMasonryView, width, height }) {
+function ImagePostVideoSkeleton({ isMasonryView, width, height }) {
   const [skeletonWidth, setSkeletonWidth] = useState(0);
 
   useEffect(() => {
@@ -27,4 +27,4 @@ function ImageVideoViewSkeleton({ isMasonryView, width, height }) {
   );
 }
 
-export default ImageVideoViewSkeleton;
+export default ImagePostVideoSkeleton;

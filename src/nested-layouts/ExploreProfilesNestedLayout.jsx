@@ -1,20 +1,16 @@
 import { useEffect, useContext, useRef, useState } from 'react';
-import { Link } from 'react-router';
-import { ExploreContext, ScrollContext } from '../common/contexts';
+import { DataContext, ScrollContext } from '../common/contexts';
 import Loaded from '../components/Loaded';
 import Loading from '../components/Loading';
 import { getProfiles } from '../common/database/profiles';
 import { useElementIntersection } from '../common/hooks';
+import SearchBar from '../components/SearchBar';
+import { searchProfiles } from '../common/database/profiles.js';
+import { SEARCH_TYPE } from '../common/enums.js';
+import ProfilePreview from '../components/ProfilePreview.jsx';
 
 function ExploreProfilesNestedLayout() {
-  const {
-    exploreProfiles,
-    setExploreProfiles,
-    exploreHasMoreProfiles,
-    setExploreHasMoreProfiles,
-    exploreHasInitializedProfiles,
-    setExploreHasInitializedProfiles,
-  } = useContext(ExploreContext);
+  const { exploreProfiles, setExploreProfiles } = useContext(DataContext);
 
   const { scrollRef } = useContext(ScrollContext);
   const [elementRef, intersectingElement] = useElementIntersection();
@@ -23,7 +19,7 @@ function ExploreProfilesNestedLayout() {
 
   useEffect(() => {
     async function initialize() {
-      if (!exploreHasInitializedProfiles) {
+      if (!exploreProfiles.hasInitializedData) {
         await getExploreProfiles();
       }
 
@@ -46,43 +42,40 @@ function ExploreProfilesNestedLayout() {
   }, []);
 
   useEffect(() => {
-    if (intersectingElement && exploreHasMoreProfiles) {
+    if (intersectingElement && exploreProfiles.hasMoreData) {
       getExploreProfiles();
     }
   }, [intersectingElement]);
 
   async function getExploreProfiles() {
     setIsLoading(true);
-    const { data, hasMore } = await getProfiles(exploreProfiles.length);
+
+    const { data, hasMore } = await getProfiles(exploreProfiles.data.length);
+
+    const _exploreProfiles = { ...exploreProfiles };
 
     if (data.length > 0) {
-      setExploreProfiles([...exploreProfiles, ...data]);
+      _exploreProfiles.data = [...exploreProfiles.data, ...data];
     }
 
-    setExploreHasMoreProfiles(hasMore);
+    _exploreProfiles.hasMoreData = hasMore;
+
+    if (!exploreProfiles.hasInitializedData) {
+      _exploreProfiles.hasInitializedData = true;
+    }
+
+    setExploreProfiles(_exploreProfiles);
+
     setIsLoading(false);
-    if (!exploreHasInitializedProfiles) setExploreHasInitializedProfiles(true);
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      {exploreProfiles.length > 0 && (
-        <>
-          {exploreProfiles.map((profile, index) => (
-            <Link
-              key={index}
-              to={`/profile/${profile.username}`}
-              className="flex flex-col gap-4 rounded-lg border-2 border-neutral-700 p-2 hover:border-white focus:border-2 focus:border-white focus:outline-none focus:ring-0"
-              ref={index === exploreProfiles.length - 1 ? elementRef : null}
-              state={{ profile }}
-            >
-              <h1>{profile.username}</h1>
-              {profile.display_name && <h2>{profile.display_name}</h2>}
-            </Link>
-          ))}
-        </>
-      )}
-      {!exploreHasMoreProfiles && <Loaded />}
+    <div className="flex w-full flex-col gap-4">
+      <SearchBar searchType={SEARCH_TYPE.PROFILES} search={searchProfiles} />
+      {exploreProfiles.data.map((profile, index) => (
+        <ProfilePreview key={index} profile={profile} />
+      ))}
+      {!exploreProfiles.hasMoreData && <Loaded />}
       {isLoading && <Loading />}
     </div>
   );

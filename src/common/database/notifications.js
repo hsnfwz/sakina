@@ -28,7 +28,7 @@ async function getAcceptedPostsNotificationsByProfileId(
   try {
     const { data, error } = await supabase
       .from('notifications')
-      .select('*, sender:sender_user_id(*), post:post_id(*)')
+      .select('*, sender:sender_user_id(*), receiver:receiver_user_id(*)')
       .eq('type', 'ACCEPTED')
       .eq('receiver_user_id', profileId)
       .order(orderBy.columnName, { ascending: orderBy.isAscending })
@@ -54,7 +54,7 @@ async function getPendingPostsNotificationsByProfileId(
   try {
     const { data, error } = await supabase
       .from('notifications')
-      .select('*, sender:sender_user_id(*), post:post_id(*)')
+      .select('*, sender:sender_user_id(*), receiver:receiver_user_id(*)')
       .eq('type', 'PENDING')
       .eq('receiver_user_id', profileId)
       .order(orderBy.columnName, { ascending: orderBy.isAscending })
@@ -80,8 +80,80 @@ async function getRejectedPostsNotificationsByProfileId(
   try {
     const { data, error } = await supabase
       .from('notifications')
-      .select('*, sender:sender_user_id(*), post:post_id(*)')
+      .select('*, sender:sender_user_id(*), receiver:receiver_user_id(*)')
       .eq('type', 'REJECTED')
+      .eq('receiver_user_id', profileId)
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getFollowerNotificationsByProfileId(
+  profileId,
+  startIndex = 0,
+  limit = 6,
+  orderBy = ORDER_BY.NEW
+) {
+  try {
+    const { data, error } = await supabase
+      .from('notifications')
+      .select('*, sender:sender_user_id(*), receiver:receiver_user_id(*)')
+      .eq('type', 'FOLLOW')
+      .eq('receiver_user_id', profileId)
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function addNotification(senderProfileId, receiverProfileId, type) {
+  try {
+    const { data, error } = await supabase
+      .from('notifications')
+      .insert({
+        sender_user_id: senderProfileId,
+        receiver_user_id: receiverProfileId,
+        type,
+      })
+      .select('*, sender:sender_user_id(*), receiver:receiver_user_id(*)');
+
+    if (error) throw error;
+
+    return {
+      data,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getNotificationsByProfileId(
+  profileId,
+  startIndex = 0,
+  limit = 6,
+  orderBy = ORDER_BY.NEW
+) {
+  try {
+    const { data, error } = await supabase
+      .from('notifications')
+      .select('*, sender:sender_user_id(*), receiver:receiver_user_id(*)')
       .eq('receiver_user_id', profileId)
       .order(orderBy.columnName, { ascending: orderBy.isAscending })
       .range(startIndex, startIndex + limit - 1);
@@ -99,7 +171,6 @@ async function getRejectedPostsNotificationsByProfileId(
 
 export {
   getNotificationsCountByProfileId,
-  getAcceptedPostsNotificationsByProfileId,
-  getPendingPostsNotificationsByProfileId,
-  getRejectedPostsNotificationsByProfileId,
+  addNotification,
+  getNotificationsByProfileId,
 };

@@ -30,9 +30,7 @@ function Comment({
           >
             <div className="flex w-full gap-4">
               <p className="text-xs">
-                {comment.is_anonymous
-                  ? 'Anonymous'
-                  : comment.user.username}
+                {comment.is_anonymous ? 'Anonymous' : comment.user.username}
               </p>
               <p className="text-xs text-neutral-700">
                 {getDate(comment.created_at, true)}
@@ -45,9 +43,7 @@ function Comment({
           <div className="flex w-full flex-col gap-4 whitespace-nowrap sm:whitespace-normal">
             <div className="flex w-full gap-4">
               <p className="text-xs">
-                {comment.is_anonymous
-                  ? 'Anonymous'
-                  : comment.user.username}
+                {comment.is_anonymous ? 'Anonymous' : comment.user.username}
               </p>
               <p className="text-xs text-neutral-700">
                 {getDate(comment.created_at, true)}
@@ -106,34 +102,29 @@ function Comment({
           </div>
         )}
       </div>
-      {commentsTracker[comment.id] &&
-        commentsTracker[comment.id].isExpand && (
-          <div className={`flex w-full flex-col gap-4 pl-4`}>
-            {commentsTracker[comment.id].comments.map(
-              (_comment, index) => (
-                <Comment
-                  key={index}
-                  comment={_comment}
-                  commentsTracker={commentsTracker}
-                  expandCollapseComments={expandCollapseComments}
-                  showLink={_comment.id !== comment.id}
-                />
-              )
-            )}
-            {commentsTracker[comment.id].hasMore && (
-              <div className="self-start">
-                <Button
-                  handleClick={async () =>
-                    await showMoreComments(comment.id)
-                  }
-                >
-                  <SVGOutlineCornerDownRightArrow />
-                  <span>Show More Replies</span>
-                </Button>
-              </div>
-            )}
-          </div>
-        )}
+      {commentsTracker[comment.id] && commentsTracker[comment.id].isExpand && (
+        <div className={`flex w-full flex-col gap-4 pl-4`}>
+          {commentsTracker[comment.id].comments.map((_comment, index) => (
+            <Comment
+              key={index}
+              comment={_comment}
+              commentsTracker={commentsTracker}
+              expandCollapseComments={expandCollapseComments}
+              showLink={_comment.id !== comment.id}
+            />
+          ))}
+          {commentsTracker[comment.id].hasMore && (
+            <div className="self-start">
+              <Button
+                handleClick={async () => await showMoreComments(comment.id)}
+              >
+                <SVGOutlineCornerDownRightArrow />
+                <span>Show More Replies</span>
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

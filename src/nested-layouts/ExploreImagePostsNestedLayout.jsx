@@ -1,20 +1,19 @@
 import { useEffect, useContext, useRef, useState } from 'react';
-import { ExploreContext, ScrollContext } from '../common/contexts';
-import Masonry from '../components/Masonry';
+import { DataContext, ScrollContext } from '../common/contexts';
 import Loaded from '../components/Loaded';
 import Loading from '../components/Loading';
-import { getAcceptedImagePosts } from '../common/database/posts';
+import {
+  getAcceptedImagePosts,
+  searchAcceptedImagePosts,
+} from '../common/database/posts';
 import { useElementIntersection } from '../common/hooks';
+import { SEARCH_TYPE } from '../common/enums';
+import SearchBar from '../components/SearchBar';
+import PostImagePreview from '../components/PostImagePreview';
 
 function ExploreImagePostsNestedLayout() {
-  const {
-    exploreAcceptedImagePosts,
-    setExploreAcceptedImagePosts,
-    exploreHasMoreAcceptedImagePosts,
-    setExploreHasMoreAcceptedImagePosts,
-    exploreHasInitializedAcceptedImagePosts,
-    setExploreHasInitializedAcceptedImagePosts,
-  } = useContext(ExploreContext);
+  const { exploreAcceptedImagePosts, setExploreAcceptedImagePosts } =
+    useContext(DataContext);
 
   const { scrollRef } = useContext(ScrollContext);
   const [elementRef, intersectingElement] = useElementIntersection();
@@ -23,7 +22,7 @@ function ExploreImagePostsNestedLayout() {
 
   useEffect(() => {
     async function initialize() {
-      if (!exploreHasInitializedAcceptedImagePosts) {
+      if (!exploreAcceptedImagePosts.hasInitializedData) {
         await getExploreAcceptedPosts();
       }
 
@@ -46,33 +45,48 @@ function ExploreImagePostsNestedLayout() {
   }, []);
 
   useEffect(() => {
-    if (intersectingElement && exploreHasMoreAcceptedImagePosts) {
+    if (intersectingElement && exploreAcceptedImagePosts.hasMoreData) {
       getExploreAcceptedPosts();
     }
   }, [intersectingElement]);
 
   async function getExploreAcceptedPosts() {
     setIsLoading(true);
+
     const { data, hasMore } = await getAcceptedImagePosts(
-      exploreAcceptedImagePosts.length
+      exploreAcceptedImagePosts.data.length
     );
 
+    const _exploreAcceptedImagePosts = { ...exploreAcceptedImagePosts };
+
     if (data.length > 0) {
-      setExploreAcceptedImagePosts([...exploreAcceptedImagePosts, ...data]);
+      _exploreAcceptedImagePosts.data = [
+        ...exploreAcceptedImagePosts.data,
+        ...data,
+      ];
     }
 
-    setExploreHasMoreAcceptedImagePosts(hasMore);
+    _exploreAcceptedImagePosts.hasMoreData = hasMore;
+
+    if (!exploreAcceptedImagePosts.hasInitializedData) {
+      _exploreAcceptedImagePosts.hasInitializedData = true;
+    }
+
+    setExploreAcceptedImagePosts(_exploreAcceptedImagePosts);
+
     setIsLoading(false);
-    if (!exploreHasInitializedAcceptedImagePosts)
-      setExploreHasInitializedAcceptedImagePosts(true);
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      {exploreAcceptedImagePosts.length > 0 && (
-        <Masonry elementRef={elementRef} data={exploreAcceptedImagePosts} />
-      )}
-      {!exploreHasMoreAcceptedImagePosts && <Loaded />}
+    <div className="flex w-full flex-col gap-4">
+      <SearchBar
+        searchType={SEARCH_TYPE.POST_IMAGES}
+        search={searchAcceptedImagePosts}
+      />
+      {exploreAcceptedImagePosts.data.map((post, index) => (
+        <PostImagePreview key={index} postImage={post} />
+      ))}
+      {!exploreAcceptedImagePosts.hasMoreData && <Loaded />}
       {isLoading && <Loading />}
     </div>
   );

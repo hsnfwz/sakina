@@ -1,11 +1,10 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
-import { ScreenResizeContext } from '../common/contexts.js';
-import ImageView from './ImageView.jsx';
-import VideoView from './VideoView.jsx';
+import PostImage from './PostImage.jsx';
+import PostVideo from './PostVideo.jsx';
 
 function Masonry({ elementRef, data }) {
-  const { screenResize } = useContext(ScreenResizeContext);
+  const screenResize = 0;
   const timerRef = useRef();
   const [masonry, setMasonry] = useState(null);
 
@@ -84,14 +83,14 @@ function Masonry({ elementRef, data }) {
                   key={postIndex}
                 >
                   {post.type === 'IMAGE' && (
-                    <ImageView
+                    <PostImage
                       images={post.images}
                       isMasonryView={true}
                       autoPlayCarousel={true}
                     />
                   )}
                   {post.type === 'VIDEO' && (
-                    <VideoView
+                    <PostVideo
                       images={post.images}
                       videos={post.videos}
                       isMasonryView={true}
@@ -99,21 +98,23 @@ function Masonry({ elementRef, data }) {
                   )}
                   <div className="z-3 absolute bottom-0 flex w-full flex-col justify-end gap-4 rounded-b-lg bg-black/50 p-4 opacity-0 backdrop-blur group-hover:opacity-100">
                     <h1 className="text-white">{post.title}</h1>
-                      <div className="flex items-center gap-2">
-                        {post.user.avatar_file && (
-                          <img
-                            className="aspect-square w-full max-w-[40px] rounded-full object-cover"
-                            src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/avatars/${post.user.avatar_file}`}
-                            alt={post.user.avatar_file}
-                          />
+                    <div className="flex items-center gap-2">
+                      {post.user.avatar && (
+                        <img
+                          className="aspect-square w-full max-w-[40px] rounded-full object-cover"
+                          src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/avatars/${post.user.avatar.name}`}
+                          alt={post.user.avatar.name}
+                          width={post.user.avatar.width}
+                          height={post.user.avatar.height}
+                        />
+                      )}
+                      <h2 className="text-xs text-white">
+                        By {post.user.username}
+                        {post.user.display_name && (
+                          <span> - {post.user.display_name}</span>
                         )}
-                        <h2 className="text-xs text-white">
-                          By {post.user.username}
-                          {post.user.display_name && (
-                            <span> - {post.user.display_name}</span>
-                          )}
-                        </h2>
-                      </div>
+                      </h2>
+                    </div>
                   </div>
                 </Link>
               ))}

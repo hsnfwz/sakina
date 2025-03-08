@@ -105,6 +105,18 @@ function formatCount(count) {
   return _count;
 }
 
+function getHighlightText(mainText, subText) {
+  const lowercaseText = mainText.toLowerCase();
+  const lowerCaseSearchTerm = subText.toLowerCase();
+
+  const highlightText = lowercaseText.replaceAll(
+    lowerCaseSearchTerm,
+    `<span className="bg-sky-500 text-white rounded-lg p-1">${lowerCaseSearchTerm}</span>`
+  );
+
+  return highlightText;
+}
+
 export {
   expectedUsernameFormat,
   formatFileName,
@@ -114,4 +126,5 @@ export {
   getIslamicDate,
   formatDuration,
   formatCount,
+  getHighlightText,
 };
