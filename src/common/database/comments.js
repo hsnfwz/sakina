@@ -77,8 +77,4 @@ async function getCommentById(id) {
   }
 }
 
-export {
-  getCommentsByPostId,
-  getCommentsByParentCommentId,
-  getCommentById,
-};
+export { getCommentsByPostId, getCommentsByParentCommentId, getCommentById };

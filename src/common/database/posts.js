@@ -111,6 +111,121 @@ async function removeStorageObjectsByPostId(postId) {
   }
 }
 
+async function searchAcceptedImagePosts(
+  searchTerm,
+  startIndex = 0,
+  limit = 6,
+  orderBy = ORDER_BY.NEW
+) {
+  try {
+    const query = searchTerm.toLowerCase().trim();
+
+    if (query.length === 0) {
+      return {
+        data: [],
+        hasMore: false,
+      };
+    }
+
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*, user:user_id(*)')
+      .eq('status', 'ACCEPTED')
+      .eq('type', 'IMAGE')
+      .eq('is_archived', false)
+      .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    await getPostImagesVideos(data);
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function searchAcceptedVideoPosts(
+  searchTerm,
+  startIndex = 0,
+  limit = 6,
+  orderBy = ORDER_BY.NEW
+) {
+  try {
+    const query = searchTerm.toLowerCase().trim();
+
+    if (query.length === 0) {
+      return {
+        data: [],
+        hasMore: false,
+      };
+    }
+
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*, user:user_id(*)')
+      .eq('status', 'ACCEPTED')
+      .eq('type', 'VIDEO')
+      .eq('is_archived', false)
+      .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    await getPostImagesVideos(data);
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function searchAcceptedDiscussionPosts(
+  searchTerm,
+  startIndex = 0,
+  limit = 6,
+  orderBy = ORDER_BY.NEW
+) {
+  try {
+    const query = searchTerm.toLowerCase().trim();
+
+    if (query.length === 0) {
+      return {
+        data: [],
+        hasMore: false,
+      };
+    }
+
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*, user:user_id(*)')
+      .eq('status', 'ACCEPTED')
+      .eq('type', 'DISCUSSION')
+      .eq('is_archived', false)
+      .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function searchAcceptedPosts(
   searchTerm,
   startIndex = 0,
@@ -280,7 +395,7 @@ async function getArchivedPostsByProfileId(
     const { data, error } = await supabase
       .from('posts')
       .select('*, user:user_id(*)')
-      .eq('is_archived', false)
+      .eq('is_archived', true)
       .eq('user_id', profileId)
       .order(orderBy.columnName, { ascending: orderBy.isAscending })
       .range(startIndex, startIndex + limit - 1);
@@ -328,7 +443,7 @@ async function getAcceptedPosts(
 async function getPendingPosts(
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.OLD
+  orderBy = ORDER_BY.NEW
 ) {
   try {
     const { data, error } = await supabase
@@ -497,6 +612,63 @@ async function getPendingPostsCount() {
   }
 }
 
+async function getViewedPostsByProfileId(
+  profileId,
+  startIndex = 0,
+  limit = 6,
+  orderBy = ORDER_BY.NEW
+) {
+  try {
+    const { data, error } = await supabase
+      .from('views')
+      .select('*, post:post_id(*)')
+      .eq('user_id', profileId)
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    await getPostImagesVideos(data);
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getAcceptedPostsByReceiverProfileIds(
+  receiverProfileIds,
+  startIndex = 0,
+  limit = 6,
+  orderBy = ORDER_BY.NEW
+) {
+  try {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*, user:user_id(*)')
+      .eq('status', 'ACCEPTED')
+      .eq('is_archived', false)
+      .eq('is_anonymous', false)
+      .in('user_id', receiverProfileIds)
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getPostsCountByProfileId() {}
+
 export {
   getPostImagesVideos,
   getImagePostFiles,
@@ -518,4 +690,10 @@ export {
   getAcceptedVideoPosts,
   getAcceptedDiscussionPosts,
   getPendingPostsCount,
+  getViewedPostsByProfileId,
+  searchAcceptedDiscussionPosts,
+  searchAcceptedVideoPosts,
+  searchAcceptedImagePosts,
+  getAcceptedPostsByReceiverProfileIds,
+  getPostsCountByProfileId,
 };

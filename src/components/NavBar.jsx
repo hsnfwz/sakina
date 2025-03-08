@@ -1,13 +1,7 @@
 import { useContext } from 'react';
 import { Link } from 'react-router';
 import { useLocation } from 'react-router';
-import {
-  ModalContext,
-  UserContext,
-  NotificationsContext,
-  AdminContext,
-} from '../common/contexts';
-import Footer from './Footer';
+import { ModalContext, UserContext } from '../common/contexts';
 import Button from './Button';
 import SVGSolidHome from './svgs/solid/SVGSolidHome';
 import SVGOutlineHome from './svgs/outline/SVGOutlineHome';
@@ -28,22 +22,22 @@ import SVGOutlineUserArrow from './svgs/outline/SVGOutlineUserArrow';
 import SVGOutlineUserPlus from './svgs/outline/SVGOutlineUserPlus';
 import { BUTTON_COLOR } from '../common/enums';
 import { formatCount } from '../common/helpers.js';
-import SearchBar from './SearchBar.jsx';
 
-function NavBar({}) {
+function NavBar({
+  notificationsCount,
+  isLoadingNotificationsCount,
+  postsCount,
+  isLoadingPostsCount,
+  pendingPostsCount,
+  isLoadingPendingPostsCount,
+}) {
   const { user } = useContext(UserContext);
   const { setShowModal } = useContext(ModalContext);
   const location = useLocation();
 
-  const { notificationsCount, isLoadingNotificationsCount } =
-    useContext(NotificationsContext);
-  const { pendingPostsCount, isLoadingPendingPostsCount } =
-    useContext(AdminContext);
-
   return (
-    <div className="fixed left-0 top-0 z-40 hidden h-full w-full max-w-[300px] bg-black p-4 sm:block">
+    <div className="fixed left-0 top-0 z-40 hidden h-full w-full max-w-[200px] border-r-2 border-neutral-700 bg-black p-4 sm:block">
       <nav className="flex h-full w-full flex-col gap-4 sm:overflow-auto">
-        <SearchBar />
         {user && user.user_role === 'SUPER_ADMIN' && (
           <Link
             to="/admin"
@@ -78,14 +72,31 @@ function NavBar({}) {
           to="/"
           className={`${location.pathname === '/' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
         >
-          {location.pathname === '/' && <SVGSolidHome />}
-          {location.pathname !== '/' && <SVGOutlineHome />}
+          <div className="relative left-0 top-0">
+            {location.pathname === '/' && (
+              <div className="relative left-0 top-0">
+                <SVGSolidHome />
+              </div>
+            )}
+            {location.pathname !== '/' && (
+              <div className="relative left-0 top-0">
+                <SVGOutlineHome />
+              </div>
+            )}
+            {!isLoadingPostsCount && postsCount > 0 && (
+              <span className="absolute -right-2 -top-2 rounded-full bg-rose-500 p-1 text-xs text-white">
+                {formatCount(postsCount)}
+              </span>
+            )}
+          </div>
+
           <span
             className={`${location.pathname === '/' ? 'text-sky-500' : 'text-white'}`}
           >
             Home
           </span>
         </Link>
+
         <Link
           to="/explore"
           className={`${location.pathname.includes('/explore') ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
@@ -147,18 +158,20 @@ function NavBar({}) {
             </span>
           </Link>
         )}
-        <Link
-          to="/settings"
-          className={`${location.pathname === '/settings' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
-        >
-          {location.pathname === '/settings' && <SVGSolidSettings />}
-          {location.pathname !== '/settings' && <SVGOutlineSettings />}
-          <span
-            className={`${location.pathname === '/settings' ? 'text-sky-500' : 'text-white'}`}
+        {user && (
+          <Link
+            to="/settings"
+            className={`${location.pathname === '/settings' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
           >
-            Settings
-          </span>
-        </Link>
+            {location.pathname === '/settings' && <SVGSolidSettings />}
+            {location.pathname !== '/settings' && <SVGOutlineSettings />}
+            <span
+              className={`${location.pathname === '/settings' ? 'text-sky-500' : 'text-white'}`}
+            >
+              Settings
+            </span>
+          </Link>
+        )}
         {user && (
           <Button
             handleClick={() => setShowModal({ type: 'POST_MODAL' })}
@@ -208,7 +221,6 @@ function NavBar({}) {
             </Link>
           </>
         )}
-        <Footer />
       </nav>
     </div>
   );

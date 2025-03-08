@@ -11,6 +11,12 @@ const UPLOAD_TYPE = Object.freeze({
     mimeTypes: ['video/mp4', 'video/mov', 'video/avi'],
     sizeLimit: 50000000, // 50 MB
   },
+  AVATAR: {
+    type: 'AVATAR',
+    bucketName: 'avatars',
+    mimeTypes: ['image/jpeg', 'image/png', 'image/gif'],
+    sizeLimit: 50000000, // 50 MB
+  },
 });
 
 const ORDER_BY = Object.freeze({
@@ -43,4 +49,23 @@ const BUTTON_COLOR = Object.freeze({
   },
 });
 
-export { UPLOAD_TYPE, ORDER_BY, BUTTON_COLOR };
+const SEARCH_TYPE = Object.freeze({
+  POST_IMAGES: {
+    type: 'POST_IMAGES',
+    placeholder: 'Search Images',
+  },
+  POST_VIDEOS: {
+    type: 'POST_VIDEOS',
+    placeholder: 'Search Videos',
+  },
+  POST_DISCUSSIONS: {
+    type: 'POST_DISCUSSIONS',
+    placeholder: 'Search Discussions',
+  },
+  PROFILES: {
+    type: 'PROFILES',
+    placeholder: 'Search Profiles',
+  },
+});
+
+export { UPLOAD_TYPE, ORDER_BY, BUTTON_COLOR, SEARCH_TYPE };

@@ -41,9 +41,6 @@ function SignUpLayout() {
       options: {
         data: {
           username: username,
-          display_name: '',
-          user_role: 'USER',
-          avatar_file: '',
         },
         emailRedirectTo: 'http://localhost:5173',
       },

@@ -6,7 +6,7 @@ function TextInput({ handleInput, placeholder, label, value }) {
         id={placeholder}
         type="text"
         placeholder={placeholder}
-        className="flex w-full rounded-full border-2 border-neutral-700 bg-black px-4 py-2 placeholder-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0"
+        className="flex w-full rounded-lg border-2 border-neutral-700 bg-black px-4 py-2 placeholder-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0"
         onInput={handleInput}
         value={value}
         autoComplete="off"

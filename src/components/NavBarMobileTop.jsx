@@ -1,22 +1,18 @@
 import { useContext } from 'react';
-import { ModalContext, UserContext, AdminContext } from '../common/contexts';
+import { ModalContext, UserContext } from '../common/contexts';
 import IconButton from './IconButton';
 import SVGOutlinePlus from './svgs/outline/SVGOutlinePlus';
 import { BUTTON_COLOR } from '../common/enums';
-import SearchBar from './SearchBar';
 import SVGSolidShield from './svgs/solid/SVGSolidShield';
 import SVGOutlineShield from './svgs/outline/SVGOutlineShield';
 import { Link } from 'react-router';
 import { useLocation } from 'react-router';
 import { formatCount } from '../common/helpers';
 
-function NavBarMobileTop() {
+function NavBarMobileTop({ pendingPostsCount, isLoadingPendingPostsCount }) {
   const { user } = useContext(UserContext);
   const { setShowModal } = useContext(ModalContext);
   const location = useLocation();
-
-  const { pendingPostsCount, isLoadingPendingPostsCount } =
-    useContext(AdminContext);
 
   return (
     <div className="sticky top-0 z-40 block w-full bg-black p-4 sm:hidden">
@@ -45,7 +41,6 @@ function NavBarMobileTop() {
             </div>
           </Link>
         )}
-        <SearchBar />
         {user && (
           <IconButton
             handleClick={() => setShowModal({ type: 'POST_MODAL' })}

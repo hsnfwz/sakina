@@ -4,7 +4,7 @@ import {
   getFollowersByProfileId,
   getProfileByUsername,
 } from '../common/database/profiles.js';
-import { ExploreContext, UserContext } from '../common/contexts.js';
+import { DataContext, UserContext } from '../common/contexts.js';
 
 import Loading from '../components/Loading.jsx';
 import Masonry from '../components/Masonry.jsx';
@@ -19,7 +19,7 @@ function ProfileFollowersNestedLayout() {
 
   let contextValues;
   if (username === user.username) {
-    contextValues = useContext(ExploreContext);
+    contextValues = useContext(DataContext);
   } else {
     contextValues = useOutletContext();
   }
@@ -104,7 +104,7 @@ function ProfileFollowersNestedLayout() {
       {isLoadingProfile && <Loading />}
       {!isLoadingProfile && profile && (
         <>
-          {profileFollowers.length > 0 && (
+          {/* {profileFollowers.length > 0 && (
             <>
               <Masonry
                 data={profileFollowers}
@@ -115,7 +115,7 @@ function ProfileFollowersNestedLayout() {
 
               {!profileHasMoreFollowers && <Loaded />}
             </>
-          )}
+          )} */}
           {profileIsLoadingFollowers && <Loading />}
           {!profileIsLoadingFollowers && profileFollowers.length === 0 && (
             <Loaded />

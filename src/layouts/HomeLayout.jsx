@@ -1,81 +1,106 @@
-import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '../common/contexts';
-import { getIslamicDate } from '../common/helpers.js';
-import { supabase } from '../common/supabase.js';
+import { useContext, useEffect, useState, useRef } from 'react';
+import { DataContext, UserContext } from '../common/contexts';
 import Loading from '../components/Loading.jsx';
+import { getFollowersBySenderProfileId } from '../common/database/followers.js';
+import { getAcceptedPostsByReceiverProfileIds } from '../common/database/posts.js';
+import Loaded from '../components/Loaded.jsx';
+import PostImagePreview from '../components/PostImagePreview.jsx';
+import PostVideoPreview from '../components/PostVideoPreview.jsx';
+import PostDiscussionPreview from '../components/PostDiscussionPreview.jsx';
+import Button from '../components/Button.jsx';
+import { BUTTON_COLOR } from '../common/enums.js';
 
-function HomeLayout() {
+function HomeLayout({
+  setPostsCount,
+  newPostsCount,
+  setNewPostsCount,
+}) {
   const { user } = useContext(UserContext);
+  const { homeAcceptedPosts, setHomeAcceptedPosts } = useContext(DataContext);
 
-  const [posts, setPosts] = useState([]);
-  const [loadingPosts, setLoadingPosts] = useState(false);
+  const receiverProfileIds = useRef([]);
 
-  async function getPosts() {
-    setLoadingPosts(true);
-
-    const { data: followersData, error: followersError } = await supabase
-      .from('followers')
-      .select('*')
-      .eq('sender_user_id', user.id);
-
-    if (followersError) {
-      console.log(followersError);
-    }
-
-    const receiverUserIds = followersData.map(
-      (follower) => follower.receiver_user_id
-    );
-
-    const { data: postsData, error: postsError } = await supabase
-      .from('posts')
-      .select('*')
-      .in('user_id', receiverUserIds)
-      .eq('status', 'ACCEPTED')
-      .order('created_at', { ascending: false });
-
-    if (postsError) {
-      console.log(postsError);
-    }
-
-    setPosts(postsData);
-    setLoadingPosts(false);
-  }
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    async function initialize() {
-      await getPosts();
+    setPostsCount(0);
+
+    if (!homeAcceptedPosts.hasInitializedData) {
+      getData();
+    }
+  }, []);
+
+  async function getData() {
+    setIsLoading(true);
+
+    const { data: followers } = await getFollowersBySenderProfileId(user.id);
+
+    const receiverIds = followers.map((follower) => follower.receiver.id);
+
+    receiverProfileIds.current = receiverIds;
+
+    const { data, hasMore } =
+      await getAcceptedPostsByReceiverProfileIds(receiverIds);
+
+    const _homeAcceptedPosts = { ...homeAcceptedPosts };
+
+    if (data.length > 0) {
+      _homeAcceptedPosts.data = [..._homeAcceptedPosts.data, ...data];
     }
 
-    if (user) initialize();
-  }, [user]);
+    _homeAcceptedPosts.hasMoreData = hasMore;
+    _homeAcceptedPosts.hasInitializedData = true;
+
+    setNewPostsCount(0);
+
+    setHomeAcceptedPosts(_homeAcceptedPosts);
+
+    setIsLoading(false);
+  }
+
+  async function refreshPosts() {
+    setIsLoading(true);
+
+    const _homeAcceptedPosts = { ...homeAcceptedPosts };
+
+    const { data } = await getAcceptedPostsByReceiverProfileIds(
+      receiverProfileIds.current,
+      0,
+      newPostsCount
+    );
+
+    _homeAcceptedPosts.data = [...data, ..._homeAcceptedPosts.data];
+
+    setNewPostsCount(0);
+
+    setHomeAcceptedPosts(_homeAcceptedPosts);
+
+    setIsLoading(false);
+  }
 
   return (
-    <div className="flex w-full flex-col items-center justify-center gap-8">
-      <div className="flex flex-col gap-4">
-        {!user && (
-          <>
-            <h1 className="text-center text-2xl">Salam!</h1>
-            <p className="text-center">Welcome to Project 313.</p>
-          </>
-        )}
-        {user && (
-          <>
-            <h1 className="text-center text-2xl">Salam {user.username}!</h1>
-            <p className="text-center">
-              Welcome back. Your feed is up to date for{' '}
-              {getIslamicDate(new Date())}
-            </p>
-          </>
-        )}
-      </div>
-      {loadingPosts && <Loading />}
-      {!loadingPosts && (
-        <>
-          {posts.map((post) => (
-            <div key={post.id}></div>
-          ))}
-        </>
+    <div className="flex w-full flex-col gap-4">
+      <h1>Salam {user.username}!</h1>
+      {homeAcceptedPosts.hasInitializedData && newPostsCount > 0 && (
+        <Button
+          buttonColor={BUTTON_COLOR.BLUE}
+          handleClick={refreshPosts}
+          isDisabled={isLoading}
+        >
+          Refresh ({newPostsCount})
+        </Button>
       )}
+      {homeAcceptedPosts.data.map((post) => (
+        <div key={post.id}>
+          {post.type === 'IMAGE' && <PostImagePreview postImage={post} />}
+          {post.type === 'VIDEO' && <PostVideoPreview postVideo={post} />}
+          {post.type === 'DISCUSSION' && (
+            <PostDiscussionPreview postDiscussion={post} />
+          )}
+        </div>
+      ))}
+      {isLoading && <Loading />}
+      {!homeAcceptedPosts.hasMoreData && <Loaded />}
     </div>
   );
 }

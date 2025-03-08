@@ -105,9 +105,7 @@ function CommentLayout() {
               </p>
             </div>
             <h1>{comment.post.title}</h1>
-            {comment.post.description && (
-              <p>{comment.post.description}</p>
-            )}
+            {comment.post.description && <p>{comment.post.description}</p>}
           </Link>
           <Comment
             comment={comment}
