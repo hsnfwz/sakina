@@ -10,11 +10,7 @@ import PostDiscussionPreview from '../components/PostDiscussionPreview.jsx';
 import Button from '../components/Button.jsx';
 import { BUTTON_COLOR } from '../common/enums.js';
 
-function HomeLayout({
-  setPostsCount,
-  newPostsCount,
-  setNewPostsCount,
-}) {
+function HomeLayout({ setPostsCount, newPostsCount, setNewPostsCount }) {
   const { user } = useContext(UserContext);
   const { homeAcceptedPosts, setHomeAcceptedPosts } = useContext(DataContext);
 

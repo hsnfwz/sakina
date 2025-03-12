@@ -1,39 +1,31 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router';
-import { expectedUsernameFormat } from '../common/helpers.js';
+import {
+  expectedUsernameFormat,
+  expectedPasswordFormat,
+} from '../common/helpers.js';
 import { supabase } from '../common/supabase.js';
+import TextInput from '../components/TextInput.jsx';
+import Button from '../components/Button.jsx';
+import { BUTTON_COLOR } from '../common/enums.js';
 
 function SignUpLayout() {
+  const usernameCharacterMax = 40;
+  const usernameCharacterMin = 2;
+  const passwordCharacterMin = 8;
+
   const navigate = useNavigate('/');
-  const [disabled, setDisabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [reenterPassword, setReenterPassword] = useState('');
   const [authMessage, setAuthMessage] = useState('');
 
+  const timerRef = useRef();
+
   async function signUp() {
-    setDisabled(true);
-
-    if (username.length < 2 || username.length > 40) {
-      setAuthMessage('USERNAME_LENGTH');
-      setDisabled(false);
-      return;
-    } else if (!expectedUsernameFormat(username)) {
-      setAuthMessage('USERNAME_CHARACTERS');
-      setDisabled(false);
-      return;
-    }
-
-    const { data: users } = await supabase
-      .from('users')
-      .select()
-      .eq('username', username);
-
-    if (users.length > 0) {
-      setAuthMessage('USERNAME_EXISTS');
-      setDisabled(false);
-      return;
-    }
+    setIsLoading(true);
 
     const { data, error } = await supabase.auth.signUp({
       email: email,
@@ -66,55 +58,201 @@ function SignUpLayout() {
       }
     }
 
-    setDisabled(false);
+    setIsLoading(false);
+  }
+
+  async function checkUsername(event) {
+    setUsername(event.target.value);
+
+    clearTimeout(timerRef.current);
+    if (event.target.value && event.target.value.length > 0) {
+      timerRef.current = setTimeout(async () => {
+        const { data } = await supabase
+          .from('users')
+          .select('*')
+          .eq('username', event.target.value);
+
+        if (event.target.value === username) {
+          setAuthMessage(null);
+          return;
+        }
+
+        if (!expectedUsernameFormat(event.target.value)) {
+          setAuthMessage('USERNAME_FORMAT');
+          return;
+        }
+
+        if (data.length > 0 && event.target.value !== username) {
+          setAuthMessage('USERNAME_EXISTS');
+          return;
+        }
+
+        if (data.length === 0 && event.target.value !== username) {
+          setAuthMessage(null);
+          return;
+        }
+      }, 1000);
+    } else {
+      setAuthMessage(null);
+    }
+  }
+
+  async function checkPassword(event) {
+    setPassword(event.target.value);
+
+    if (event.target.value.length === 0) {
+      setAuthMessage(null);
+      return;
+    }
+
+    if (!expectedPasswordFormat(event.target.value)) {
+      setAuthMessage('PASSWORD_FORMAT');
+      return;
+    } else {
+      setAuthMessage(null);
+      return;
+    }
+  }
+
+  async function checkReenterPassword(event) {
+    setReenterPassword(event.target.value);
+
+    if (event.target.value.length === 0) {
+      setAuthMessage(null);
+      return;
+    }
+
+    if (event.target.value !== password) {
+      setAuthMessage('REENTER_PASSWORD_NOT_EQUAL');
+      return;
+    } else {
+      setAuthMessage(null);
+      return;
+    }
   }
 
   return (
-    <div>
+    <div className="m-auto flex w-full max-w-screen-md flex-col gap-4">
       {authMessage !== 'CONFIRM_EMAIL' && (
-        <div>
-          <input
-            type="text"
-            onInput={(e) => setUsername(e.target.value)}
-            placeholder="Username"
-          />
+        <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <TextInput
+                label="*Username"
+                handleInput={checkUsername}
+                placeholder="Username"
+                value={username}
+              />
+              <p
+                className={`self-end ${username.length > usernameCharacterMax ? 'text-rose-500' : 'text-white'}`}
+              >
+                {username.length} / {usernameCharacterMax}
+              </p>
+            </div>
+            {authMessage === 'USERNAME_EXISTS' && (
+              <p className="text-rose-500">Username already exists.</p>
+            )}
+            {authMessage === 'USERNAME_FORMAT' && (
+              <p className="text-rose-500">
+                Only uppercase letters (A - Z), lowercase letters (a - z),
+                underscores (_), and periods (.) allowed.
+              </p>
+            )}
+          </div>
 
-          <p>Username rules:</p>
-          <ul>
-            <li>Must be between 2 and 40 characters long</li>
-            <li>May include uppercase letters (A-Z)</li>
-            <li>May include lowercase letters (a-z)</li>
-            <li>May include numbers (0-9)</li>
-            <li>May include underscores (_)</li>
-            <li>May include periods (.)</li>
-          </ul>
+          <div className="flex flex-col gap-4">
+            <TextInput
+              label="*Email"
+              handleInput={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              value={email}
+            />
+            {authMessage === 'VALIDATION_FAILED' && (
+              <p className="text-rose-500">
+                Your email is not in the expected format. Please try a different
+                email.
+              </p>
+            )}
+            {authMessage === 'EMAIL_ADDRESS_INVALID' && (
+              <p className="text-rose-500">
+                Your email is not accepted. Please try a different email.
+              </p>
+            )}
+            {authMessage === 'EMAIL_EXISTS' && (
+              <p className="text-rose-500">
+                Email already exists. Please try a different email.
+              </p>
+            )}
+            {authMessage === 'OVER_EMAIL_SEND_RATE_LIMIT' && (
+              <p className="text-rose-500">
+                Email send limit reached. Please try again later.
+              </p>
+            )}
+          </div>
 
-          <input
-            type="text"
-            onInput={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-          />
-          <input
-            type="text"
-            onInput={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-          />
-          <p>Password rules:</p>
-          <ul>
-            <li>Must be at least 8 characters long</li>
-            <li>Must have at least 1 uppercase letter (A-Z)</li>
-            <li>Must have at least 1 lowercase letter (a-z)</li>
-            <li>Must have at least 1 number (0-9)</li>
-          </ul>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <TextInput
+                label="*Password"
+                handleInput={checkPassword}
+                placeholder="Password"
+                value={password}
+              />
+              <p
+                className={`self-end ${password.length < passwordCharacterMin ? 'text-rose-500' : 'text-white'}`}
+              >
+                {password.length}
+              </p>
+            </div>
+            {authMessage === 'WEAK_PASSWORD' && (
+              <p className="text-rose-500">
+                Your password is weak. Please try a different password.
+              </p>
+            )}
+            {authMessage === 'PASSWORD_FORMAT' && (
+              <p className="text-rose-500">
+                Must be at least 8 characters long and have at least 1 uppercase
+                letter (A - Z), 1 lowercase letter (a - z), and 1 number.
+              </p>
+            )}
+          </div>
 
-          <button
-            type="button"
-            className="disabled:pointer-events-none disabled:opacity-50"
-            disabled={disabled}
-            onClick={async () => await signUp()}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <TextInput
+                label="*Re-enter Password"
+                handleInput={checkReenterPassword}
+                placeholder="Re-enter Password"
+                value={reenterPassword}
+              />
+              <p
+                className={`self-end ${reenterPassword.length < passwordCharacterMin ? 'text-rose-500' : 'text-white'}`}
+              >
+                {reenterPassword.length}
+              </p>
+            </div>
+            {authMessage === 'REENTER_PASSWORD_NOT_EQUAL' && (
+              <p className="text-rose-500">Must match password.</p>
+            )}
+          </div>
+
+          <Button
+            isDisabled={
+              isLoading ||
+              username.length > usernameCharacterMax ||
+              username.length < usernameCharacterMin ||
+              !expectedUsernameFormat(username) ||
+              authMessage === 'USERNAME_EXISTS' ||
+              email.length === 0 ||
+              !expectedPasswordFormat(password) ||
+              password.length < passwordCharacterMin ||
+              reenterPassword !== password
+            }
+            handleClick={async () => await signUp()}
+            buttonColor={BUTTON_COLOR.BLUE}
           >
             Sign Up
-          </button>
+          </Button>
         </div>
       )}
 
@@ -123,48 +261,6 @@ function SignUpLayout() {
           A confirmation email has been sent to <strong>{email}</strong> with a
           link. Please click on the link to confirm your account and log in.
         </p>
-      )}
-
-      {authMessage === 'WEAK_PASSWORD' && (
-        <p>Your password is weak. Please try a different password.</p>
-      )}
-
-      {authMessage === 'VALIDATION_FAILED' && (
-        <p>
-          Your email is not in the expected format. Please try a different
-          email.
-        </p>
-      )}
-
-      {authMessage === 'EMAIL_ADDRESS_INVALID' && (
-        <p>Your email is not accepted. Please try a different email.</p>
-      )}
-
-      {authMessage === 'USERNAME_EXISTS' && (
-        <p>Username already exists. Please try a different username.</p>
-      )}
-
-      {authMessage === 'EMAIL_EXISTS' && (
-        <p>Email already exists. Please try a different email.</p>
-      )}
-
-      {authMessage === 'USERNAME_LENGTH' && (
-        <p>
-          Username must be between 2 and 40 characters. Please try a different
-          username.
-        </p>
-      )}
-
-      {authMessage === 'USERNAME_CHARACTERS' && (
-        <p>
-          Username can only include uppercase letters (A-Z), lowercase letters
-          (a-z), underscores (_), or periods(.). Please try a different
-          username.
-        </p>
-      )}
-
-      {authMessage === 'OVER_EMAIL_SEND_RATE_LIMIT' && (
-        <p>Email send limit reached. Please try again later.</p>
       )}
     </div>
   );

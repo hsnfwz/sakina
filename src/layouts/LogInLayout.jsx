@@ -2,17 +2,20 @@ import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { SessionContext } from '../common/contexts.js';
 import { supabase } from '../common/supabase.js';
+import Button from '../components/Button.jsx';
+import TextInput from '../components/TextInput.jsx';
+import { BUTTON_COLOR } from '../common/enums.js';
 
 function LogInLayout() {
   const { setSession } = useContext(SessionContext);
   const navigate = useNavigate();
-  const [disabled, setDisabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [authMessage, setAuthMessage] = useState('');
 
   async function signIn() {
-    setDisabled(true);
+    setIsLoading(true);
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
@@ -34,34 +37,46 @@ function LogInLayout() {
       navigate('/');
     }
 
-    setDisabled(false);
+    setIsLoading(false);
   }
 
   return (
-    <div>
+    <div className="m-auto flex w-full max-w-screen-md flex-col gap-8">
       {authMessage !== 'RESENT_CONFIRMATION' && (
         <>
-          <input
-            type="text"
-            onInput={(e) => setEmail(e.target.value)}
+          <TextInput
+            handleInput={(e) => setEmail(e.target.value)}
             placeholder="Email"
-          />
-          <input
-            type="text"
-            onInput={(e) => setPassword(e.target.value)}
-            placeholder="Password"
+            label="Email"
+            value={email}
           />
 
-          <button
-            type="button"
-            className="disabled:pointer-events-none disabled:opacity-50"
-            disabled={disabled}
-            onClick={async () => await signIn()}
+          <TextInput
+            handleInput={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            label="Password"
+            value={password}
+          />
+
+          <Button
+            isDisabled={
+              isLoading ||
+              email.length === 0 ||
+              password.length === 0 ||
+              authMessage
+            }
+            handleClick={async () => await signIn()}
+            buttonColor={BUTTON_COLOR.BLUE}
           >
             Log In
-          </button>
+          </Button>
 
-          <Link to="/forgot-password">Forgot Password</Link>
+          <Link
+            to="/forgot-password"
+            className="self-start text-neutral-700 underline"
+          >
+            Forgot Password
+          </Link>
         </>
       )}
 
@@ -76,12 +91,11 @@ function LogInLayout() {
             to email <strong>{email}</strong> to confirm your account and log
             in.
           </p>
-          <button
-            type="button"
-            className="disabled:pointer-events-none disabled:opacity-50"
-            disabled={disabled}
-            onClick={async () => {
-              setDisabled(true);
+          <Button
+            isDisabled={isLoading}
+            buttonColor={BUTTON_COLOR.RED}
+            handleClick={async () => {
+              setIsLoading(true);
 
               const { error } = await supabase.auth.resend({
                 type: 'signup',
@@ -94,11 +108,11 @@ function LogInLayout() {
               if (error) console.log(JSON.stringify(error));
 
               setAuthMessage('RESENT_CONFIRMATION');
-              setDisabled(false);
+              setIsLoading(false);
             }}
           >
             Resend Confirmation Email
-          </button>
+          </Button>
         </>
       )}
 

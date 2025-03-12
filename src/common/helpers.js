@@ -2,6 +2,15 @@ function expectedUsernameFormat(username) {
   return /^[a-zA-Z0-9._]+$/.test(username);
 }
 
+function expectedPasswordFormat(password) {
+  return (
+    password.length >= 8 &&
+    /\d/.test(password) &&
+    /[A-Z]/.test(password) &&
+    /[a-z]/.test(password)
+  );
+}
+
 function formatFileName(fileName) {
   const newFileName = fileName
     .split('.')
@@ -119,6 +128,7 @@ function getHighlightText(mainText, subText) {
 
 export {
   expectedUsernameFormat,
+  expectedPasswordFormat,
   formatFileName,
   formatFileSize,
   formatFileSizeAbbreviation,

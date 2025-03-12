@@ -1,8 +1,6 @@
 import { useEffect, useContext, useState } from 'react';
 import { supabase } from '../common/supabase';
-import {
-  getPendingPosts,
-} from '../common/database/posts';
+import { getPendingPosts } from '../common/database/posts';
 import { DataContext, UserContext } from '../common/contexts';
 import { useElementIntersection } from '../common/hooks';
 import Loading from '../components/Loading';
@@ -34,7 +32,9 @@ function AdminLayout({
   async function getData() {
     setIsLoading(true);
 
-    const { data, hasMore } = await getPendingPosts(adminPendingPosts.data.length);
+    const { data, hasMore } = await getPendingPosts(
+      adminPendingPosts.data.length
+    );
 
     const _adminPendingPosts = { ...adminPendingPosts };
 
@@ -111,7 +111,7 @@ function AdminLayout({
   }
 
   return (
-    <div className="flex flex-col gap-4 w-full">
+    <div className="flex w-full flex-col gap-4">
       <h1>Admin</h1>
       {adminPendingPosts.hasInitializedData && newPendingPostsCount > 0 && (
         <Button
@@ -123,24 +123,15 @@ function AdminLayout({
         </Button>
       )}
       {adminPendingPosts.data.map((pendingPost, index) => (
-        <div
-          key={index}
-          className="flex flex-col gap-4 w-full"
-        >
+        <div key={index} className="flex w-full flex-col gap-4">
           {pendingPost.type === 'IMAGE' && (
-            <PostImagePreview
-              postImage={pendingPost}
-            />
+            <PostImagePreview postImage={pendingPost} />
           )}
           {pendingPost.type === 'VIDEO' && (
-            <PostVideoPreview
-              postVideo={pendingPost}
-            />
+            <PostVideoPreview postVideo={pendingPost} />
           )}
           {pendingPost.type === 'DISCUSSION' && (
-            <PostDiscussionPreview
-              postDiscussion={pendingPost}
-            />
+            <PostDiscussionPreview postDiscussion={pendingPost} />
           )}
           <div className="flex gap-2">
             <Button

@@ -1,35 +1,38 @@
 import { useState } from 'react';
 import { supabase } from '../common/supabase';
+import TextInput from '../components/TextInput';
+import Button from '../components/Button';
+import { BUTTON_COLOR } from '../common/enums';
 
 function ForgotPasswordLayout() {
-  const [disabled, setDisabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [authMessage, setAuthMessage] = useState(null);
   const [email, setEmail] = useState('');
 
   return (
-    <div>
+    <div className="m-auto flex w-full max-w-screen-md flex-col gap-8">
       {authMessage !== 'RESET' && (
         <>
-          <input
-            type="text"
-            onInput={(e) => setEmail(e.target.value)}
+          <TextInput
+            handleInput={(e) => setEmail(e.target.value)}
             placeholder="Email"
+            label="Email"
+            value={email}
           />
-          <button
-            className="disabled:pointer-events-none disabled:opacity-50"
-            type="button"
-            disabled={disabled || email === ''}
-            onClick={async () => {
-              setDisabled(true);
+          <Button
+            buttonColor={BUTTON_COLOR.RED}
+            isDisabled={isLoading || email.length === 0}
+            handleClick={async () => {
+              setIsLoading(true);
               await supabase.auth.resetPasswordForEmail(email, {
                 redirectTo: 'http://localhost:5173/reset-password',
               });
               setAuthMessage('RESET');
-              setDisabled(false);
+              setIsLoading(false);
             }}
           >
-            Forgot Password
-          </button>
+            Reset Password
+          </Button>
         </>
       )}
 

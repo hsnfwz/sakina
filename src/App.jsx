@@ -79,7 +79,7 @@ function App() {
     notifications: {
       scrollX: 0,
       scrollY: 0,
-    }
+    },
   });
 
   const [showModal, setShowModal] = useState({
@@ -276,14 +276,24 @@ function App() {
         .channel('pending-post-changes')
         .on(
           'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'posts', filter: 'status=eq.PENDING' },
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'posts',
+            filter: 'status=eq.PENDING',
+          },
           (payload) => {
             setPendingPostPayload(payload);
           }
         )
         .on(
           'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'posts', filter: 'status=eq.PENDING' },
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'posts',
+            filter: 'status=eq.PENDING',
+          },
           (payload) => {
             setPendingPostPayload(payload);
           }
@@ -657,6 +667,9 @@ export default App;
 
 /* 
     BACKLOG:
+    - make inputs green when they are correctly inputted to indicate progress to the user
+    - make inputs red when they are incorrectly inputted to indicate error to the user
+
     - rethink post status
     - search bar for a profile's content
     - FIX: add scroll to position and infinite scroll for all pages based on NotificationsLayout

@@ -1,35 +1,110 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { supabase } from '../common/supabase.js';
+import TextInput from '../components/TextInput.jsx';
+import Button from '../components/Button.jsx';
+import { BUTTON_COLOR } from '../common/enums.js';
+import { expectedPasswordFormat } from '../common/helpers.js';
 
 function ResetPasswordLayout() {
+  const passwordCharacterMin = 8;
+
   const [password, setPassword] = useState('');
+  const [reenterPassword, setReenterPassword] = useState('');
+
   const [authMessage, setAuthMessage] = useState('');
 
-  const [disabled, setDisabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function checkPassword(event) {
+    setPassword(event.target.value);
+
+    if (event.target.value.length === 0) {
+      setAuthMessage(null);
+      return;
+    }
+
+    if (!expectedPasswordFormat(event.target.value)) {
+      setAuthMessage('PASSWORD_FORMAT');
+      return;
+    } else {
+      setAuthMessage(null);
+      return;
+    }
+  }
+
+  async function checkReenterPassword(event) {
+    setReenterPassword(event.target.value);
+
+    if (event.target.value.length === 0) {
+      setAuthMessage(null);
+      return;
+    }
+
+    if (event.target.value !== password) {
+      setAuthMessage('REENTER_PASSWORD_NOT_EQUAL');
+      return;
+    } else {
+      setAuthMessage(null);
+      return;
+    }
+  }
 
   return (
-    <div>
+    <div className="m-auto flex w-full max-w-screen-md flex-col gap-8">
       {authMessage !== 'PASSWORD_RESET' && (
         <>
-          <input
-            type="text"
-            onInput={(e) => setPassword(e.target.value)}
-            placeholder="New Password"
-          />
-          <p>Password rules:</p>
-          <ul>
-            <li>Must be at least 8 characters long</li>
-            <li>Must have at least 1 uppercase letter (A-Z)</li>
-            <li>Must have at least 1 lowercase letter (a-z)</li>
-            <li>Must have at least 1 number (0-9)</li>
-          </ul>
-          <button
-            className="disabled:pointer-events-none disabled:opacity-50"
-            type="button"
-            disabled={disabled}
-            onClick={async () => {
-              setDisabled(true);
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <TextInput
+                handleInput={checkPassword}
+                placeholder="New Password"
+                label="New Password"
+                value={password}
+              />
+              <p
+                className={`self-end ${password.length < passwordCharacterMin ? 'text-rose-500' : 'text-white'}`}
+              >
+                {password.length}
+              </p>
+            </div>
+            {authMessage === 'PASSWORD_FORMAT' && (
+              <p className="text-rose-500">
+                Must be at least 8 characters long and have at least 1 uppercase
+                letter (A - Z), 1 lowercase letter (a - z), and 1 number.
+              </p>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <TextInput
+                handleInput={checkReenterPassword}
+                placeholder="Re-enter New Password"
+                label="Re-enter New Password"
+                value={reenterPassword}
+              />
+              <p
+                className={`self-end ${reenterPassword.length < passwordCharacterMin ? 'text-rose-500' : 'text-white'}`}
+              >
+                {reenterPassword.length}
+              </p>
+            </div>
+            {authMessage === 'REENTER_PASSWORD_NOT_EQUAL' && (
+              <p className="text-rose-500">Must match password.</p>
+            )}
+          </div>
+
+          <Button
+            buttonColor={BUTTON_COLOR.RED}
+            isDisabled={
+              isLoading ||
+              password.length === 0 ||
+              reenterPassword !== password ||
+              authMessage
+            }
+            handleClick={async () => {
+              setIsLoading(true);
               const { data, error } = await supabase.auth.updateUser({
                 password,
               });
@@ -48,11 +123,11 @@ function ResetPasswordLayout() {
 
               if (!error) setAuthMessage('PASSWORD_RESET');
 
-              setDisabled(false);
+              setIsLoading(false);
             }}
           >
-            Save
-          </button>
+            Reset Password
+          </Button>
         </>
       )}
 
