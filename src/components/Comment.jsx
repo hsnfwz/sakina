@@ -1,5 +1,6 @@
 import { useContext, useEffect } from 'react';
-import { ModalContext, UserContext } from '../common/contexts';
+import { ModalContext } from '../common/contexts';
+import { AuthContext } from '../common/context/AuthContextProvider';
 import Button from './Button';
 import { getDate } from '../common/helpers';
 import SVGOulineArrowDown from './svgs/outline/SVGOutlineArrowDown';
@@ -16,7 +17,7 @@ function Comment({
   showMoreComments,
   showLink,
 }) {
-  const { user } = useContext(UserContext);
+  const { authUser } = useContext(AuthContext);
   const { setShowModal } = useContext(ModalContext);
 
   return (
@@ -52,7 +53,7 @@ function Comment({
             <p>{comment.description}</p>
           </div>
         )}
-        {user && (
+        {authUser && (
           <div className="self-start">
             <Button
               buttonColor={BUTTON_COLOR.BLUE}

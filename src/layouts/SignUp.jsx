@@ -8,13 +8,22 @@ import { supabase } from '../common/supabase.js';
 import TextInput from '../components/TextInput.jsx';
 import Button from '../components/Button.jsx';
 import { BUTTON_COLOR } from '../common/enums.js';
+import { AuthContext } from '../common/context/AuthContextProvider.jsx';
 
-function SignUpLayout() {
+function SignUp() {
   const usernameCharacterMax = 40;
   const usernameCharacterMin = 2;
   const passwordCharacterMin = 8;
 
+  const { authUser, isLoadingAuthUser } = useContext(AuthContext);
   const navigate = useNavigate('/');
+
+  useEffect(() => {
+    if (!isLoadingAuthUser && authUser) {
+      navigate('/home');
+    }
+  }, [isLoadingAuthUser, authUser]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -51,7 +60,7 @@ function SignUpLayout() {
         setAuthMessage('OVER_EMAIL_SEND_RATE_LIMIT');
       }
     } else {
-      if (data.user?.identities?.length === 0) {
+      if (data.authUser?.identities?.length === 0) {
         setAuthMessage('EMAIL_EXISTS');
       } else {
         setAuthMessage('CONFIRM_EMAIL');
@@ -144,7 +153,7 @@ function SignUpLayout() {
                 value={username}
               />
               <p
-                className={`self-end ${username.length > usernameCharacterMax ? 'text-rose-500' : 'text-white'}`}
+                className={`self-end ${username.length > usernameCharacterMax ? 'text-rose-500' : 'text-black'}`}
               >
                 {username.length} / {usernameCharacterMax}
               </p>
@@ -199,7 +208,7 @@ function SignUpLayout() {
                 value={password}
               />
               <p
-                className={`self-end ${password.length < passwordCharacterMin ? 'text-rose-500' : 'text-white'}`}
+                className={`self-end ${password.length < passwordCharacterMin ? 'text-rose-500' : 'text-black'}`}
               >
                 {password.length}
               </p>
@@ -226,7 +235,7 @@ function SignUpLayout() {
                 value={reenterPassword}
               />
               <p
-                className={`self-end ${reenterPassword.length < passwordCharacterMin ? 'text-rose-500' : 'text-white'}`}
+                className={`self-end ${reenterPassword.length < passwordCharacterMin ? 'text-rose-500' : 'text-black'}`}
               >
                 {reenterPassword.length}
               </p>
@@ -266,4 +275,4 @@ function SignUpLayout() {
   );
 }
 
-export default SignUpLayout;
+export default SignUp;

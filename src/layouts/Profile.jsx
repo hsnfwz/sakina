@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { Outlet, useLocation, useParams } from 'react-router';
-import { getProfileByUsername } from '../common/database/profiles.js';
-import { DataContext, UserContext } from '../common/contexts.js';
+import { getProfileByUsername } from '../common/database/users.js';
 import Loading from '../components/Loading.jsx';
 import Button from '../components/Button.jsx';
 import NavPanel from '../components/NavPanel.jsx';
@@ -12,12 +11,14 @@ import {
   getFollowerBySenderProfileIdAndReceiverProfileId,
 } from '../common/database/followers.js';
 import { addNotification } from '../common/database/notifications.js';
+import { DataContext } from '../common/context/DataContextProvider.jsx';
+import { AuthContext } from '../common/context/AuthContextProvider.jsx';
 
-function ProfileLayout() {
+function Profile() {
   const location = useLocation();
   const { username } = useParams();
 
-  const { user } = useContext(UserContext);
+  const { authUser } = useContext(AuthContext);
   const {
     activeProfile,
     setActiveProfile,
@@ -77,7 +78,7 @@ function ProfileLayout() {
     setIsLoadingFollower(true);
 
     const { data } = await getFollowerBySenderProfileIdAndReceiverProfileId(
-      user.id,
+      authUser.id,
       activeProfile.id
     );
 
@@ -89,73 +90,73 @@ function ProfileLayout() {
   function resetProfile() {
     setProfileAcceptedPosts({
       data: [],
-      hasMoreData: true,
-      hasInitializedData: false,
+      hasMore: true,
+      hasInitialized: false,
     });
     setProfilePendingPosts({
       data: [],
-      hasMoreData: true,
-      hasInitializedData: false,
+      hasMore: true,
+      hasInitialized: false,
     });
     setProfileRejectedPosts({
       data: [],
-      hasMoreData: true,
-      hasInitializedData: false,
+      hasMore: true,
+      hasInitialized: false,
     });
     setProfileArchivedPosts({
       data: [],
-      hasMoreData: true,
-      hasInitializedData: false,
+      hasMore: true,
+      hasInitialized: false,
     });
     setProfileViewedPosts({
       data: [],
-      hasMoreData: true,
-      hasInitializedData: false,
+      hasMore: true,
+      hasInitialized: false,
     });
     setProfileAcceptedComments({
       data: [],
-      hasMoreData: true,
-      hasInitializedData: false,
+      hasMore: true,
+      hasInitialized: false,
     });
     setProfilePendingComments({
       data: [],
-      hasMoreData: true,
-      hasInitializedData: false,
+      hasMore: true,
+      hasInitialized: false,
     });
     setProfileRejectedComments({
       data: [],
-      hasMoreData: true,
-      hasInitializedData: false,
+      hasMore: true,
+      hasInitialized: false,
     });
     setProfileArchivedComments({
       data: [],
-      hasMoreData: true,
-      hasInitializedData: false,
+      hasMore: true,
+      hasInitialized: false,
     });
     setProfileViewedComments({
       data: [],
-      hasMoreData: true,
-      hasInitializedData: false,
+      hasMore: true,
+      hasInitialized: false,
     });
     setProfileFollowers({
       data: [],
-      hasMoreData: true,
-      hasInitializedData: false,
+      hasMore: true,
+      hasInitialized: false,
     });
     setProfileFollowing({
       data: [],
-      hasMoreData: true,
-      hasInitializedData: false,
+      hasMore: true,
+      hasInitialized: false,
     });
   }
 
   async function handleFollow() {
     setIsLoadingFollow(true);
 
-    const { data } = await addFollower(user.id, activeProfile.id);
+    const { data } = await addFollower(authUser.id, activeProfile.id);
     setFollower(data[0]);
 
-    await addNotification(user.id, activeProfile.id, 'FOLLOW');
+    await addNotification(authUser.id, activeProfile.id, 'FOLLOW');
 
     setIsLoadingFollow(false);
   }
@@ -191,12 +192,10 @@ function ProfileLayout() {
             </div>
             <h1>
               {activeProfile.username}
-              {activeProfile.display_name && (
-                <span> - {activeProfile.display_name}</span>
-              )}
+              {activeProfile.name && <span> - {activeProfile.name}</span>}
             </h1>
             {activeProfile.bio && <p>{activeProfile.bio}</p>}
-            {user && user.id !== activeProfile.id && !follower && (
+            {authUser && authUser.id !== activeProfile.id && !follower && (
               <Button
                 buttonColor={BUTTON_COLOR.BLUE}
                 handleClick={handleFollow}
@@ -205,7 +204,7 @@ function ProfileLayout() {
                 Follow
               </Button>
             )}
-            {user && user.id !== activeProfile.id && follower && (
+            {authUser && authUser.id !== activeProfile.id && follower && (
               <Button
                 buttonColor={BUTTON_COLOR.BLUE}
                 handleClick={handleUnfollow}
@@ -232,7 +231,7 @@ function ProfileLayout() {
                   profile: activeProfile,
                 },
                 label: 'Pending Posts',
-                show: user && activeProfile.id === user.id,
+                show: authUser && activeProfile.id === authUser.id,
               },
               {
                 to: 'rejected-posts',
@@ -240,7 +239,7 @@ function ProfileLayout() {
                   profile: activeProfile,
                 },
                 label: 'Rejected Posts',
-                show: user && activeProfile.id === user.id,
+                show: authUser && activeProfile.id === authUser.id,
               },
               {
                 to: 'archived-posts',
@@ -248,7 +247,7 @@ function ProfileLayout() {
                   profile: activeProfile,
                 },
                 label: 'Archived Posts',
-                show: user && activeProfile.id === user.id,
+                show: authUser && activeProfile.id === authUser.id,
               },
               {
                 to: 'viewed-posts',
@@ -256,7 +255,7 @@ function ProfileLayout() {
                   profile: activeProfile,
                 },
                 label: 'Viewed Posts',
-                show: user && activeProfile.id === user.id,
+                show: authUser && activeProfile.id === authUser.id,
               },
               {
                 to: 'followers',
@@ -283,4 +282,4 @@ function ProfileLayout() {
   );
 }
 
-export default ProfileLayout;
+export default Profile;

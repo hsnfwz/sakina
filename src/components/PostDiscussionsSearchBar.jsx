@@ -63,9 +63,7 @@ function PostDiscussionsSearchBar() {
           )}
           <div className="flex flex-col">
             <p>{profile.username}</p>
-            {profile.display_name && (
-              <p className="text-neutral-700">{profile.display_name}</p>
-            )}
+            {profile.name && <p className="text-neutral-700">{profile.name}</p>}
           </div>
         </Link>
       ))}

@@ -1,7 +1,7 @@
 import { useEffect, useContext, useState } from 'react';
 import { supabase } from '../common/supabase';
 import { getPendingPosts } from '../common/database/posts';
-import { DataContext, UserContext } from '../common/contexts';
+import { DataContext, AuthContext } from '../common/contexts';
 import { useElementIntersection } from '../common/hooks';
 import Loading from '../components/Loading';
 import Loaded from '../components/Loaded';
@@ -16,7 +16,7 @@ function AdminLayout({
   newPendingPostsCount,
   setNewPendingPostsCount,
 }) {
-  const { user } = useContext(UserContext);
+  const { authUser } = useContext(AuthContext);
   const { adminPendingPosts, setAdminPendingPosts } = useContext(DataContext);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +24,7 @@ function AdminLayout({
   useEffect(() => {
     setPendingPostsCount(0);
 
-    if (!adminPendingPosts.hasInitializedData) {
+    if (!adminPendingPosts.hasInitialized) {
       getData();
     }
   }, []);
@@ -42,8 +42,8 @@ function AdminLayout({
       _adminPendingPosts.data = [..._adminPendingPosts.data, ...data];
     }
 
-    _adminPendingPosts.hasMoreData = hasMore;
-    _adminPendingPosts.hasInitializedData = true;
+    _adminPendingPosts.hasMore = hasMore;
+    _adminPendingPosts.hasInitialized = true;
 
     setNewPendingPostsCount(0);
 
@@ -85,7 +85,7 @@ function AdminLayout({
       .eq('id', pendingPost.id);
 
     await supabase.from('notifications').insert({
-      sender_user_id: user.id,
+      sender_user_id: authUser.id,
       receiver_user_id: pendingPost.user_id,
       type: 'ACCEPTED',
       post_id: pendingPost.id,
@@ -101,7 +101,7 @@ function AdminLayout({
       .eq('id', pendingPost.id);
 
     await supabase.from('notifications').insert({
-      sender_user_id: user.id,
+      sender_user_id: authUser.id,
       receiver_user_id: pendingPost.user_id,
       type: 'REJECTED',
       post_id: pendingPost.id,
@@ -113,7 +113,7 @@ function AdminLayout({
   return (
     <div className="flex w-full flex-col gap-4">
       <h1>Admin</h1>
-      {adminPendingPosts.hasInitializedData && newPendingPostsCount > 0 && (
+      {adminPendingPosts.hasInitialized && newPendingPostsCount > 0 && (
         <Button
           buttonColor={BUTTON_COLOR.BLUE}
           handleClick={refreshPendingPosts}
@@ -150,7 +150,7 @@ function AdminLayout({
         </div>
       ))}
       {isLoading && <Loading />}
-      {!adminPendingPosts.hasMoreData && <Loaded />}
+      {!adminPendingPosts.hasMore && <Loaded />}
     </div>
   );
 }

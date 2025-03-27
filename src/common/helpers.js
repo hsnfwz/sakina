@@ -120,7 +120,7 @@ function getHighlightText(mainText, subText) {
 
   const highlightText = lowercaseText.replaceAll(
     lowerCaseSearchTerm,
-    `<span className="bg-sky-500 text-white rounded-lg p-1">${lowerCaseSearchTerm}</span>`
+    `<span className="bg-sky-500 text-black rounded-lg p-1">${lowerCaseSearchTerm}</span>`
   );
 
   return highlightText;

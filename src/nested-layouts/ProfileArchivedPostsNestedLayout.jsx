@@ -16,7 +16,7 @@ function ProfileArchivedPostsNestedLayout() {
 
   useEffect(() => {
     if (activeProfile) {
-      if (!profileArchivedPosts.hasInitializedData) {
+      if (!profileArchivedPosts.hasInitialized) {
         getArchivedPosts();
       }
     }
@@ -36,10 +36,10 @@ function ProfileArchivedPostsNestedLayout() {
       _profileArchivedPosts.data = [...profileArchivedPosts.data, ...data];
     }
 
-    _profileArchivedPosts.hasMoreData = hasMore;
+    _profileArchivedPosts.hasMore = hasMore;
 
-    if (!profileArchivedPosts.hasInitializedData) {
-      _profileArchivedPosts.hasInitializedData = true;
+    if (!profileArchivedPosts.hasInitialized) {
+      _profileArchivedPosts.hasInitialized = true;
     }
 
     setProfileArchivedPosts(_profileArchivedPosts);
@@ -52,7 +52,7 @@ function ProfileArchivedPostsNestedLayout() {
       {profileArchivedPosts.data.map((post, index) => (
         <Post key={index} post={post} isPreview={true} />
       ))}
-      {!profileArchivedPosts.hasMoreData && <Loaded />}
+      {!profileArchivedPosts.hasMore && <Loaded />}
       {isLoading && <Loading />}
     </div>
   );

@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react';
-import { ModalContext, UserContext } from '../common/contexts';
+import { ModalContext } from '../common/contexts';
+import { AuthContext } from '../common/context/AuthContextProvider';
 import { supabase } from '../common/supabase';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
@@ -9,7 +10,7 @@ import Toggle from '../components/Toggle';
 const descriptionCharacterLimit = 2000;
 
 function CommentModal() {
-  const { user } = useContext(UserContext);
+  const { user } = useContext(AuthContext);
   const { showModal, setShowModal } = useContext(ModalContext);
 
   const [isAddingComment, setIsAddingComment] = useState(false);
@@ -66,7 +67,7 @@ function CommentModal() {
         isChecked={isAnonymous}
       />
       <p
-        className={`self-end ${description.length > descriptionCharacterLimit ? 'text-rose-500' : 'text-white'}`}
+        className={`self-end ${description.length > descriptionCharacterLimit ? 'text-rose-500' : 'text-black'}`}
       >
         {description.length} / {descriptionCharacterLimit}
       </p>

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { getAcceptedPostsByProfileId } from '../common/database/posts.js';
-import { DataContext, UserContext } from '../common/contexts.js';
+import { DataContext, AuthContext } from '../common/contexts.js';
 
 import Loading from '../components/Loading.jsx';
 import Loaded from '../components/Loaded.jsx';
@@ -8,7 +8,7 @@ import Post from '../components/Post.jsx';
 
 function ProfileAcceptedPostsNestedLayout() {
   const { activeProfile } = useContext(DataContext);
-  const { user } = useContext(UserContext);
+  const { user } = useContext(AuthContext);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -17,7 +17,7 @@ function ProfileAcceptedPostsNestedLayout() {
 
   useEffect(() => {
     if (activeProfile) {
-      if (!profileAcceptedPosts.hasInitializedData) {
+      if (!profileAcceptedPosts.hasInitialized) {
         getAcceptedPosts();
       }
     }
@@ -37,10 +37,10 @@ function ProfileAcceptedPostsNestedLayout() {
       _profileAcceptedPosts.data = [...profileAcceptedPosts.data, ...data];
     }
 
-    _profileAcceptedPosts.hasMoreData = hasMore;
+    _profileAcceptedPosts.hasMore = hasMore;
 
-    if (!profileAcceptedPosts.hasInitializedData) {
-      _profileAcceptedPosts.hasInitializedData = true;
+    if (!profileAcceptedPosts.hasInitialized) {
+      _profileAcceptedPosts.hasInitialized = true;
     }
 
     setProfileAcceptedPosts(_profileAcceptedPosts);
@@ -58,7 +58,7 @@ function ProfileAcceptedPostsNestedLayout() {
           )}
         </div>
       ))}
-      {!profileAcceptedPosts.hasMoreData && <Loaded />}
+      {!profileAcceptedPosts.hasMore && <Loaded />}
       {isLoading && <Loading />}
     </div>
   );

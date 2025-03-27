@@ -4,7 +4,7 @@ import {
   getFollowersByProfileId,
   getProfileByUsername,
 } from '../common/database/profiles.js';
-import { DataContext, UserContext } from '../common/contexts.js';
+import { DataContext, AuthContext } from '../common/contexts.js';
 
 import Loading from '../components/Loading.jsx';
 import Masonry from '../components/Masonry.jsx';
@@ -13,7 +13,7 @@ import Loaded from '../components/Loaded.jsx';
 function ProfileFollowersNestedLayout() {
   const { username } = useParams();
   const location = useLocation();
-  const { user } = useContext(UserContext);
+  const { user } = useContext(AuthContext);
 
   const scrollYRef = useRef(0);
 

@@ -1,7 +1,7 @@
 import { useEffect, useContext, useState, useRef } from 'react';
 import { Link } from 'react-router';
 import { getNotificationsByProfileId } from '../common/database/notifications';
-import { UserContext, DataContext, ScrollContext } from '../common/contexts.js';
+import { AuthContext, DataContext, ScrollContext } from '../common/contexts.js';
 import { useElementIntersection } from '../common/hooks';
 import Loading from '../components/Loading.jsx';
 import Loaded from '../components/Loaded';
@@ -17,7 +17,7 @@ function NotificationsLayout({
   setNotificationsCount,
 }) {
   const { scrollRef } = useContext(ScrollContext);
-  const { user } = useContext(UserContext);
+  const { authUser } = useContext(AuthContext);
   const { notifications, setNotifications } = useContext(DataContext);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +33,7 @@ function NotificationsLayout({
 
     // window.addEventListener('scroll', handleScroll);
 
-    if (!notifications.hasInitializedData) {
+    if (!notifications.hasInitialized) {
       getData();
     }
 
@@ -53,7 +53,7 @@ function NotificationsLayout({
   // }, [notifications]);
 
   useEffect(() => {
-    if (intersectingElement && notifications.hasMoreData) {
+    if (intersectingElement && notifications.hasMore) {
       getData();
     }
   }, [intersectingElement]);
@@ -62,7 +62,7 @@ function NotificationsLayout({
     setIsLoading(true);
 
     const { data, hasMore } = await getNotificationsByProfileId(
-      user.id,
+      authUser.id,
       notifications.data.length
     );
 
@@ -72,8 +72,8 @@ function NotificationsLayout({
       _notifications.data = [...notifications.data, ...data];
     }
 
-    _notifications.hasMoreData = hasMore;
-    _notifications.hasInitializedData = true;
+    _notifications.hasMore = hasMore;
+    _notifications.hasInitialized = true;
 
     setNewNotificationsCount(0);
 
@@ -88,7 +88,7 @@ function NotificationsLayout({
     const _notifications = { ...notifications };
 
     const { data } = await getNotificationsByProfileId(
-      user.id,
+      authUser.id,
       0,
       newNotificationsCount
     );
@@ -104,7 +104,7 @@ function NotificationsLayout({
 
   return (
     <div className="flex w-full flex-col gap-4">
-      {notifications.hasInitializedData && newNotificationsCount > 0 && (
+      {notifications.hasInitialized && newNotificationsCount > 0 && (
         <Button
           buttonColor={BUTTON_COLOR.BLUE}
           handleClick={refreshNotifications}
@@ -197,7 +197,7 @@ function NotificationsLayout({
         </div>
       )}
       {isLoading && <Loading />}
-      {!notifications.hasMoreData && <Loaded />}
+      {!notifications.hasMore && <Loaded />}
     </div>
   );
 }

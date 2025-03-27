@@ -1,7 +1,13 @@
 const UPLOAD_TYPE = Object.freeze({
-  IMAGE: {
-    type: 'IMAGE',
-    bucketName: 'images',
+  CLIP: {
+    type: 'CLIP',
+    bucketName: 'clips',
+    mimeTypes: ['video/mp4', 'video/mov', 'video/avi'],
+    sizeLimit: 50000000, // 50 MB
+  },
+  CLIP_THUMBNAIL: {
+    type: 'CLIP_THUMBNAIL',
+    bucketName: 'clip-thumbnails',
     mimeTypes: ['image/jpeg', 'image/png', 'image/gif'],
     sizeLimit: 50000000, // 50 MB
   },
@@ -9,6 +15,12 @@ const UPLOAD_TYPE = Object.freeze({
     type: 'VIDEO',
     bucketName: 'videos',
     mimeTypes: ['video/mp4', 'video/mov', 'video/avi'],
+    sizeLimit: 50000000, // 50 MB
+  },
+  VIDEO_THUMBNAIL: {
+    type: 'VIDEO_THUMBNAIL',
+    bucketName: 'video-thumbnails',
+    mimeTypes: ['image/jpeg', 'image/png', 'image/gif'],
     sizeLimit: 50000000, // 50 MB
   },
   AVATAR: {

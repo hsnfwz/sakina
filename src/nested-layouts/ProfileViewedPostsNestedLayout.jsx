@@ -2,7 +2,7 @@ import { useContext, useEffect, useState, useRef } from 'react';
 import { useLocation, useParams } from 'react-router';
 import { getProfileByUsername } from '../common/database/profiles.js';
 import { getViewedPostsByProfileId } from '../common/database/posts.js';
-import { DataContext, UserContext } from '../common/contexts.js';
+import { DataContext, AuthContext } from '../common/contexts.js';
 
 import Loading from '../components/Loading.jsx';
 import Masonry from '../components/Masonry.jsx';
@@ -11,7 +11,7 @@ import Loaded from '../components/Loaded.jsx';
 function ProfileViewedPostsNestedLayout() {
   const { username } = useParams();
   const location = useLocation();
-  const { user } = useContext(UserContext);
+  const { user } = useContext(AuthContext);
 
   const scrollYRef = useRef(0);
 

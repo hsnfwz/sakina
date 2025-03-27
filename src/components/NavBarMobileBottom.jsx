@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { Link, useLocation } from 'react-router';
-import { UserContext } from '../common/contexts';
+import { ModalContext } from '../common/contexts';
+import { AuthContext } from '../common/context/AuthContextProvider';
 import SVGOutlineHome from './svgs/outline/SVGOutlineHome';
 import SVGSolidHome from './svgs/solid/SVGSolidHome';
 import SVGSolidCompass from './svgs/solid/SVGSolidCompass';
@@ -16,6 +17,9 @@ import SVGSolidUserPlus from './svgs/solid/SVGSolidUserPlus';
 import SVGOutlineUserArrow from './svgs/outline/SVGOutlineUserArrow';
 import SVGOutlineUserPlus from './svgs/outline/SVGOutlineUserPlus';
 import { formatCount } from '../common/helpers';
+import IconButton from './IconButton';
+import SVGOutlinePlus from './svgs/outline/SVGOutlinePlus';
+import { BUTTON_COLOR } from '../common/enums';
 
 function NavBarMobileBottom({
   notificationsCount,
@@ -23,29 +27,30 @@ function NavBarMobileBottom({
   postsCount,
   isLoadingPostsCount,
 }) {
-  const { user } = useContext(UserContext);
+  const { authUser } = useContext(AuthContext);
+  const { setShowModal } = useContext(ModalContext);
   const location = useLocation();
 
   return (
-    <div className="fixed bottom-0 z-40 block w-full bg-black p-4 sm:hidden">
-      <nav className="flex w-full justify-around gap-2">
+    <div className="fixed bottom-0 z-40 block w-full bg-white p-2">
+      <nav className="mx-auto flex w-full max-w-screen-md justify-around gap-2">
         <Link
-          to="/"
-          className={`${location.pathname === '/' ? 'fill-sky-500' : 'fill-white'} flex gap-2 rounded-full border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+          to="/home"
+          className={`${location.pathname === '/home' ? 'fill-sky-500' : 'fill-black'} flex gap-2 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
         >
           <div className="relative left-0 top-0">
-            {location.pathname === '/' && (
+            {location.pathname === '/home' && (
               <div className="relative left-0 top-0">
                 <SVGSolidHome />
               </div>
             )}
-            {location.pathname !== '/' && (
+            {location.pathname !== '/home' && (
               <div className="relative left-0 top-0">
                 <SVGOutlineHome />
               </div>
             )}
             {!isLoadingPostsCount && postsCount > 0 && (
-              <span className="absolute -right-2 -top-2 rounded-full bg-rose-500 p-1 text-xs text-white">
+              <span className="absolute -right-2 -top-2 rounded-full bg-rose-500 p-1 text-xs text-black">
                 {formatCount(postsCount)}
               </span>
             )}
@@ -54,15 +59,23 @@ function NavBarMobileBottom({
 
         <Link
           to="/explore"
-          className={`${location.pathname === '/explore' ? 'fill-sky-500' : 'fill-white'} flex gap-2 rounded-full border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+          className={`${location.pathname.includes('/explore') ? 'fill-sky-500' : 'fill-black'} flex gap-2 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
         >
-          {location.pathname === '/explore' && <SVGSolidCompass />}
-          {location.pathname !== '/explore' && <SVGOutlineCompass />}
+          {location.pathname.includes('/explore') && <SVGSolidCompass />}
+          {!location.pathname.includes('/explore') && <SVGOutlineCompass />}
         </Link>
-        {user && (
+        {authUser && (
+          <IconButton
+            handleClick={() => setShowModal({ type: 'CREATE_MODAL' })}
+            buttonColor={BUTTON_COLOR.GREEN}
+          >
+            <SVGOutlinePlus />
+          </IconButton>
+        )}
+        {/* {authUser && (
           <Link
             to="/notifications"
-            className={`${location.pathname.includes('/notifications') ? 'fill-sky-500' : 'fill-white'} flex gap-2 rounded-full border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+            className={`${location.pathname.includes('/notifications') ? 'fill-sky-500' : 'fill-black'} flex gap-2 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
           >
             <div className="relative left-0 top-0">
               {location.pathname.includes('/notifications') && (
@@ -76,48 +89,48 @@ function NavBarMobileBottom({
                 </div>
               )}
               {!isLoadingNotificationsCount && notificationsCount > 0 && (
-                <span className="absolute -right-2 -top-2 rounded-full bg-rose-500 p-1 text-xs text-white">
+                <span className="absolute -right-2 -top-2 rounded-full bg-rose-500 p-1 text-xs text-black">
                   {formatCount(notificationsCount)}
                 </span>
               )}
             </div>
           </Link>
-        )}
-        {user && (
+        )} */}
+        {authUser && (
           <Link
-            to={`/profile/${user.username}`}
-            state={{ profile: user }}
-            className={`${location.pathname.includes(`/profile/${user.username}`) ? 'fill-sky-500' : 'fill-white'} flex gap-2 rounded-full border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+            to={`/profile/${authUser.username}`}
+            state={{ profile: authUser }}
+            className={`${location.pathname.includes(`/profile/${authUser.username}`) ? 'fill-sky-500' : 'fill-black'} flex gap-2 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
           >
-            {location.pathname.includes(`/profile/${user.username}`) && (
+            {location.pathname.includes(`/profile/${authUser.username}`) && (
               <SVGSolidUser />
             )}
-            {!location.pathname.includes(`/profile/${user.username}`) && (
+            {!location.pathname.includes(`/profile/${authUser.username}`) && (
               <SVGOutlineUser />
             )}
           </Link>
         )}
-        {user && (
+        {authUser && (
           <Link
             to="/settings"
-            className={`${location.pathname === '/settings' ? 'fill-sky-500' : 'fill-white'} flex gap-2 rounded-full border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+            className={`${location.pathname === '/settings' ? 'fill-sky-500' : 'fill-black'} flex gap-2 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
           >
             {location.pathname === '/settings' && <SVGSolidSettings />}
             {location.pathname !== '/settings' && <SVGOutlineSettings />}
           </Link>
         )}
-        {!user && (
+        {!authUser && (
           <>
             <Link
               to="/log-in"
-              className={`${location.pathname === '/log-in' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-full border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+              className={`${location.pathname === '/log-in' ? 'fill-sky-500' : 'fill-black'} flex gap-4 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
             >
               {location.pathname === '/log-in' && <SVGSolidUserArrow />}
               {location.pathname !== '/log-in' && <SVGOutlineUserArrow />}
             </Link>
             <Link
               to="/sign-up"
-              className={`${location.pathname === '/sign-up' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-full border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+              className={`${location.pathname === '/sign-up' ? 'fill-sky-500' : 'fill-black'} flex gap-4 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
             >
               {location.pathname === '/sign-up' && <SVGSolidUserPlus />}
               {location.pathname !== '/sign-up' && <SVGOutlineUserPlus />}

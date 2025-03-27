@@ -16,7 +16,7 @@ function ProfileRejectedPostsNestedLayout() {
 
   useEffect(() => {
     if (activeProfile) {
-      if (!profileRejectedPosts.hasInitializedData) {
+      if (!profileRejectedPosts.hasInitialized) {
         getRejectedPosts();
       }
     }
@@ -36,10 +36,10 @@ function ProfileRejectedPostsNestedLayout() {
       _profileRejectedPosts.data = [...profileRejectedPosts.data, ...data];
     }
 
-    _profileRejectedPosts.hasMoreData = hasMore;
+    _profileRejectedPosts.hasMore = hasMore;
 
-    if (!profileRejectedPosts.hasInitializedData) {
-      _profileRejectedPosts.hasInitializedData = true;
+    if (!profileRejectedPosts.hasInitialized) {
+      _profileRejectedPosts.hasInitialized = true;
     }
 
     setProfileRejectedPosts(_profileRejectedPosts);
@@ -52,7 +52,7 @@ function ProfileRejectedPostsNestedLayout() {
       {profileRejectedPosts.data.map((post, index) => (
         <Post key={index} post={post} isPreview={true} />
       ))}
-      {!profileRejectedPosts.hasMoreData && <Loaded />}
+      {!profileRejectedPosts.hasMore && <Loaded />}
       {isLoading && <Loading />}
     </div>
   );

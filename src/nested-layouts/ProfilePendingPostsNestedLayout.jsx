@@ -16,7 +16,7 @@ function ProfilePendingPostsNestedLayout() {
 
   useEffect(() => {
     if (activeProfile) {
-      if (!profilePendingPosts.hasInitializedData) {
+      if (!profilePendingPosts.hasInitialized) {
         getPendingPosts();
       }
     }
@@ -36,10 +36,10 @@ function ProfilePendingPostsNestedLayout() {
       _profilePendingPosts.data = [...profilePendingPosts.data, ...data];
     }
 
-    _profilePendingPosts.hasMoreData = hasMore;
+    _profilePendingPosts.hasMore = hasMore;
 
-    if (!profilePendingPosts.hasInitializedData) {
-      _profilePendingPosts.hasInitializedData = true;
+    if (!profilePendingPosts.hasInitialized) {
+      _profilePendingPosts.hasInitialized = true;
     }
 
     setProfilePendingPosts(_profilePendingPosts);
@@ -52,7 +52,7 @@ function ProfilePendingPostsNestedLayout() {
       {profilePendingPosts.data.map((post, index) => (
         <Post key={index} post={post} isPreview={true} />
       ))}
-      {!profilePendingPosts.hasMoreData && <Loaded />}
+      {!profilePendingPosts.hasMore && <Loaded />}
       {isLoading && <Loading />}
     </div>
   );

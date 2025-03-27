@@ -1,17 +1,17 @@
 import { useState, useContext, useRef } from 'react';
-import { useUppyState } from '@uppy/react';
+// import { useUppyState } from '@uppy/react';
 import DefaultStore from '@uppy/store-default';
 import { useUppyWithSupabase } from '../common/hooks';
 import { supabase } from '../common/supabase';
-import { UserContext, ModalContext } from '../common/contexts';
+import { ModalContext } from '../common/contexts';
+import { AuthContext } from '../common/context/AuthContextProvider';
 import UploadFileButton from '../components/UploadFileButton';
-import UploadFileTable from '../components/UploadFileTable';
 import Modal from '../components/Modal';
 import Button from '../components/Button';
 import { UPLOAD_TYPE } from '../common/enums';
 
 function AvatarModal() {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(AuthContext);
   const { setShowModal } = useContext(ModalContext);
 
   const [uploadStarted, setUploadStarted] = useState(false);
@@ -27,9 +27,10 @@ function AvatarModal() {
     },
   });
 
-  const uppyAvatarFiles = useUppyState(uppyAvatar, (state) =>
-    Object.values(state.files)
-  );
+  const uppyAvatarFiles = [];
+  // const uppyAvatarFiles = useUppyState(uppyAvatar, (state) =>
+  //   Object.values(state.files)
+  // );
 
   const avatarUploadFileButtonRef = useRef();
 
@@ -72,14 +73,6 @@ function AvatarModal() {
           bucketName={UPLOAD_TYPE.AVATAR.bucketName}
           uploadFileButtonRef={avatarUploadFileButtonRef}
         />
-        {uppyAvatarFiles.length > 0 && (
-          <UploadFileTable
-            uppy={uppyAvatar}
-            setUploadStarted={setUploadStarted}
-            setUploadCompleted={setUploadCompleted}
-            uploadFileButtonRef={avatarUploadFileButtonRef}
-          />
-        )}
       </div>
       <div className="flex gap-2 self-end">
         <Button

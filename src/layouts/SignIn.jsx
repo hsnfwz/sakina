@@ -1,14 +1,22 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { SessionContext } from '../common/contexts.js';
+import { AuthContext } from '../common/context/AuthContextProvider.jsx';
 import { supabase } from '../common/supabase.js';
 import Button from '../components/Button.jsx';
 import TextInput from '../components/TextInput.jsx';
 import { BUTTON_COLOR } from '../common/enums.js';
 
-function LogInLayout() {
-  const { setSession } = useContext(SessionContext);
+function SignIn() {
+  const { authUser, isLoadingAuthUser, setAuthSession } =
+    useContext(AuthContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoadingAuthUser && authUser) {
+      navigate('/home');
+    }
+  }, [isLoadingAuthUser, authUser]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,7 +41,7 @@ function LogInLayout() {
         setAuthMessage('OVER_EMAIL_SEND_RATE_LIMIT');
       }
     } else {
-      setSession(data.session);
+      setAuthSession(data.session);
       navigate('/');
     }
 
@@ -130,4 +138,4 @@ function LogInLayout() {
   );
 }
 
-export default LogInLayout;
+export default SignIn;

@@ -1,7 +1,31 @@
 import { supabase } from '../supabase';
 import { ORDER_BY } from '../enums';
 
-async function searchProfiles(
+async function getUsers(startIndex = 0, limit = 6, orderBy = ORDER_BY.NEW) {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      data: [],
+      hasMore: false,
+    };
+  }
+}
+
+async function getUsersBySearchTerm(
   searchTerm,
   startIndex = 0,
   limit = 6,
@@ -19,8 +43,8 @@ async function searchProfiles(
 
     const { data, error } = await supabase
       .from('users')
-      .select('*, avatar:avatar_id(*)')
-      .or(`display_name.ilike.%${query}%,username.ilike.%${query}%`)
+      .select('*')
+      .or(`name.ilike.%${query}%,username.ilike.%${query}%`)
       .order(orderBy.columnName, { ascending: orderBy.isAscending })
       .range(startIndex, startIndex + limit - 1);
 
@@ -32,25 +56,11 @@ async function searchProfiles(
     };
   } catch (error) {
     console.log(error);
-  }
-}
-
-async function getProfiles(startIndex = 0, limit = 6, orderBy = ORDER_BY.NEW) {
-  try {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*, avatar:avatar_id(*)')
-      .order(orderBy.columnName, { ascending: orderBy.isAscending })
-      .range(startIndex, startIndex + limit - 1);
-
-    if (error) throw error;
 
     return {
-      data,
-      hasMore: data.length === limit,
+      data: [],
+      hasMore: false,
     };
-  } catch (error) {
-    console.log(error);
   }
 }
 
@@ -58,7 +68,7 @@ async function getProfileByUsername(username) {
   try {
     const { data, error } = await supabase
       .from('users')
-      .select('*, avatar:avatar_id(*)')
+      .select('*')
       .eq('username', username);
 
     if (error) throw error;
@@ -122,8 +132,8 @@ async function getFollowingByProfileId(
 }
 
 export {
-  searchProfiles,
-  getProfiles,
+  getUsers,
+  getUsersBySearchTerm,
   getFollowersByProfileId,
   getFollowingByProfileId,
   getProfileByUsername,

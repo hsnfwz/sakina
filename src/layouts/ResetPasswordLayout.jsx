@@ -63,7 +63,7 @@ function ResetPasswordLayout() {
                 value={password}
               />
               <p
-                className={`self-end ${password.length < passwordCharacterMin ? 'text-rose-500' : 'text-white'}`}
+                className={`self-end ${password.length < passwordCharacterMin ? 'text-rose-500' : 'text-black'}`}
               >
                 {password.length}
               </p>
@@ -85,7 +85,7 @@ function ResetPasswordLayout() {
                 value={reenterPassword}
               />
               <p
-                className={`self-end ${reenterPassword.length < passwordCharacterMin ? 'text-rose-500' : 'text-white'}`}
+                className={`self-end ${reenterPassword.length < passwordCharacterMin ? 'text-rose-500' : 'text-black'}`}
               >
                 {reenterPassword.length}
               </p>

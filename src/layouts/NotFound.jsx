@@ -1,12 +1,12 @@
 import { Link } from 'react-router';
 
-function NotFoundLayout() {
+function NotFound() {
   return (
     <div>
-      <p>404 Not Found</p>
+      <p>Whoops! We could not find what you were looking for.</p>
       <Link to="/">Return home</Link>
     </div>
   );
 }
 
-export default NotFoundLayout;
+export default NotFound;

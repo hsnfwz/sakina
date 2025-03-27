@@ -97,7 +97,7 @@ function Masonry({ elementRef, data }) {
                     />
                   )}
                   <div className="z-3 absolute bottom-0 flex w-full flex-col justify-end gap-4 rounded-b-lg bg-black/50 p-4 opacity-0 backdrop-blur group-hover:opacity-100">
-                    <h1 className="text-white">{post.title}</h1>
+                    <h1 className="text-black">{post.title}</h1>
                     <div className="flex items-center gap-2">
                       {post.user.avatar && (
                         <img
@@ -108,11 +108,9 @@ function Masonry({ elementRef, data }) {
                           height={post.user.avatar.height}
                         />
                       )}
-                      <h2 className="text-xs text-white">
+                      <h2 className="text-xs text-black">
                         By {post.user.username}
-                        {post.user.display_name && (
-                          <span> - {post.user.display_name}</span>
-                        )}
+                        {post.user.name && <span> - {post.user.name}</span>}
                       </h2>
                     </div>
                   </div>

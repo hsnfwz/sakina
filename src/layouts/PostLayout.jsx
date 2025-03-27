@@ -1,6 +1,6 @@
 import { useEffect, useContext, useRef, useState } from 'react';
 import { useLocation, useParams, Link } from 'react-router';
-import { DataContext, ModalContext, UserContext } from '../common/contexts';
+import { DataContext, ModalContext, AuthContext } from '../common/contexts';
 import { getLike, addLike, removeLike } from '../common/database/likes.js';
 import {
   getAcceptedPostById,
@@ -27,7 +27,7 @@ import { addNotification } from '../common/database/notifications.js';
 function PostLayout() {
   const { acceptedPosts, setAcceptedPosts } = useContext(DataContext);
   const { setShowModal } = useContext(ModalContext);
-  const { user } = useContext(UserContext);
+  const { authUser } = useContext(AuthContext);
   const { id } = useParams();
   const location = useLocation();
 
@@ -47,10 +47,10 @@ function PostLayout() {
 
   useEffect(() => {
     async function initialize() {
-      if (user.id !== post.user.id) {
+      if (authUser.id !== post.authUser.id) {
         setTimeout(async () => {
-          await addPostView(user.id, post.id);
-          await addNotification(user.id, post.user.id, 'VIEW_POST');
+          await addPostView(authUser.id, post.id);
+          await addNotification(authUser.id, post.authUser.id, 'VIEW_POST');
         }, 3000);
       }
     }
@@ -90,7 +90,7 @@ function PostLayout() {
 
   async function _getLike() {
     setIsLoadingLike(true);
-    const { data } = await getLike(user.id, post.id);
+    const { data } = await getLike(authUser.id, post.id);
     setLike(data[0]);
     setIsLoadingLike(false);
   }
@@ -171,11 +171,11 @@ function PostLayout() {
             {post.is_anonymous && <p className="text-xs">Anonymous</p>}
             {!post.is_anonymous && (
               <Link
-                to={`/profile/${post.user.username}#posts`}
-                state={{ profile: post.user }}
+                to={`/profile/${post.authUser.username}#posts`}
+                state={{ profile: post.authUser }}
                 className={`text-xs underline hover:text-sky-500`}
               >
-                {post.user.username}
+                {post.authUser.username}
               </Link>
             )}
             <p className="text-xs text-neutral-700">
@@ -208,7 +208,7 @@ function PostLayout() {
           <h1 className="text-2xl">{post.title}</h1>
           {post.description && <p>{post.description}</p>}
 
-          {user && (
+          {authUser && (
             <div className="flex gap-2 self-start">
               <Button
                 buttonColor={BUTTON_COLOR.BLUE}
@@ -226,7 +226,7 @@ function PostLayout() {
               </Button>
             </div>
           )}
-          {user && user.id === post.user.id && (
+          {authUser && authUser.id === post.authUser.id && (
             <div className="flex gap-2 self-start">
               <Button
                 buttonColor={BUTTON_COLOR.BLUE}
@@ -235,9 +235,13 @@ function PostLayout() {
                     await removeLike(like.id);
                     setLike(null);
                   } else {
-                    const { data } = await addLike(user.id, post.id);
+                    const { data } = await addLike(authUser.id, post.id);
                     setLike(data[0]);
-                    await addNotification(user.id, post.user.id, 'LIKE_POST');
+                    await addNotification(
+                      authUser.id,
+                      post.authUser.id,
+                      'LIKE_POST'
+                    );
                   }
                 }}
               >

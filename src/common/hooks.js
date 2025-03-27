@@ -1,44 +1,39 @@
 import Uppy from '@uppy/core';
-import '@uppy/core/dist/style.min.css';
-import '@uppy/dashboard/dist/style.min.css';
 import Tus from '@uppy/tus';
+
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { SessionContext } from './contexts';
+import { AuthContext } from './context/AuthContextProvider';
 
 const useUppyWithSupabase = ({ uppyOptions }) => {
-  // Initialize Uppy instance only once
-
-  const { session } = useContext(SessionContext);
+  const { authSession } = useContext(AuthContext);
   const [uppy] = useState(() => new Uppy(uppyOptions));
 
   useEffect(() => {
     const initializeUppy = async () => {
       uppy.use(Tus, {
-        endpoint: `${import.meta.env.VITE_SUPABASE_PROJECT_URL}/storage/v1/upload/resumable`, // Supabase TUS endpoint
-        retryDelays: [0, 3000, 5000, 10000, 20000], // Retry delays for resumable uploads
+        endpoint: `${import.meta.env.VITE_SUPABASE_PROJECT_URL}/storage/v1/upload/resumable`,
+        retryDelays: [0, 3000, 5000, 10000, 20000],
         headers: {
-          authorization: `Bearer ${session?.access_token}`, // User session access token
-          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY, // API key for Supabase
+          authorization: `Bearer ${authSession?.access_token}`,
+          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
         },
-        uploadDataDuringCreation: true, // Send metadata with file chunks
-        removeFingerprintOnSuccess: true, // Remove fingerprint after successful upload
+        uploadDataDuringCreation: true,
+        removeFingerprintOnSuccess: true,
         chunkSize: 6 * 1024 * 1024, // Chunk size for TUS uploads (6MB)
         allowedMetaFields: [
-          'width',
-          'height',
           'bucketName',
           'objectName',
           'contentType',
           'cacheControl',
-        ], // Metadata fields allowed for the upload
+        ],
       });
     };
 
-    // Initialize Uppy with Supabase settings
-    initializeUppy();
-  }, []);
+    if (authSession) {
+      initializeUppy();
+    }
+  }, [authSession]);
 
-  // Return the configured Uppy instance
   return uppy;
 };
 
