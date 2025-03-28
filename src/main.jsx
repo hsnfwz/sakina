@@ -10,7 +10,7 @@ import Home from './layouts/Home.jsx';
 import HomeClips from './layouts/HomeClips.jsx';
 import HomeDiscussions from './layouts/HomeDiscussions.jsx';
 import HomeVideos from './layouts/HomeVideos.jsx';
-import Search from './layouts/Search.jsx';
+import Explore from './layouts/Explore.jsx';
 import Videos from './layouts/Videos.jsx';
 import Clips from './layouts/Clips.jsx';
 import ExploreDiscussions from './layouts/ExploreDiscussions.jsx';
@@ -54,8 +54,8 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: 'search',
-        Component: Search,
+        path: 'explore',
+        Component: Explore,
         index: true,
       },
       {
@@ -109,40 +109,31 @@ createRoot(root).render(
 );
 
 /* 
-
-  - search modal
-  - skeleton for loading the contents
-  - search - split results into those you follow, those you can discover, and those you have posted for each type of content
-
-  - upgrade tailwind
-  - FIX: intersection for discussions and profiles not working
-
     BACKLOG:
+    - upgrade tailwind
+    
+    - FIX: scroll position for infinite scrolls
+    - FIX: make sure intersection for all infinite scrolls works (users, videos, clips, discussions - for pages, searches)
+
     - make inputs green when they are correctly inputted to indicate progress to the user
     - make inputs red when they are incorrectly inputted to indicate error to the user
-
     - FIX: all global state changes across the app due to new state structure
     - FIX: profile followers, following, comments, and views nested layouts
     - FIX: make sure all state and url state is up to date whenever changes are made - we do not want stale data
-
     - hide/unhide videos and discussions
-
     - @ mentions
-
     - notifications
       - is_read
       - auto-expire notifications within x time
       - auto-delete rejected posts within 24 hours
 
     - counts for followers, following, posts, comments, likes, views
-
     - video play and pause with space bar
     - make sure custom inputs can listen to important keys (enter, spacebar, etc.)
-
     - show preview of post before submission
-    - allow user to select a video frame to set as their thumbnail
 
     FUTURE:
+    - allow user to select a video frame to set as their thumbnail
     - allow users to block/mute/remove user discussing unwanted topics on their videos
     - pined content
     - scheduled content
@@ -151,7 +142,7 @@ createRoot(root).render(
     - notifications for activity by people you follow
     - analytics page
     - stories (24 hours) + archived stories
-    - video timestamps/chapters similar to youtube
+    - playlists
     - collections (similar to albums and playlists)
     - rewards and promotion/spotlight system
     - message and sharing
@@ -165,32 +156,4 @@ createRoot(root).render(
     - SMTP server configuration - https://supabase.com/docs/guides/auth/auth-smtp
     - auth email templates configuration - https://supabase.com/docs/guides/auth/auth-email-templates
     - rate limit supabase requests for data and storage to avoid potential spam - ex: when a user constantly refreshes the page
-
-    COSTS
-    - $25/month - Supabase
-    - $20/month - Vercel
-    - $20/year - Namecheap
-    - 2.9% + 0.30C - Stripe
-    - $5-25/month - SMTP Server Provider
-    - supabase additional storage and egress costs
-
-    FREE
-    - $0
-    - upload up to 5 files per post
-    - max 2 GB per file
-    - no priority review, 24 hours wait time
-    - no priority search
-    - no analytics page
-    - no priority support
-    - no supporter badge
-
-    PRO
-    - $4.99/month or $49.99/year (save $10)
-    - upload up to 20 files per post (4x more!)
-    - max 10GB per file (5x more!)
-    - priority review, 2 hours wait time
-    - priority search
-    - analytics page
-    - priority support
-    - supporter badge
   */

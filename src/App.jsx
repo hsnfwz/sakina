@@ -647,6 +647,8 @@ import { AuthContextProvider } from './common/context/AuthContextProvider.jsx';
 import { ModalContextProvider } from './common/context/ModalContextProvider.jsx';
 import NavBar from './components/NavBar.jsx';
 import CreateModal from './modals/CreateModal.jsx';
+import SearchModal from './modals/SearchModal.jsx';
+import Footer from './components/Footer.jsx';
 
 function App() {
   const location = useLocation();
@@ -660,9 +662,11 @@ function App() {
               <>
                 <NavBar />
                 <CreateModal />
+                <SearchModal />
               </>
             )}
             <Outlet />
+            {/* <Footer /> */}
           </main>
         </ModalContextProvider>
       </DataContextProvider>

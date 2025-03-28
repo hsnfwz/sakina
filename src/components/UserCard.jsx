@@ -1,4 +1,8 @@
+import { useState } from 'react';
+
 function UserCard({ user }) {
+  const [isLoadingImage, setIsLoadingImage] = useState(true);
+
   return (
     <div className="flex w-full flex-col gap-2 rounded-lg">
       {user.avatar_file_name && (
@@ -7,11 +11,17 @@ function UserCard({ user }) {
           alt={user.avatar_file_name}
           width={128}
           height={128}
-          className="block aspect-square w-full rounded-full object-center"
+          className={`aspect-square w-full rounded-full object-center ${isLoadingImage ? 'hidden' : 'block'}`}
+          onLoad={() => setIsLoadingImage(false)}
         />
       )}
       {!user.avatar_file_name && (
         <div className="aspect-square max-h-[128px] w-full max-w-[128px] rounded-full bg-neutral-200"></div>
+      )}
+      {user.avatar_file_name && (
+        <div
+          className={`aspect-square animate-pulse rounded-full bg-neutral-200 ${isLoadingImage ? 'block' : 'hidden'}`}
+        ></div>
       )}
       <h1>{user.username}</h1>
     </div>

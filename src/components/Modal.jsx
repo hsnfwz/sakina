@@ -2,9 +2,13 @@ import { useContext, useEffect } from 'react';
 import { ModalContext } from '../common/context/ModalContextProvider';
 import IconButton from './IconButton';
 import SVGOutlineX from './svgs/outline/SVGOutlineX';
+import { useLocation, useNavigate } from 'react-router';
 
 function Modal({ children, isDisabled }) {
   const { setShowModal } = useContext(ModalContext);
+
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     disableBodyScroll();
@@ -46,6 +50,7 @@ function Modal({ children, isDisabled }) {
     if (!isDisabled) {
       enableBodyScroll();
       clearShowModal();
+      navigate(location.pathname);
     }
   }
 

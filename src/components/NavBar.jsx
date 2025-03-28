@@ -36,8 +36,8 @@ function NavBar() {
         </Link>
       )}
 
-      <Link className="px-4 py-2 text-xs" to="/search">
-        Search
+      <Link className="px-4 py-2 text-xs" to="/explore">
+        Explore
       </Link>
 
       {authUser && (
@@ -63,6 +63,13 @@ function NavBar() {
           Create
         </button>
       )}
+      <button
+        type="button"
+        className="px-4 py-2 text-xs"
+        onClick={() => setShowModal({ type: 'SEARCH_MODAL' })}
+      >
+        Search
+      </button>
     </nav>
   );
 }

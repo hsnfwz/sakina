@@ -1,13 +1,20 @@
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
+import { useLocation } from 'react-router';
+import { Link } from 'react-router';
+import { BUTTON_COLOR } from '../common/enums.js';
 import TextInput from './TextInput.jsx';
 import Loading from './Loading.jsx';
 import Loaded from './Loaded.jsx';
 import Button from './Button.jsx';
-import { BUTTON_COLOR } from '../common/enums.js';
-import { getVideosBySearchTerm } from '../common/database/videos.js';
-import { getClipsBySearchTerm } from '../common/database/clips.js';
+import UserCard from './UserCard.jsx';
+import VideoCard from './VideoCard.jsx';
+import ClipCard from './ClipCard.jsx';
+import DiscussionCard from './DiscussionCard.jsx';
+import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 
-function SearchBar() {
+function SearchBar({ placeholder, handleSearch }) {
+  const location = useLocation();
+  const { setShowModal } = useContext(ModalContext);
   const timerRef = useRef();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -15,7 +22,7 @@ function SearchBar() {
   const [isLoadingSearchResults, setIsLoadingSearchResults] = useState(false);
   const [hasMoreSearchResults, setHasMoreSearchResults] = useState(true);
 
-  async function handleSearch(event) {
+  async function handleInput(event) {
     setIsLoadingSearchResults(true);
 
     setSearchTerm(event.target.value);
@@ -27,15 +34,11 @@ function SearchBar() {
       setIsLoadingSearchResults(false);
     } else {
       timerRef.current = setTimeout(async () => {
-        const [videos, clips] = await Promise.all([
-          getVideosBySearchTerm(searchTerm),
-          getClipsBySearchTerm(searchTerm),
-        ]);
+        const { data, hasMore } = await handleSearch(searchTerm);
 
-        console.log(videos, clips);
+        setSearchResults(data);
+        setHasMoreSearchResults(hasMore);
 
-        // setSearchResults(data);
-        // setHasMoreSearchResults(hasMore);
         setIsLoadingSearchResults(false);
       }, 1000);
     }
@@ -44,137 +47,97 @@ function SearchBar() {
   return (
     <div className="flex w-full flex-col gap-4">
       <TextInput
-        placeholder="Search videos, clips, discussions, and users"
-        handleInput={handleSearch}
+        placeholder={placeholder}
+        handleInput={handleInput}
         value={searchTerm}
       />
 
       {isLoadingSearchResults && <Loading />}
-      {hasMoreSearchResults && (
-        <Button
-          handleClick={async () => {
-            setIsLoadingSearchResults(true);
-            const { data, hasMore } = await search(
-              searchTerm,
-              searchResults.length
-            );
-            if (data.length > 0) {
-              setSearchResults([...searchResults, ...data]);
-            }
-            setHasMoreSearchResults(hasMore);
-            setIsLoadingSearchResults(false);
-          }}
-          isDisabled={isLoadingSearchResults}
-          buttonColor={BUTTON_COLOR.BLUE}
-        >
-          Load More
-        </Button>
+
+      {searchResults.length > 0 && (
+        <>
+          {(location.hash === '' || location.hash === '#users') && (
+            <>
+              {searchResults.map((searchResult, index) => (
+                <Link
+                  onClick={() => setShowModal({ type: null, data: null })}
+                  key={searchResult.id}
+                  to={`/users/${searchResult.id}`}
+                  className="w-[320px] snap-start rounded-lg"
+                >
+                  <UserCard user={searchResult} />
+                </Link>
+              ))}
+            </>
+          )}
+          {location.hash === '#videos' && (
+            <>
+              {searchResults.map((searchResult, index) => (
+                <Link
+                  onClick={() => setShowModal({ type: null, data: null })}
+                  key={searchResult.id}
+                  to={`/videos/${searchResult.id}`}
+                  className="w-[320px] snap-start rounded-lg"
+                >
+                  <VideoCard video={searchResult} />
+                </Link>
+              ))}
+            </>
+          )}
+          {location.hash === '#clips' && (
+            <>
+              {searchResults.map((searchResult, index) => (
+                <Link
+                  onClick={() => setShowModal({ type: null, data: null })}
+                  key={searchResult.id}
+                  to={`/clips/${searchResult.id}`}
+                  className="w-[320px] snap-start rounded-lg"
+                >
+                  <ClipCard clip={searchResult} />
+                </Link>
+              ))}
+            </>
+          )}
+          {location.hash === '#discussions' && (
+            <>
+              {searchResults.map((searchResult, index) => (
+                <Link
+                  onClick={() => setShowModal({ type: null, data: null })}
+                  key={searchResult.id}
+                  to={`/discussions/${searchResult.id}`}
+                  className="w-[320px] snap-start rounded-lg border-2 border-neutral-200"
+                >
+                  <DiscussionCard discussion={searchResult} />
+                </Link>
+              ))}
+            </>
+          )}
+
+          {hasMoreSearchResults && (
+            <Button
+              handleClick={async () => {
+                setIsLoadingSearchResults(true);
+                const { data, hasMore } = await search(
+                  searchTerm,
+                  searchResults.length
+                );
+                if (data.length > 0) {
+                  setSearchResults([...searchResults, ...data]);
+                }
+                setHasMoreSearchResults(hasMore);
+                setIsLoadingSearchResults(false);
+              }}
+              isDisabled={isLoadingSearchResults}
+              buttonColor={BUTTON_COLOR.BLUE}
+            >
+              Load More
+            </Button>
+          )}
+          {!hasMoreSearchResults && <Loaded />}
+        </>
       )}
-      {!hasMoreSearchResults && <Loaded />}
     </div>
   );
 }
-
-// function SearchBar({ searchType, search }) {
-//   const timerRef = useRef();
-
-//   const [searchTerm, setSearchTerm] = useState('');
-//   const [searchResults, setSearchResults] = useState([]);
-//   const [isLoadingSearchResults, setIsLoadingSearchResults] = useState(false);
-//   const [hasMoreSearchResults, setHasMoreSearchResults] = useState(true);
-
-//   async function _search(event) {
-//     setIsLoadingSearchResults(true);
-
-//     setSearchTerm(event.target.value);
-
-//     clearTimeout(timerRef.current);
-
-//     if (event.target.value.length === 0) {
-//       setSearchResults([]);
-//       setIsLoadingSearchResults(false);
-//     } else {
-//       timerRef.current = setTimeout(async () => {
-//         const { data, hasMore } = await search(searchTerm);
-//         setSearchResults(data);
-//         setHasMoreSearchResults(hasMore);
-//         setIsLoadingSearchResults(false);
-//       }, 1000);
-//     }
-//   }
-
-//   return (
-//     <div className="flex w-full flex-col gap-4 bg-black">
-//       <TextInput
-//         placeholder={searchType.placeholder}
-//         handleInput={_search}
-//         value={searchTerm}
-//       />
-
-//       {isLoadingSearchResults && <Loading />}
-
-//       {searchResults.length > 0 && (
-//         <>
-//           {searchType.type === 'PROFILES' && (
-//             <>
-//               {searchResults.map((searchResult, index) => (
-//                 <ProfilePreview key={index} profile={searchResult} />
-//               ))}
-//             </>
-//           )}
-//           {searchType.type === 'POST_IMAGES' && (
-//             <>
-//               {searchResults.map((searchResult, index) => (
-//                 <PostImagePreview key={index} postImage={searchResult} />
-//               ))}
-//             </>
-//           )}
-//           {searchType.type === 'POST_VIDEOS' && (
-//             <>
-//               {searchResults.map((searchResult, index) => (
-//                 <PostVideoPreview key={index} postVideo={searchResult} />
-//               ))}
-//             </>
-//           )}
-//           {searchType.type === 'POST_DISCUSSIONS' && (
-//             <>
-//               {searchResults.map((searchResult, index) => (
-//                 <PostDiscussionPreview
-//                   key={index}
-//                   postDiscussion={searchResult}
-//                 />
-//               ))}
-//             </>
-//           )}
-//           {hasMoreSearchResults && (
-//             <Button
-//               handleClick={async () => {
-//                 setIsLoadingSearchResults(true);
-//                 const { data, hasMore } = await search(
-//                   searchTerm,
-//                   searchResults.length
-//                 );
-//                 if (data.length > 0) {
-//                   setSearchResults([...searchResults, ...data]);
-//                 }
-//                 setHasMoreSearchResults(hasMore);
-//                 setIsLoadingSearchResults(false);
-//               }}
-//               isDisabled={isLoadingSearchResults}
-//               buttonColor={BUTTON_COLOR.BLUE}
-//             >
-//               Load More
-//             </Button>
-//           )}
-//           {!hasMoreSearchResults && <Loaded />}
-//         </>
-//       )}
-
-//       {searchResults.length > 0 && (
-//         <div className="h-[2px] w-full rounded-full bg-neutral-700"></div>
-//       )}
-//     </div>
-//   );
-// }
 
 export default SearchBar;
