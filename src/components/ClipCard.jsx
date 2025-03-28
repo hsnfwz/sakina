@@ -10,11 +10,11 @@ function ClipCard({ clip }) {
         alt={clip.clip_thumbnail_file_name}
         width={1080}
         height={1920}
-        className={`aspect-[9/16] w-full rounded-lg object-center ${isLoadingImage ? 'hidden' : 'block'}`}
+        className={`aspect-9/16 w-full rounded-lg object-center ${isLoadingImage ? 'hidden' : 'block'}`}
         onLoad={() => setIsLoadingImage(false)}
       />
       <div
-        className={`aspect-[9/16] animate-pulse rounded-lg bg-neutral-200 ${isLoadingImage ? 'block' : 'hidden'}`}
+        className={`aspect-9/16 animate-pulse rounded-lg bg-neutral-200 ${isLoadingImage ? 'block' : 'hidden'}`}
       ></div>
       <h1>{clip.title}</h1>
     </div>

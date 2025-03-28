@@ -6,7 +6,7 @@ function PostDiscussionPreview({ postDiscussion }) {
     <Link
       to={`/post/${postDiscussion.id}`}
       state={{ post: postDiscussion }}
-      className="flex w-full flex-col gap-4 rounded-lg border-2 border-transparent p-2 hover:border-white focus:border-2 focus:border-white focus:outline-none focus:ring-0"
+      className="flex w-full flex-col gap-4 rounded-lg border-2 border-transparent p-2 hover:border-white focus:border-2 focus:border-white focus:outline-hidden focus:ring-0"
       ref={null}
     >
       <p className="text-neutral-700">

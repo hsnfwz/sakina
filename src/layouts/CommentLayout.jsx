@@ -90,7 +90,7 @@ function CommentLayout() {
         <>
           <Link
             to={`/post/${comment.post.id}`}
-            className="flex w-full flex-col gap-4 whitespace-nowrap rounded-lg border-2 border-neutral-700 p-2 hover:border-white focus:border-2 focus:border-white focus:outline-none focus:ring-0 sm:whitespace-normal"
+            className="flex w-full flex-col gap-4 whitespace-nowrap rounded-lg border-2 border-neutral-700 p-2 hover:border-white focus:border-2 focus:border-white focus:outline-hidden focus:ring-0 sm:whitespace-normal"
             state={{ post: comment.post }}
           >
             <div className="flex w-full gap-4">

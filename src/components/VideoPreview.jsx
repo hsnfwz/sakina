@@ -6,7 +6,7 @@ function VideoPreview({ video, isAutoPlay }) {
     <Link
       to={`/post/${video.id}`}
       state={{ post: video }}
-      className="flex h-full w-full border-2 border-transparent focus:border-2 focus:border-white focus:outline-none focus:ring-0"
+      className="flex h-full w-full border-2 border-transparent focus:border-2 focus:border-white focus:outline-hidden focus:ring-0"
       ref={null}
     >
       <VideoContent video={video} isPreview={true} isAutoPlay={isAutoPlay} />

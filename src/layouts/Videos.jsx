@@ -52,7 +52,7 @@ function Videos() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-screen-md flex-col">
+    <div className="mx-auto flex w-full max-w-(--breakpoint-md) flex-col">
       <div className="app_hide-scrollbar flex h-[calc(100vh-120px)] w-full snap-y snap-mandatory flex-col gap-2 overflow-y-scroll overscroll-y-contain">
         {videos.data.map((video, index) => (
           <div

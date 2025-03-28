@@ -92,7 +92,7 @@ function NavBar() {
 //         {user && user.user_role === 'SUPER_ADMIN' && (
 //           <Link
 //             to="/admin"
-//             className={`${location.pathname.includes('/admin') ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+//             className={`${location.pathname.includes('/admin') ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
 //           >
 //             <div className="relative left-0 top-0">
 //               {location.pathname.includes('/admin') && (
@@ -121,7 +121,7 @@ function NavBar() {
 //         )}
 //         <Link
 //           to="/"
-//           className={`${location.pathname === '/' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+//           className={`${location.pathname === '/' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
 //         >
 //           <div className="relative left-0 top-0">
 //             {location.pathname === '/' && (
@@ -150,7 +150,7 @@ function NavBar() {
 
 //         <Link
 //           to="/explore"
-//           className={`${location.pathname.includes('/explore') ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+//           className={`${location.pathname.includes('/explore') ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
 //         >
 //           {location.pathname.includes('/explore') && <SVGSolidCompass />}
 //           {!location.pathname.includes('/explore') && <SVGOutlineCompass />}
@@ -163,7 +163,7 @@ function NavBar() {
 //         {user && (
 //           <Link
 //             to="/notifications"
-//             className={`${location.pathname.includes('/notifications') ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+//             className={`${location.pathname.includes('/notifications') ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
 //           >
 //             <div className="relative left-0 top-0">
 //               {location.pathname.includes('/notifications') && (
@@ -194,7 +194,7 @@ function NavBar() {
 //           <Link
 //             to={`/profile/${user.username}`}
 //             state={{ profile: user }}
-//             className={`${location.pathname.includes(`/profile/${user.username}`) ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+//             className={`${location.pathname.includes(`/profile/${user.username}`) ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
 //           >
 //             {location.pathname.includes(`/profile/${user.username}`) && (
 //               <SVGSolidUser />
@@ -212,7 +212,7 @@ function NavBar() {
 //         {user && (
 //           <Link
 //             to="/settings"
-//             className={`${location.pathname === '/settings' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+//             className={`${location.pathname === '/settings' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
 //           >
 //             {location.pathname === '/settings' && <SVGSolidSettings />}
 //             {location.pathname !== '/settings' && <SVGOutlineSettings />}
@@ -242,7 +242,7 @@ function NavBar() {
 //                 })
 //               }
 //               to="/log-in"
-//               className={`${location.pathname === '/log-in' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+//               className={`${location.pathname === '/log-in' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
 //             >
 //               {location.pathname === '/log-in' && <SVGSolidUserArrow />}
 //               {location.pathname !== '/log-in' && <SVGOutlineUserArrow />}
@@ -260,7 +260,7 @@ function NavBar() {
 //                 })
 //               }
 //               to="/sign-up"
-//               className={`${location.pathname === '/sign-up' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+//               className={`${location.pathname === '/sign-up' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
 //             >
 //               {location.pathname === '/sign-up' && <SVGSolidUserPlus />}
 //               {location.pathname !== '/sign-up' && <SVGOutlineUserPlus />}

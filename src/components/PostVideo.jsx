@@ -147,7 +147,7 @@ function PostVideo({ images, videos, isPreview }) {
       </video>
       {!isLoadingFile && (
         <div
-          className={`absolute bottom-0 left-0 flex w-full flex-col gap-4 rounded-b-lg bg-black/50 p-4 backdrop-blur ${showControlsView ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute bottom-0 left-0 flex w-full flex-col gap-4 rounded-b-lg bg-black/50 p-4 backdrop-blur-sm ${showControlsView ? 'opacity-100' : 'opacity-0'}`}
         >
           <Slider
             max={videos[0].duration}

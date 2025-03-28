@@ -13,7 +13,7 @@ function Textarea({
       <textarea
         id={placeholder}
         placeholder={placeholder}
-        className="flex w-full rounded-lg border-2 border-transparent bg-neutral-200 p-2 placeholder-neutral-400 focus:border-2 focus:border-black focus:bg-white focus:outline-none focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
+        className="flex w-full rounded-lg border-2 border-transparent bg-neutral-200 p-2 placeholder-neutral-400 focus:border-2 focus:border-black focus:bg-white focus:outline-hidden focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
         onInput={handleInput}
         value={value}
         rows={10}

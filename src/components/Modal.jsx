@@ -59,13 +59,13 @@ function Modal({ children, isDisabled }) {
       className="fixed left-0 top-0 z-50 h-screen w-full overflow-y-auto bg-black/75 p-4 backdrop-blur-lg"
       onClick={handleModalClickOutside}
     >
-      <div className="m-auto flex w-full max-w-screen-md flex-col gap-4 rounded-lg bg-white p-4">
+      <div className="m-auto flex w-full max-w-(--breakpoint-md) flex-col gap-4 rounded-lg bg-white p-4">
         <div className="flex justify-end">
           <IconButton isDisabled={isDisabled} handleClick={closeModal}>
             <SVGOutlineX />
           </IconButton>
         </div>
-        <div className="mx-auto flex h-full w-full max-w-screen-md flex-col gap-4">
+        <div className="mx-auto flex h-full w-full max-w-(--breakpoint-md) flex-col gap-4">
           {children}
         </div>
       </div>

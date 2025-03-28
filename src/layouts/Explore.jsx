@@ -97,7 +97,7 @@ function Explore() {
               <Link
                 to="/users"
                 ref={usersLastRef}
-                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:outline-none focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
+                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:outline-hidden focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
               >
                 <SVGOutlineRegularArrowRight />
               </Link>
@@ -141,7 +141,7 @@ function Explore() {
               <Link
                 to="/videos"
                 ref={videosLastRef}
-                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:outline-none focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
+                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:outline-hidden focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
               >
                 <SVGOutlineRegularArrowRight />
               </Link>
@@ -185,7 +185,7 @@ function Explore() {
               <Link
                 to="/clips"
                 ref={clipsLastRef}
-                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:outline-none focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
+                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:outline-hidden focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
               >
                 <SVGOutlineRegularArrowRight />
               </Link>
@@ -229,7 +229,7 @@ function Explore() {
               <Link
                 to="/discussions"
                 ref={discussionsLastRef}
-                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:outline-none focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
+                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:outline-hidden focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
               >
                 <SVGOutlineRegularArrowRight />
               </Link>

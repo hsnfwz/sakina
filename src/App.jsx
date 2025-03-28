@@ -657,7 +657,7 @@ function App() {
     <AuthContextProvider>
       <DataContextProvider>
         <ModalContextProvider>
-          <main className="mx-auto flex w-full max-w-screen-lg flex-col">
+          <main className="mx-auto flex w-full max-w-(--breakpoint-lg) flex-col">
             {location.pathname !== '/' && (
               <>
                 <NavBar />

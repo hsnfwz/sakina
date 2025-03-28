@@ -109,9 +109,7 @@ createRoot(root).render(
 );
 
 /* 
-    BACKLOG:
-    - upgrade tailwind
-    
+    BACKLOG:    
     - FIX: scroll position for infinite scrolls
     - FIX: make sure intersection for all infinite scrolls works (users, videos, clips, discussions - for pages, searches)
 

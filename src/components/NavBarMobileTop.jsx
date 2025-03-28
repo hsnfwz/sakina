@@ -21,7 +21,7 @@ function NavBarMobileTop({ pendingPostsCount, isLoadingPendingPostsCount }) {
         {authUser && authUser.user_role === 'SUPER_ADMIN' && (
           <Link
             to="/admin"
-            className={`${location.pathname === '/admin' ? 'fill-sky-500' : 'fill-white'} flex gap-2 rounded-full border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+            className={`${location.pathname === '/admin' ? 'fill-sky-500' : 'fill-white'} flex gap-2 rounded-full border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
           >
             <div className="relative left-0 top-0">
               {location.pathname.includes('/admin') && (

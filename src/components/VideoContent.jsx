@@ -147,7 +147,7 @@ function VideoContent({ video, isPreview, isAutoPlay }) {
       </video>
       {!isLoadingFile && (
         <div
-          className={`absolute bottom-0 left-0 flex w-full flex-col gap-4 bg-black/50 p-4 backdrop-blur ${showControlsView ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute bottom-0 left-0 flex w-full flex-col gap-4 bg-black/50 p-4 backdrop-blur-sm ${showControlsView ? 'opacity-100' : 'opacity-0'}`}
         >
           <Slider
             max={video.video_duration}

@@ -70,7 +70,7 @@ function ExploreProfiles() {
   }
 
   return (
-    <div className="mx-auto mb-[60px] flex w-full max-w-screen-md flex-col gap-4 py-4">
+    <div className="mx-auto mb-[60px] flex w-full max-w-(--breakpoint-md) flex-col gap-4 py-4">
       {exploreProfiles.data.map((profile, index) => (
         <ProfilePreview key={index} profile={profile} />
       ))}

@@ -33,10 +33,10 @@ function NavBarMobileBottom({
 
   return (
     <div className="fixed bottom-0 z-40 block w-full bg-white p-2">
-      <nav className="mx-auto flex w-full max-w-screen-md justify-around gap-2">
+      <nav className="mx-auto flex w-full max-w-(--breakpoint-md) justify-around gap-2">
         <Link
           to="/home"
-          className={`${location.pathname === '/home' ? 'fill-sky-500' : 'fill-black'} flex gap-2 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+          className={`${location.pathname === '/home' ? 'fill-sky-500' : 'fill-black'} flex gap-2 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
         >
           <div className="relative left-0 top-0">
             {location.pathname === '/home' && (
@@ -59,7 +59,7 @@ function NavBarMobileBottom({
 
         <Link
           to="/explore"
-          className={`${location.pathname.includes('/explore') ? 'fill-sky-500' : 'fill-black'} flex gap-2 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+          className={`${location.pathname.includes('/explore') ? 'fill-sky-500' : 'fill-black'} flex gap-2 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
         >
           {location.pathname.includes('/explore') && <SVGSolidCompass />}
           {!location.pathname.includes('/explore') && <SVGOutlineCompass />}
@@ -75,7 +75,7 @@ function NavBarMobileBottom({
         {/* {authUser && (
           <Link
             to="/notifications"
-            className={`${location.pathname.includes('/notifications') ? 'fill-sky-500' : 'fill-black'} flex gap-2 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+            className={`${location.pathname.includes('/notifications') ? 'fill-sky-500' : 'fill-black'} flex gap-2 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
           >
             <div className="relative left-0 top-0">
               {location.pathname.includes('/notifications') && (
@@ -100,7 +100,7 @@ function NavBarMobileBottom({
           <Link
             to={`/profile/${authUser.username}`}
             state={{ profile: authUser }}
-            className={`${location.pathname.includes(`/profile/${authUser.username}`) ? 'fill-sky-500' : 'fill-black'} flex gap-2 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+            className={`${location.pathname.includes(`/profile/${authUser.username}`) ? 'fill-sky-500' : 'fill-black'} flex gap-2 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
           >
             {location.pathname.includes(`/profile/${authUser.username}`) && (
               <SVGSolidUser />
@@ -113,7 +113,7 @@ function NavBarMobileBottom({
         {authUser && (
           <Link
             to="/settings"
-            className={`${location.pathname === '/settings' ? 'fill-sky-500' : 'fill-black'} flex gap-2 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+            className={`${location.pathname === '/settings' ? 'fill-sky-500' : 'fill-black'} flex gap-2 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
           >
             {location.pathname === '/settings' && <SVGSolidSettings />}
             {location.pathname !== '/settings' && <SVGOutlineSettings />}
@@ -123,14 +123,14 @@ function NavBarMobileBottom({
           <>
             <Link
               to="/log-in"
-              className={`${location.pathname === '/log-in' ? 'fill-sky-500' : 'fill-black'} flex gap-4 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+              className={`${location.pathname === '/log-in' ? 'fill-sky-500' : 'fill-black'} flex gap-4 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
             >
               {location.pathname === '/log-in' && <SVGSolidUserArrow />}
               {location.pathname !== '/log-in' && <SVGOutlineUserArrow />}
             </Link>
             <Link
               to="/sign-up"
-              className={`${location.pathname === '/sign-up' ? 'fill-sky-500' : 'fill-black'} flex gap-4 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-none focus:ring-0`}
+              className={`${location.pathname === '/sign-up' ? 'fill-sky-500' : 'fill-black'} flex gap-4 rounded-full border-2 border-transparent bg-white p-2 hover:bg-neutral-200 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
             >
               {location.pathname === '/sign-up' && <SVGSolidUserPlus />}
               {location.pathname !== '/sign-up' && <SVGOutlineUserPlus />}

@@ -168,7 +168,7 @@ function Settings() {
         <button
           type="button"
           onClick={() => setShowModal({ type: 'AVATAR_MODAL' })}
-          className="w-full max-w-[128px] self-start rounded-full border-2 border-transparent hover:border-white focus:border-2 focus:border-white focus:outline-none focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
+          className="w-full max-w-[128px] self-start rounded-full border-2 border-transparent hover:border-white focus:border-2 focus:border-white focus:outline-hidden focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
         >
           {authUser.avatar_file_name && (
             <img

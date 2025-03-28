@@ -51,7 +51,7 @@ function ResetPasswordLayout() {
   }
 
   return (
-    <div className="m-auto flex w-full max-w-screen-md flex-col gap-8">
+    <div className="m-auto flex w-full max-w-(--breakpoint-md) flex-col gap-8">
       {authMessage !== 'PASSWORD_RESET' && (
         <>
           <div className="flex flex-col gap-4">

@@ -10,7 +10,7 @@ function ForgotPasswordLayout() {
   const [email, setEmail] = useState('');
 
   return (
-    <div className="m-auto flex w-full max-w-screen-md flex-col gap-8">
+    <div className="m-auto flex w-full max-w-(--breakpoint-md) flex-col gap-8">
       {authMessage !== 'RESET' && (
         <>
           <TextInput

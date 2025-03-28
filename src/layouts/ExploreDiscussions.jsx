@@ -71,7 +71,7 @@ function ExploreDiscussions() {
   }
 
   return (
-    <div className="mx-auto mb-[60px] flex w-full max-w-screen-md flex-col gap-4 py-4">
+    <div className="mx-auto mb-[60px] flex w-full max-w-(--breakpoint-md) flex-col gap-4 py-4">
       {exploreDiscussions.data.map((post, index) => (
         <PostDiscussionPreview key={index} postDiscussion={post} />
       ))}

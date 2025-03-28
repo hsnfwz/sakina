@@ -8,7 +8,7 @@ function Post({ post, isPreview }) {
     <Link
       to={`/post/${post.id}`}
       state={{ post }}
-      className="block w-full max-w-[400px] rounded-lg border-2 border-transparent hover:border-white focus:border-2 focus:border-white focus:outline-none focus:ring-0"
+      className="block w-full max-w-[400px] rounded-lg border-2 border-transparent hover:border-white focus:border-2 focus:border-white focus:outline-hidden focus:ring-0"
       ref={null}
     >
       {post.type === 'IMAGE' && (
