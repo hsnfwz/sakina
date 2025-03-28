@@ -56,7 +56,7 @@ function Modal({ children, isDisabled }) {
 
   return (
     <div
-      className="fixed left-0 top-0 z-50 h-screen w-full overflow-y-auto bg-black/75 p-4 backdrop-blur-lg"
+      className="fixed top-0 left-0 z-50 h-screen w-full overflow-y-auto bg-black/75 p-4 backdrop-blur-lg"
       onClick={handleModalClickOutside}
     >
       <div className="m-auto flex w-full max-w-(--breakpoint-md) flex-col gap-4 rounded-lg bg-white p-4">

@@ -211,7 +211,7 @@ function PostLayout() {
           {authUser && (
             <div className="flex gap-2 self-start">
               <Button
-                buttonColor={BUTTON_COLOR.BLUE}
+                color={BUTTON_COLOR.BLUE}
                 handleClick={() => {
                   setShowModal({
                     type: 'COMMENT_MODAL',
@@ -229,7 +229,7 @@ function PostLayout() {
           {authUser && authUser.id === post.authUser.id && (
             <div className="flex gap-2 self-start">
               <Button
-                buttonColor={BUTTON_COLOR.BLUE}
+                color={BUTTON_COLOR.BLUE}
                 handleClick={async () => {
                   if (like) {
                     await removeLike(like.id);
@@ -249,7 +249,7 @@ function PostLayout() {
                 {!isLoadingLike && <>{like ? 'Unlike' : 'Like'}</>}
               </Button>
               <Button
-                buttonColor={BUTTON_COLOR.RED}
+                color={BUTTON_COLOR.RED}
                 handleClick={() => {
                   setShowModal({
                     type: 'CONFIRM_MODAL',
@@ -273,7 +273,7 @@ function PostLayout() {
                 Archive
               </Button>
               <Button
-                buttonColor={BUTTON_COLOR.RED}
+                color={BUTTON_COLOR.RED}
                 handleClick={() => {
                   setShowModal({
                     type: 'CONFIRM_MODAL',

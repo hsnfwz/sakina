@@ -7,7 +7,7 @@ import Post from '../components/Post.jsx';
 import Loaded from '../components/Loaded.jsx';
 
 function ProfileRejectedPostsNestedLayout() {
-  const { activeProfile } = useContext(DataContext);
+  const { activeUser } = useContext(DataContext);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -15,18 +15,18 @@ function ProfileRejectedPostsNestedLayout() {
     useContext(DataContext);
 
   useEffect(() => {
-    if (activeProfile) {
+    if (activeUser) {
       if (!profileRejectedPosts.hasInitialized) {
         getRejectedPosts();
       }
     }
-  }, [activeProfile]);
+  }, [activeUser]);
 
   async function getRejectedPosts() {
     setIsLoading(true);
 
     const { data, hasMore } = await getRejectedPostsByProfileId(
-      activeProfile.id,
+      activeUser.id,
       profileRejectedPosts.data.length
     );
 

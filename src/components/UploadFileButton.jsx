@@ -51,7 +51,7 @@ function UploadFileButton({
         ref={uploadFileButtonRef}
       />
       <label
-        className="flex w-full items-center justify-center self-start rounded-lg border-2 border-emerald-500 p-2 text-center text-black hover:cursor-pointer hover:bg-emerald-500 peer-disabled:pointer-events-none peer-disabled:cursor-default peer-disabled:opacity-50"
+        className="flex w-full items-center justify-center self-start rounded-lg border-2 border-emerald-500 p-2 text-center text-black peer-disabled:pointer-events-none peer-disabled:cursor-default peer-disabled:opacity-50 hover:cursor-pointer hover:bg-emerald-500"
         htmlFor={id}
       >
         {text}

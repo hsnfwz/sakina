@@ -115,7 +115,7 @@ function AdminLayout({
       <h1>Admin</h1>
       {adminPendingPosts.hasInitialized && newPendingPostsCount > 0 && (
         <Button
-          buttonColor={BUTTON_COLOR.BLUE}
+          color={BUTTON_COLOR.BLUE}
           handleClick={refreshPendingPosts}
           isDisabled={isLoading}
         >
@@ -136,13 +136,13 @@ function AdminLayout({
           <div className="flex gap-2">
             <Button
               handleClick={async () => await handleAccept(pendingPost)}
-              buttonColor={BUTTON_COLOR.BLUE}
+              color={BUTTON_COLOR.BLUE}
             >
               Accept
             </Button>
             <Button
               handleClick={async () => await handleReject(pendingPost)}
-              buttonColor={BUTTON_COLOR.RED}
+              color={BUTTON_COLOR.RED}
             >
               Reject
             </Button>

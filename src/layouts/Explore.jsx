@@ -82,22 +82,19 @@ function Explore() {
           {users.length > 0 && (
             <div
               ref={usersRef}
-              className="app_hide-scrollbar grid w-full snap-x snap-mandatory grid-flow-col justify-start gap-2 overflow-y-hidden overflow-x-scroll overscroll-x-contain"
+              className="app_hide-scrollbar grid w-full snap-x snap-mandatory grid-flow-col justify-start gap-2 overflow-x-scroll overflow-y-hidden overscroll-x-contain"
             >
               {users.map((user, index) => (
-                <Link
-                  key={user.id}
-                  to={`/users/${user.username}`}
-                  className="w-[128px] snap-start"
-                  ref={index === 0 ? usersFirstRef : null}
-                >
-                  <UserCard user={user} />
-                </Link>
+                <UserCard
+                  key={index}
+                  user={user}
+                  elementRef={index === 0 ? usersFirstRef : null}
+                />
               ))}
               <Link
                 to="/users"
                 ref={usersLastRef}
-                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:outline-hidden focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
+                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
               >
                 <SVGOutlineRegularArrowRight />
               </Link>
@@ -126,22 +123,19 @@ function Explore() {
           {videos.length > 0 && (
             <div
               ref={videosRef}
-              className="app_hide-scrollbar grid w-full snap-x snap-mandatory grid-flow-col justify-start gap-2 overflow-y-hidden overflow-x-scroll overscroll-x-contain"
+              className="app_hide-scrollbar grid w-full snap-x snap-mandatory grid-flow-col justify-start gap-2 overflow-x-scroll overflow-y-hidden overscroll-x-contain"
             >
               {videos.map((video, index) => (
-                <Link
-                  key={video.id}
-                  to={`/videos/${video.id}`}
-                  className="w-[320px] snap-start"
-                  ref={index === 0 ? videosFirstRef : null}
-                >
-                  <VideoCard video={video} />
-                </Link>
+                <VideoCard
+                  key={index}
+                  video={video}
+                  elementRef={index === 0 ? videosFirstRef : null}
+                />
               ))}
               <Link
                 to="/videos"
                 ref={videosLastRef}
-                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:outline-hidden focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
+                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
               >
                 <SVGOutlineRegularArrowRight />
               </Link>
@@ -170,22 +164,19 @@ function Explore() {
           {clips.length > 0 && (
             <div
               ref={clipsRef}
-              className="app_hide-scrollbar grid w-full snap-x snap-mandatory grid-flow-col justify-start gap-2 overflow-y-hidden overflow-x-scroll overscroll-x-contain"
+              className="app_hide-scrollbar grid w-full snap-x snap-mandatory grid-flow-col justify-start gap-2 overflow-x-scroll overflow-y-hidden overscroll-x-contain"
             >
               {clips.map((clip, index) => (
-                <Link
-                  key={clip.id}
-                  to={`/clips/${clip.id}`}
-                  className="w-[320px] snap-start"
-                  ref={index === 0 ? clipsFirstRef : null}
-                >
-                  <ClipCard clip={clip} />
-                </Link>
+                <ClipCard
+                  key={index}
+                  clip={clip}
+                  elementRef={index === 0 ? clipsFirstRef : null}
+                />
               ))}
               <Link
                 to="/clips"
                 ref={clipsLastRef}
-                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:outline-hidden focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
+                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
               >
                 <SVGOutlineRegularArrowRight />
               </Link>
@@ -214,22 +205,19 @@ function Explore() {
           {discussions.length > 0 && (
             <div
               ref={discussionsRef}
-              className="app_hide-scrollbar grid w-full snap-x snap-mandatory grid-flow-col justify-start gap-2 overflow-y-hidden overflow-x-scroll overscroll-x-contain"
+              className="app_hide-scrollbar grid w-full snap-x snap-mandatory grid-flow-col justify-start gap-2 overflow-x-scroll overflow-y-hidden overscroll-x-contain"
             >
               {discussions.map((discussion, index) => (
-                <Link
-                  key={discussion.id}
-                  to={`/discussions/${discussion.id}`}
-                  className="w-[320px] snap-start rounded-lg border-2 border-neutral-200"
-                  ref={index === 0 ? discussionsFirstRef : null}
-                >
-                  <DiscussionCard discussion={discussion} />
-                </Link>
+                <DiscussionCard
+                  key={index}
+                  discussion={discussion}
+                  elementRef={index === 0 ? discussionsFirstRef : null}
+                />
               ))}
               <Link
                 to="/discussions"
                 ref={discussionsLastRef}
-                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:outline-hidden focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
+                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
               >
                 <SVGOutlineRegularArrowRight />
               </Link>

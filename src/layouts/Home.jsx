@@ -82,7 +82,7 @@ import NavPanel from '../components/NavPanel.jsx';
 //       <h1>Salam {authUser.username}!</h1>
 //       {homeAcceptedPosts.hasInitialized && newPostsCount > 0 && (
 //         <Button
-//           buttonColor={BUTTON_COLOR.BLUE}
+//           color={BUTTON_COLOR.BLUE}
 //           handleClick={refreshPosts}
 //           isDisabled={isLoading}
 //         >

@@ -7,7 +7,7 @@ import Post from '../components/Post.jsx';
 import Loaded from '../components/Loaded.jsx';
 
 function ProfileArchivedPostsNestedLayout() {
-  const { activeProfile } = useContext(DataContext);
+  const { activeUser } = useContext(DataContext);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -15,18 +15,18 @@ function ProfileArchivedPostsNestedLayout() {
     useContext(DataContext);
 
   useEffect(() => {
-    if (activeProfile) {
+    if (activeUser) {
       if (!profileArchivedPosts.hasInitialized) {
         getArchivedPosts();
       }
     }
-  }, [activeProfile]);
+  }, [activeUser]);
 
   async function getArchivedPosts() {
     setIsLoading(true);
 
     const { data, hasMore } = await getArchivedPostsByProfileId(
-      activeProfile.id,
+      activeUser.id,
       profileArchivedPosts.data.length
     );
 

@@ -78,7 +78,7 @@ function Masonry({ elementRef, data }) {
                 <Link
                   to={`/post/${post.id}`}
                   state={{ post }}
-                  className="group relative top-0 w-full rounded-lg border-2 border-transparent hover:border-white focus:border-2 focus:border-white focus:outline-hidden focus:ring-0"
+                  className="group relative top-0 w-full rounded-lg border-2 border-transparent hover:border-white focus:border-2 focus:border-white focus:ring-0 focus:outline-hidden"
                   ref={post.id === masonry.lastPost.id ? elementRef : null}
                   key={postIndex}
                 >
@@ -96,7 +96,7 @@ function Masonry({ elementRef, data }) {
                       isMasonryView={true}
                     />
                   )}
-                  <div className="z-3 absolute bottom-0 flex w-full flex-col justify-end gap-4 rounded-b-lg bg-black/50 p-4 opacity-0 backdrop-blur-sm group-hover:opacity-100">
+                  <div className="absolute bottom-0 z-3 flex w-full flex-col justify-end gap-4 rounded-b-lg bg-black/50 p-4 opacity-0 backdrop-blur-sm group-hover:opacity-100">
                     <h1 className="text-black">{post.title}</h1>
                     <div className="flex items-center gap-2">
                       {post.user.avatar && (

@@ -58,57 +58,29 @@ function SearchBar({ placeholder, handleSearch }) {
         <>
           {(location.hash === '' || location.hash === '#users') && (
             <>
-              {searchResults.map((searchResult, index) => (
-                <Link
-                  onClick={() => setShowModal({ type: null, data: null })}
-                  key={searchResult.id}
-                  to={`/users/${searchResult.id}`}
-                  className="w-[320px] snap-start rounded-lg"
-                >
-                  <UserCard user={searchResult} />
-                </Link>
+              {searchResults.map((user, index) => (
+                <UserCard key={index} user={user} />
               ))}
             </>
           )}
           {location.hash === '#videos' && (
             <>
-              {searchResults.map((searchResult, index) => (
-                <Link
-                  onClick={() => setShowModal({ type: null, data: null })}
-                  key={searchResult.id}
-                  to={`/videos/${searchResult.id}`}
-                  className="w-[320px] snap-start rounded-lg"
-                >
-                  <VideoCard video={searchResult} />
-                </Link>
+              {searchResults.map((video, index) => (
+                <VideoCard key={index} video={video} />
               ))}
             </>
           )}
           {location.hash === '#clips' && (
             <>
-              {searchResults.map((searchResult, index) => (
-                <Link
-                  onClick={() => setShowModal({ type: null, data: null })}
-                  key={searchResult.id}
-                  to={`/clips/${searchResult.id}`}
-                  className="w-[320px] snap-start rounded-lg"
-                >
-                  <ClipCard clip={searchResult} />
-                </Link>
+              {searchResults.map((clip, index) => (
+                <ClipCard key={index} clip={clip} />
               ))}
             </>
           )}
           {location.hash === '#discussions' && (
             <>
-              {searchResults.map((searchResult, index) => (
-                <Link
-                  onClick={() => setShowModal({ type: null, data: null })}
-                  key={searchResult.id}
-                  to={`/discussions/${searchResult.id}`}
-                  className="w-[320px] snap-start rounded-lg border-2 border-neutral-200"
-                >
-                  <DiscussionCard discussion={searchResult} />
-                </Link>
+              {searchResults.map((discussion, index) => (
+                <DiscussionCard key={index} discussion={discussion} />
               ))}
             </>
           )}
@@ -128,7 +100,7 @@ function SearchBar({ placeholder, handleSearch }) {
                 setIsLoadingSearchResults(false);
               }}
               isDisabled={isLoadingSearchResults}
-              buttonColor={BUTTON_COLOR.BLUE}
+              color={BUTTON_COLOR.BLUE}
             >
               Load More
             </Button>

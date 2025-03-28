@@ -45,8 +45,12 @@ function NavBar() {
           <Link className="px-4 py-2 text-xs" to="/inbox">
             Inbox
           </Link>
-          <Link className="px-4 py-2 text-xs" to="/profile">
-            Profile
+          <Link
+            className="px-4 py-2 text-xs"
+            state={{ user: authUser }}
+            to={`/users/${authUser.username}`}
+          >
+            {authUser.username}
           </Link>
           <Link className="px-4 py-2 text-xs" to="/settings">
             Settings
@@ -226,7 +230,7 @@ function NavBar() {
 //         {user && (
 //           <Button
 //             handleClick={() => setShowModal({ type: 'CREATE_MODAL' })}
-//             buttonColor={BUTTON_COLOR.GREEN}
+//             color={BUTTON_COLOR.GREEN}
 //           >
 //             <SVGOutlinePlus />
 //             <span>Create</span>

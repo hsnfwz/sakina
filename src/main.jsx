@@ -18,11 +18,14 @@ import ExploreProfiles from './layouts/ExploreProfiles.jsx';
 import Video from './layouts/Video.jsx';
 import Clip from './layouts/Clip.jsx';
 import Discussion from './layouts/Discussion.jsx';
-import Profile from './layouts/Profile.jsx';
+import User from './layouts/User.jsx';
 import NotFound from './layouts/NotFound.jsx';
 import Settings from './layouts/Settings.jsx';
 import SignUp from './layouts/SignUp.jsx';
 import SignIn from './layouts/SignIn.jsx';
+import UserVideos from './layouts/UserVideos.jsx';
+import UserClips from './layouts/UserClips.jsx';
+import UserDiscussions from './layouts/UserDiscussions.jsx';
 
 const router = createBrowserRouter([
   {
@@ -34,17 +37,17 @@ const router = createBrowserRouter([
         index: true,
       },
       {
-        path: 'sign-up',
+        path: '/sign-up',
         Component: SignUp,
         index: true,
       },
       {
-        path: 'sign-in',
+        path: '/sign-in',
         Component: SignIn,
         index: true,
       },
       {
-        path: 'home',
+        path: '/home',
         Component: Home,
         children: [
           { index: true, Component: HomeVideos },
@@ -54,45 +57,54 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: 'explore',
+        path: '/explore',
         Component: Explore,
         index: true,
       },
       {
-        path: 'videos',
+        path: '/videos',
         children: [
           { index: true, Component: Videos },
           { path: ':id', Component: Video },
         ],
       },
       {
-        path: 'clips',
+        path: '/clips',
         children: [
           { index: true, Component: Clips },
           { path: ':id', Component: Clip },
         ],
       },
       {
-        path: 'discussions',
+        path: '/discussions',
         children: [
           { index: true, Component: ExploreDiscussions },
           { path: ':id', Component: Discussion },
         ],
       },
       {
-        path: 'users',
+        path: '/users',
         children: [
           { index: true, Component: ExploreProfiles },
-          { path: ':id', Component: Profile },
+          {
+            path: ':username',
+            Component: User,
+            children: [
+              { index: true, Component: UserVideos },
+              { path: 'videos', Component: UserVideos },
+              { path: 'clips', Component: UserClips },
+              { path: 'discussions', Component: UserDiscussions },
+            ],
+          },
         ],
       },
       {
-        path: 'settings',
+        path: '/settings',
         Component: Settings,
         index: true,
       },
       {
-        path: '*',
+        path: '/*',
         Component: NotFound,
         index: true,
       },
@@ -109,16 +121,15 @@ createRoot(root).render(
 );
 
 /* 
-    BACKLOG:    
-    - FIX: scroll position for infinite scrolls
-    - FIX: make sure intersection for all infinite scrolls works (users, videos, clips, discussions - for pages, searches)
+  - look into making classes with tailwind properties to avoid using hardcoded enum values
 
+
+    - FIX: scroll position and intersections for infinite scrolls and intersection
+    - ensure all changes to content is updated in the global state
     - make inputs green when they are correctly inputted to indicate progress to the user
     - make inputs red when they are incorrectly inputted to indicate error to the user
-    - FIX: all global state changes across the app due to new state structure
-    - FIX: profile followers, following, comments, and views nested layouts
-    - FIX: make sure all state and url state is up to date whenever changes are made - we do not want stale data
-    - hide/unhide videos and discussions
+    - hide/unhide content
+    - edit content
     - @ mentions
     - notifications
       - is_read
@@ -126,7 +137,6 @@ createRoot(root).render(
       - auto-delete rejected posts within 24 hours
 
     - counts for followers, following, posts, comments, likes, views
-    - video play and pause with space bar
     - make sure custom inputs can listen to important keys (enter, spacebar, etc.)
     - show preview of post before submission
 
@@ -136,7 +146,6 @@ createRoot(root).render(
     - pined content
     - scheduled content
     - expired content
-    - edit content
     - notifications for activity by people you follow
     - analytics page
     - stories (24 hours) + archived stories

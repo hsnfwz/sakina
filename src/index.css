@@ -19,8 +19,7 @@
 }
 
 :root {
-  --color-rose-500: oklch(0.645 0.246 16.439);
-  --color-neutral-700: oklch(0.371 0 0);
+  --color-white-transparent: rgba(255,255,255,0.5);
   --color-neutral-200: oklch(0.922 0 0);
 }
 
@@ -62,7 +61,7 @@ input[type='checkbox'] {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  /* background-color: #ccc; */
   -webkit-transition: 0.4s;
   transition: 0.4s;
   border-radius: 34px;
@@ -109,7 +108,7 @@ input[type='range']::-webkit-slider-thumb {
   appearance: none;
   width: 16px;
   height: 16px;
-  background: var(--color-rose-500);
+  background: white;
   border: none;
   border-radius: 100%;
   transition: 0.2s all;
@@ -117,28 +116,28 @@ input[type='range']::-webkit-slider-thumb {
 input[type='range']::-moz-range-thumb {
   width: 16px;
   height: 16px;
-  background: var(--color-rose-500);
+  background: white;
   border: none;
   border-radius: 100%;
   transition: 0.2s all;
 }
 input[type='range']::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 0 4px var(--color-rose-500);
+  box-shadow: 0 0 0 4px white;
 }
 input[type='range']:active::-webkit-slider-thumb {
-  box-shadow: 0 0 0 8px var(--color-rose-500);
+  box-shadow: 0 0 0 8px white;
 }
 input[type='range']:focus::-webkit-slider-thumb {
-  box-shadow: 0 0 0 8px var(--color-rose-500);
+  box-shadow: 0 0 0 8px white;
 }
 input[type='range']::-moz-range-thumb:hover {
-  box-shadow: 0 0 0 4px var(--color-rose-500);
+  box-shadow: 0 0 0 4px white;
 }
 input[type='range']:active::-moz-range-thumb {
-  box-shadow: 0 0 0 8px var(--color-rose-500);
+  box-shadow: 0 0 0 8px white;
 }
 input[type='range']:focus::-moz-range-thumb {
-  box-shadow: 0 0 0 8px var(--color-rose-500);
+  box-shadow: 0 0 0 8px white;
 }
 
 .app_hide-scrollbar::-webkit-scrollbar {

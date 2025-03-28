@@ -23,7 +23,7 @@ function ConfirmModal() {
           No
         </Button>
         <Button
-          buttonColor={BUTTON_COLOR.RED}
+          color={BUTTON_COLOR.RED}
           handleClick={async () => {
             await showModal.data.handleSubmit();
             setShowModal({

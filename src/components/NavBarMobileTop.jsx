@@ -21,21 +21,21 @@ function NavBarMobileTop({ pendingPostsCount, isLoadingPendingPostsCount }) {
         {authUser && authUser.user_role === 'SUPER_ADMIN' && (
           <Link
             to="/admin"
-            className={`${location.pathname === '/admin' ? 'fill-sky-500' : 'fill-white'} flex gap-2 rounded-full border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
+            className={`${location.pathname === '/admin' ? 'fill-sky-500' : 'fill-white'} flex gap-2 rounded-full border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:ring-0 focus:outline-hidden`}
           >
-            <div className="relative left-0 top-0">
+            <div className="relative top-0 left-0">
               {location.pathname.includes('/admin') && (
-                <div className="relative left-0 top-0">
+                <div className="relative top-0 left-0">
                   <SVGSolidShield />
                 </div>
               )}
               {!location.pathname.includes('/admin') && (
-                <div className="relative left-0 top-0">
+                <div className="relative top-0 left-0">
                   <SVGOutlineShield />
                 </div>
               )}
               {!isLoadingPendingPostsCount && pendingPostsCount > 0 && (
-                <span className="absolute -right-2 -top-2 rounded-full bg-rose-500 p-1 text-xs text-black">
+                <span className="absolute -top-2 -right-2 rounded-full bg-rose-500 p-1 text-xs text-black">
                   {formatCount(pendingPostsCount)}
                 </span>
               )}
@@ -45,7 +45,7 @@ function NavBarMobileTop({ pendingPostsCount, isLoadingPendingPostsCount }) {
         {authUser && (
           <IconButton
             handleClick={() => setShowModal({ type: 'CREATE_MODAL' })}
-            buttonColor={BUTTON_COLOR.GREEN}
+            color={BUTTON_COLOR.GREEN}
           >
             <SVGOutlinePlus />
           </IconButton>

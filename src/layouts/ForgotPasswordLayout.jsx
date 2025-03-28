@@ -20,7 +20,7 @@ function ForgotPasswordLayout() {
             value={email}
           />
           <Button
-            buttonColor={BUTTON_COLOR.RED}
+            color={BUTTON_COLOR.RED}
             isDisabled={isLoading || email.length === 0}
             handleClick={async () => {
               setIsLoading(true);

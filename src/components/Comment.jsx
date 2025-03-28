@@ -26,7 +26,7 @@ function Comment({
         {showLink && (
           <Link
             to={`comment/${comment.id}`}
-            className="flex w-full flex-col gap-4 whitespace-nowrap rounded-lg border-2 border-neutral-700 p-2 hover:border-white focus:border-2 focus:border-white focus:outline-hidden focus:ring-0 sm:whitespace-normal"
+            className="flex w-full flex-col gap-4 rounded-lg border-2 border-neutral-700 p-2 whitespace-nowrap hover:border-white focus:border-2 focus:border-white focus:ring-0 focus:outline-hidden sm:whitespace-normal"
             state={{ comment }}
           >
             <div className="flex w-full gap-4">
@@ -56,7 +56,7 @@ function Comment({
         {authUser && (
           <div className="self-start">
             <Button
-              buttonColor={BUTTON_COLOR.BLUE}
+              color={BUTTON_COLOR.BLUE}
               handleClick={() => {
                 setShowModal({
                   type: 'COMMENT_MODAL',

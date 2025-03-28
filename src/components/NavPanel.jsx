@@ -10,7 +10,7 @@ function NavPanel({ links }) {
           <div key={index}>
             {link.show && (
               <Link
-                className={`block ${location.pathname === link.pathname || location.pathname.includes(link.to) || location.hash === link.hash ? 'border-b-sky-500 border-t-transparent' : 'border-y-transparent'} border-y-2 py-2 hover:border-b-sky-500`}
+                className={`block ${location.pathname === link.pathname || location.pathname.includes(link.to) || location.hash === link.hash ? 'border-t-transparent border-b-sky-500' : 'border-y-transparent'} border-y-2 py-2 hover:border-b-sky-500`}
                 to={link.to}
                 state={link.state}
               >

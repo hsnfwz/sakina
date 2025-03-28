@@ -258,7 +258,7 @@ function SignUp() {
               reenterPassword !== password
             }
             handleClick={async () => await signUp()}
-            buttonColor={BUTTON_COLOR.BLUE}
+            color={BUTTON_COLOR.BLUE}
           >
             Sign Up
           </Button>

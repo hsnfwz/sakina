@@ -6,7 +6,7 @@ function PostVideoPreview({ postVideo }) {
     <Link
       to={`/post/${postVideo.id}`}
       state={{ post: postVideo }}
-      className="block w-full max-w-[256px] rounded-lg border-2 border-transparent hover:border-white focus:border-2 focus:border-white focus:outline-hidden focus:ring-0"
+      className="block w-full max-w-[256px] rounded-lg border-2 border-transparent hover:border-white focus:border-2 focus:border-white focus:ring-0 focus:outline-hidden"
       ref={null}
     >
       <PostVideo

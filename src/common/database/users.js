@@ -64,7 +64,7 @@ async function getUsersBySearchTerm(
   }
 }
 
-async function getProfileByUsername(username) {
+async function getUserByUsername(username) {
   try {
     const { data, error } = await supabase
       .from('users')
@@ -78,6 +78,10 @@ async function getProfileByUsername(username) {
     };
   } catch (error) {
     console.log(error);
+
+    return {
+      data: null,
+    };
   }
 }
 
@@ -134,7 +138,7 @@ async function getFollowingByProfileId(
 export {
   getUsers,
   getUsersBySearchTerm,
+  getUserByUsername,
   getFollowersByProfileId,
   getFollowingByProfileId,
-  getProfileByUsername,
 };

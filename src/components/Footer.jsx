@@ -1,9 +1,8 @@
-import { Link } from "react-router";
+import { Link } from 'react-router';
 
 function Footer() {
-
   return (
-    <footer className="w-full flex flex-col gap-2 p-2">
+    <footer className="flex w-full flex-col gap-2 p-2">
       <Link to="/">Sakina</Link>
       <p>Copyright 2025 Sakina</p>
     </footer>

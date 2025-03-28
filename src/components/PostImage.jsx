@@ -51,7 +51,7 @@ function PostImage({ images, isPreview }) {
   }, [carouselIndex, isLoadingFile]);
 
   return (
-    <div className="relative left-0 top-0 flex flex-col">
+    <div className="relative top-0 left-0 flex flex-col">
       <div className="grid">
         {images.map((image, index) => (
           <img
@@ -67,7 +67,7 @@ function PostImage({ images, isPreview }) {
         ))}
       </div>
       {!isLoadingFile && images.length > 1 && (
-        <div className="absolute left-0 top-0 flex h-full w-full flex-col gap-2 p-2">
+        <div className="absolute top-0 left-0 flex h-full w-full flex-col gap-2 p-2">
           <div className="flex gap-2">
             {images.map((image, index) => (
               <div key={index} className={`h-2 w-full rounded-lg bg-white/50`}>

@@ -46,7 +46,7 @@ function PostDiscussionsSearchBar() {
           key={index}
           to={`/profile/${profile.username}`}
           state={{ profile }}
-          className="flex items-center gap-2 rounded-lg border-2 border-transparent bg-black p-2 hover:border-white focus:border-2 focus:border-white focus:outline-hidden focus:ring-0"
+          className="flex items-center gap-2 rounded-lg border-2 border-transparent bg-black p-2 hover:border-white focus:border-2 focus:border-white focus:ring-0 focus:outline-hidden"
           onClick={() => setSearchResults([])}
         >
           {profile.avatar && (

@@ -96,7 +96,7 @@ function ResetPasswordLayout() {
           </div>
 
           <Button
-            buttonColor={BUTTON_COLOR.RED}
+            color={BUTTON_COLOR.RED}
             isDisabled={
               isLoading ||
               password.length === 0 ||

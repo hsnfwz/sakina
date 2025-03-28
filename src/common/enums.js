@@ -47,17 +47,68 @@ const ORDER_BY = Object.freeze({
 });
 
 const BUTTON_COLOR = Object.freeze({
-  RED: {
-    tailwindColor: 'bg-rose-500',
-    tailwindColorHover: 'hover:bg-rose-700',
+  SOLID_BLACK: {
+    tailwindBackgroundColor: 'bg-black',
+    tailwindHoverBackgroundColor: 'hover:bg-black',
+    tailwindTextColor: 'text-white',
+    tailwindFillColor: 'fill-white',
+    tailwindBorderColor: 'border-black',
+    tailwindBorderFocusColor: 'focus:border-black',
+    tailwindBorderHoverColor: 'hover:border-black',
   },
-  BLUE: {
-    tailwindColor: 'bg-sky-500',
-    tailwindColorHover: 'hover:bg-sky-700',
+  OUTLINE_BLACK: {
+    tailwindBackgroundColor: 'bg-transparent',
+    tailwindHoverBackgroundColor: 'hover:bg-transparent',
+    tailwindTextColor: 'text-black',
+    tailwindFillColor: 'fill-black',
+    tailwindBorderColor: 'border-black',
+    tailwindBorderFocusColor: 'focus:border-black',
+    tailwindBorderHoverColor: 'hover:border-black',
   },
-  GREEN: {
-    tailwindColor: 'bg-emerald-500',
-    tailwindColorHover: 'hover:bg-emerald-700',
+  SOLID_WHITE: {
+    tailwindBackgroundColor: 'bg-white',
+    tailwindHoverBackgroundColor: 'hover:bg-neutral-200',
+    tailwindTextColor: 'text-black',
+    tailwindFillColor: 'fill-black',
+    tailwindBorderColor: 'border-black',
+    tailwindBorderFocusColor: 'focus:border-black',
+    tailwindBorderHoverColor: 'hover:border-black'
+  },
+  OUTLINE_WHITE: {
+    tailwindBackgroundColor: 'bg-transparent',
+    tailwindHoverBackgroundColor: 'hover:bg-transparent',
+    tailwindTextColor: 'text-white',
+    tailwindFillColor: 'fill-white',
+    tailwindBorderColor: 'border-white',
+    tailwindBorderFocusColor: 'focus:border-white',
+    tailwindBorderHoverColor: 'hover:border-white',
+  },
+  SOLID_RED: {
+    tailwindBackgroundColor: 'bg-rose-500',
+    tailwindHoverBackgroundColor: 'hover:bg-rose-700',
+    tailwindTextColor: 'text-white',
+    tailwindFillColor: 'fill-white',
+    tailwindBorderColor: 'border-rose-500',
+    tailwindBorderFocusColor: 'focus:border-rose-500',
+    tailwindBorderHoverColor: 'hover:border-rose-700',
+  },
+  SOLID_BLUE: {
+    tailwindBackgroundColor: 'bg-sky-500',
+    tailwindHoverBackgroundColor: 'hover:bg-sky-700',
+    tailwindTextColor: 'text-white',
+    tailwindFillColor: 'fill-white',
+    tailwindBorderColor: 'border-sky-500',
+    tailwindBorderFocusColor: 'focus:border-sky-500',
+    tailwindBorderHoverColor: 'hover:border-sky-700',
+  },
+  SOLID_GREEN: {
+    tailwindBackgroundColor: 'bg-emerald-500',
+    tailwindHoverBackgroundColor: 'hover:bg-emerald-700',
+    tailwindTextColor: 'text-white',
+    tailwindFillColor: 'fill-white',
+    tailwindBorderColor: 'border-emerald-500',
+    tailwindBorderFocusColor: 'focus:border-emerald-500',
+    tailwindBorderHoverColor: 'hover:border-emerald-700',
   },
 });
 

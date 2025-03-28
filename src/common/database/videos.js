@@ -66,4 +66,57 @@ async function getVideosBySearchTerm(
   }
 }
 
-export { getVideos, getVideosBySearchTerm };
+async function getVideosByUserId(
+  userId,
+  startIndex = 0,
+  limit = 6,
+  orderBy = ORDER_BY.NEW
+) {
+  try {
+    const { data, error } = await supabase
+      .from('videos')
+      .select('*, user:user_id(*)')
+      .eq('is_hidden', false)
+      .eq('user_id', userId)
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      data: [],
+      hasMore: false,
+    };
+  }
+}
+
+async function getVideoById(id) {
+  try {
+    const { data, error } = await supabase
+      .from('videos')
+      .select('*, user:user_id(*)')
+      .eq('is_hidden', false)
+      .eq('id', id);
+
+    if (error) throw error;
+
+    return {
+      data,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      data: null,
+    };
+  }
+}
+
+export { getVideos, getVideosBySearchTerm, getVideosByUserId, getVideoById };

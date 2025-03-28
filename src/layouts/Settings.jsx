@@ -168,7 +168,7 @@ function Settings() {
         <button
           type="button"
           onClick={() => setShowModal({ type: 'AVATAR_MODAL' })}
-          className="w-full max-w-[128px] self-start rounded-full border-2 border-transparent hover:border-white focus:border-2 focus:border-white focus:outline-hidden focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
+          className="w-full max-w-[128px] self-start rounded-full border-2 border-transparent hover:border-white focus:border-2 focus:border-white focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
         >
           {authUser.avatar_file_name && (
             <img
@@ -200,7 +200,7 @@ function Settings() {
           </div>
           <div className="self-end">
             <Button
-              buttonColor={BUTTON_COLOR.BLUE}
+              color={BUTTON_COLOR.BLUE}
               isDisabled={
                 isLoading ||
                 authUser.name === displayName ||
@@ -230,7 +230,7 @@ function Settings() {
           </div>
           <div className="self-end">
             <Button
-              buttonColor={BUTTON_COLOR.BLUE}
+              color={BUTTON_COLOR.BLUE}
               isDisabled={
                 isLoading ||
                 authUser.bio === bio ||
@@ -272,7 +272,7 @@ function Settings() {
           </div>
           <div className="self-end">
             <Button
-              buttonColor={BUTTON_COLOR.BLUE}
+              color={BUTTON_COLOR.BLUE}
               isDisabled={
                 isLoading ||
                 authUser.username === username ||
@@ -304,7 +304,7 @@ function Settings() {
                   isDisabled={isLoading || authSession.user.email === email}
                   isLoading={isLoading}
                   handleClick={async () => await updateUserEmail()}
-                  buttonColor={BUTTON_COLOR.BLUE}
+                  color={BUTTON_COLOR.BLUE}
                 >
                   Update Email
                 </Button>
@@ -313,7 +313,7 @@ function Settings() {
           )}
 
         <Button
-          buttonColor={BUTTON_COLOR.BLUE}
+          color={BUTTON_COLOR.BLUE}
           isDisabled={isLoading}
           isLoading={isLoading}
           handleClick={async () => {
@@ -329,7 +329,7 @@ function Settings() {
         </Button>
 
         <Button
-          buttonColor={BUTTON_COLOR.RED}
+          color={BUTTON_COLOR.RED}
           handleClick={async () => {
             await supabase.auth.signOut({ scope: 'local' });
             setAuthSession(null);
@@ -348,7 +348,7 @@ function Settings() {
               click on the link from both emails to confirm your email change.
             </p>
             <Button
-              buttonColor={BUTTON_COLOR.BLUE}
+              color={BUTTON_COLOR.BLUE}
               isDisabled={isLoading}
               isLoading={isLoading}
               handleClick={async () => {

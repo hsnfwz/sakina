@@ -106,7 +106,7 @@ function NotificationsLayout({
     <div className="flex w-full flex-col gap-4">
       {notifications.hasInitialized && newNotificationsCount > 0 && (
         <Button
-          buttonColor={BUTTON_COLOR.BLUE}
+          color={BUTTON_COLOR.BLUE}
           handleClick={refreshNotifications}
           isDisabled={isLoading}
         >

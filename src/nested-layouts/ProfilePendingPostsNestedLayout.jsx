@@ -7,7 +7,7 @@ import Post from '../components/Post.jsx';
 import Loaded from '../components/Loaded.jsx';
 
 function ProfilePendingPostsNestedLayout() {
-  const { activeProfile } = useContext(DataContext);
+  const { activeUser } = useContext(DataContext);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -15,18 +15,18 @@ function ProfilePendingPostsNestedLayout() {
     useContext(DataContext);
 
   useEffect(() => {
-    if (activeProfile) {
+    if (activeUser) {
       if (!profilePendingPosts.hasInitialized) {
         getPendingPosts();
       }
     }
-  }, [activeProfile]);
+  }, [activeUser]);
 
   async function getPendingPosts() {
     setIsLoading(true);
 
     const { data, hasMore } = await getPendingPostsByProfileId(
-      activeProfile.id,
+      activeUser.id,
       profilePendingPosts.data.length
     );
 

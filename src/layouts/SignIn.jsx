@@ -74,7 +74,7 @@ function SignIn() {
               authMessage
             }
             handleClick={async () => await signIn()}
-            buttonColor={BUTTON_COLOR.BLUE}
+            color={BUTTON_COLOR.BLUE}
           >
             Log In
           </Button>
@@ -101,7 +101,7 @@ function SignIn() {
           </p>
           <Button
             isDisabled={isLoading}
-            buttonColor={BUTTON_COLOR.RED}
+            color={BUTTON_COLOR.RED}
             handleClick={async () => {
               setIsLoading(true);
 

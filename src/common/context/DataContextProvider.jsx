@@ -39,29 +39,31 @@ function DataContextProvider({ children }) {
     hasInitialized: false,
   });
 
-  const [profiles, setProfiles] = useState({
+  const [users, setUsers] = useState({
     data: [],
     hasMore: true,
     hasInitialized: false,
   });
 
-  const [profileVideos, setProfileVideos] = useState({
+  const [userVideos, setUserVideos] = useState({
     data: [],
     hasMore: true,
     hasInitialized: false,
   });
 
-  const [profileClips, setProfileClips] = useState({
+  const [userClips, setUserClips] = useState({
     data: [],
     hasMore: true,
     hasInitialized: false,
   });
 
-  const [profileDiscussions, setProfileDiscussions] = useState({
+  const [userDiscussions, setUserDiscussions] = useState({
     data: [],
     hasMore: true,
     hasInitialized: false,
   });
+
+  const [activeUser, setActiveUser] = useState(null);
 
   return (
     <DataContext.Provider
@@ -78,14 +80,16 @@ function DataContextProvider({ children }) {
         setClips,
         discussions,
         setDiscussions,
-        profiles,
-        setProfiles,
-        profileVideos,
-        setProfileVideos,
-        profileClips,
-        setProfileClips,
-        profileDiscussions,
-        setProfileDiscussions,
+        users,
+        setUsers,
+        userVideos,
+        setUserVideos,
+        userClips,
+        setUserClips,
+        userDiscussions,
+        setUserDiscussions,
+        activeUser,
+        setActiveUser,
       }}
     >
       {children}

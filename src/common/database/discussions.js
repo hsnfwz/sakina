@@ -70,6 +70,37 @@ async function getDiscussionsBySearchTerm(
   }
 }
 
+async function getDiscussionsByUserId(
+  userId,
+  startIndex = 0,
+  limit = 6,
+  orderBy = ORDER_BY.NEW
+) {
+  try {
+    const { data, error } = await supabase
+      .from('discussions')
+      .select('*, user:user_id(*)')
+      .eq('is_hidden', false)
+      .eq('user_id', userId)
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      data: [],
+      hasMore: false,
+    };
+  }
+}
+
 async function getPostImagesVideos(posts) {
   const postIds = posts.map((post) => post.id);
 
@@ -215,35 +246,6 @@ async function getAcceptedPostById(id) {
 
     return {
       data,
-    };
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function getAcceptedPostsByProfileId(
-  profileId,
-  startIndex = 0,
-  limit = 6,
-  orderBy = ORDER_BY.NEW
-) {
-  try {
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*, user:user_id(*)')
-      .eq('status', 'ACCEPTED')
-      .eq('is_archived', false)
-      .eq('user_id', profileId)
-      .order(orderBy.columnName, { ascending: orderBy.isAscending })
-      .range(startIndex, startIndex + limit - 1);
-
-    if (error) throw error;
-
-    await getPostImagesVideos(data);
-
-    return {
-      data,
-      hasMore: data.length === limit,
     };
   } catch (error) {
     console.log(error);
@@ -513,8 +515,8 @@ async function getAcceptedPostsByReceiverProfileIds(
 export {
   getDiscussions,
   getDiscussionsBySearchTerm,
+  getDiscussionsByUserId,
   removeStorageObjectsByPostId,
-  getAcceptedPostsByProfileId,
   getArchivedPostsByProfileId,
   getPendingPostsByProfileId,
   getRejectedPostsByProfileId,
