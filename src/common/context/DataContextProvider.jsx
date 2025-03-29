@@ -63,6 +63,12 @@ function DataContextProvider({ children }) {
     hasInitialized: false,
   });
 
+  const [notifications, setNotifications] = useState({
+    data: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
   const [activeUser, setActiveUser] = useState(null);
 
   return (
@@ -88,6 +94,8 @@ function DataContextProvider({ children }) {
         setUserClips,
         userDiscussions,
         setUserDiscussions,
+        notifications,
+        setNotifications,
         activeUser,
         setActiveUser,
       }}

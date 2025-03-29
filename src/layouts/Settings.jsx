@@ -8,6 +8,7 @@ import TextInput from '../components/TextInput.jsx';
 import Textarea from '../components/Textarea.jsx';
 import Button from '../components/Button.jsx';
 import { BUTTON_COLOR } from '../common/enums.js';
+import Header from '../components/Header.jsx';
 
 function Settings() {
   const displayNameCharacterLimit = 40;
@@ -166,7 +167,8 @@ function Settings() {
 
   if (!isLoadingAuthUser && authSession && authUser) {
     return (
-      <div className="flex w-full flex-col gap-8">
+      <div className="flex w-full flex-col gap-4">
+        <Header>Settings</Header>
         <button
           type="button"
           onClick={() => setShowModal({ type: 'AVATAR_MODAL' })}

@@ -2,6 +2,7 @@ import { useContext, useEffect, useState, useRef } from 'react';
 import { Outlet, useNavigate, Link } from 'react-router';
 import { AuthContext } from '../common/context/AuthContextProvider.jsx';
 import NavPanel from '../components/NavPanel.jsx';
+import Header from '../components/Header.jsx';
 
 // import Loading from '../components/Loading.jsx';
 // import { getFollowersBySenderProfileId } from '../common/database/followers.js';
@@ -114,8 +115,12 @@ function Home() {
     }
   }, [isLoadingAuthUser, authUser]);
 
+  if (!isLoadingAuthUser && authUser) {
+
+  
   return (
     <div className="flex w-full flex-col gap-4">
+      <Header>Home</Header>
       <nav className="flex w-full bg-sky-500 text-white">
         <Link className="px-4 py-2 text-xs" to="videos">
           Videos
@@ -130,6 +135,7 @@ function Home() {
       <Outlet />
     </div>
   );
+}
 }
 
 export default Home;

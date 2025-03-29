@@ -26,6 +26,7 @@ import SignIn from './layouts/SignIn.jsx';
 import UserVideos from './layouts/UserVideos.jsx';
 import UserClips from './layouts/UserClips.jsx';
 import UserDiscussions from './layouts/UserDiscussions.jsx';
+import Notifications from './layouts/Notifications.jsx';
 
 const router = createBrowserRouter([
   {
@@ -59,6 +60,11 @@ const router = createBrowserRouter([
       {
         path: '/explore',
         Component: Explore,
+        index: true,
+      },
+      {
+        path: '/notifications',
+        Component: Notifications,
         index: true,
       },
       {
@@ -134,12 +140,16 @@ createRoot(root).render(
     - hide/unhide content
     - edit content - ensure all changes to content is updated in the global state
 
-    - notifications for activity by people you follow
-    - notifications
+    notifications
+      - notification card
+      - notifications for activity by people you follow
       - is_read
       - auto-expire notifications within x time
       - auto-delete rejected posts within 24 hours
 
+    - views, likes, follows
+
+    sign-up/sign-in
     - make inputs green when they are correctly inputted to indicate progress to the user
     - make inputs red when they are incorrectly inputted to indicate error to the user
 
