@@ -27,6 +27,10 @@ import UserVideos from './layouts/UserVideos.jsx';
 import UserClips from './layouts/UserClips.jsx';
 import UserDiscussions from './layouts/UserDiscussions.jsx';
 import Notifications from './layouts/Notifications.jsx';
+import SettingsAccount from './layouts/SettingsAccount.jsx';
+import SettingsVideos from './layouts/SettingsVideos.jsx';
+import SettingsClips from './layouts/SettingsClips.jsx';
+import SettingsDiscussions from './layouts/SettingsDiscussions.jsx';
 
 const router = createBrowserRouter([
   {
@@ -107,7 +111,13 @@ const router = createBrowserRouter([
       {
         path: '/settings',
         Component: Settings,
-        index: true,
+        children: [
+          { index: true, Component: SettingsAccount },
+          { path: 'account', Component: SettingsAccount },
+          { path: 'videos', Component: SettingsVideos },
+          { path: 'clips', Component: SettingsClips },
+          { path: 'discussions', Component: SettingsDiscussions },
+        ],
       },
       {
         path: '/*',
@@ -127,10 +137,23 @@ createRoot(root).render(
 );
 
 /* 
+    - discussions
+
+    - explore - show newest and most popular this week
+
+    - handle links for content and view more on explore page
+
+    - modals opening animation
+    - transitions between pages
+
+    - fetch more when intersecting last element - check for all content pages
 
     - user card design
 
+    VIDEO
     - add skip 5 seconds forward and back for video using arrow keys
+    - enable/disable looping
+
     - show preview of post before submission
 
     - look into making classes with tailwind properties to avoid using hardcoded enum values
@@ -147,7 +170,7 @@ createRoot(root).render(
       - auto-expire notifications within x time
       - auto-delete rejected posts within 24 hours
 
-    - views, likes, follows
+    - views, likes, follows, anonymous discussions
 
     sign-up/sign-in
     - make inputs green when they are correctly inputted to indicate progress to the user

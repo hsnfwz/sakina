@@ -13,6 +13,7 @@ import Toggle from '../components/Toggle';
 import TextInput from '../components/TextInput';
 import Textarea from '../components/Textarea';
 import Button from '../components/Button';
+import Anchor from '../components/Anchor';
 
 function CreateModal() {
   const titleCharacterLimit = 100;
@@ -227,20 +228,23 @@ function CreateModal() {
   if (showModal.type === 'CREATE_MODAL') {
     return (
       <Modal isDisabled={isUploading}>
-        <nav className="flex w-full bg-black text-white">
+        <nav className="flex w-full">
           {authUser && authUser.is_verified && (
             <>
-              <Link className="px-4 py-2 text-xs" to="#video">
+              <Anchor
+                active={location.hash === '' || location.hash === '#video'}
+                to="#video"
+              >
                 Video
-              </Link>
-              <Link className="px-4 py-2 text-xs" to="#clip">
+              </Anchor>
+              <Anchor active={location.hash === '#clip'} to="#clip">
                 Clip
-              </Link>
+              </Anchor>
             </>
           )}
-          <Link className="px-4 py-2 text-xs" to="#discussion">
+          <Anchor active={location.hash === '#discussion'} to="#discussion">
             Discussion
-          </Link>
+          </Anchor>
         </nav>
         {(location.hash === '' || location.hash === '#video') && (
           <>

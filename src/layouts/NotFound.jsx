@@ -1,10 +1,10 @@
-import { Link } from 'react-router';
+import Anchor from '../components/Anchor';
 
 function NotFound() {
   return (
     <div>
       <p>Whoops! We could not find what you were looking for.</p>
-      <Link to="/">Return home</Link>
+      <Anchor to="/">Home</Anchor>
     </div>
   );
 }

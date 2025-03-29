@@ -11,7 +11,7 @@ function ClipCard({ clip, elementRef }) {
       onClick={() => setShowModal({ type: null, data: null })}
       to={`/clips/${clip.id}`}
       state={{ clip }}
-      className="block w-[320px] snap-start rounded-lg"
+      className="block w-full rounded-lg"
       ref={elementRef}
     >
       <div className="flex w-full flex-col gap-2 rounded-lg">

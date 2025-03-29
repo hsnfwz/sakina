@@ -53,7 +53,6 @@ const BUTTON_COLOR = Object.freeze({
     tailwindTextColor: 'text-white',
     tailwindFillColor: 'fill-white',
     tailwindBorderColor: 'border-black',
-    tailwindFocusBorderColor: 'focus:border-black',
     tailwindHoverBorderColor: 'hover:border-black',
   },
   OUTLINE_BLACK: {
@@ -62,7 +61,6 @@ const BUTTON_COLOR = Object.freeze({
     tailwindTextColor: 'text-black',
     tailwindFillColor: 'fill-black',
     tailwindBorderColor: 'border-black',
-    tailwindFocusBorderColor: 'focus:border-black',
     tailwindHoverBorderColor: 'hover:border-black',
   },
   SOLID_WHITE: {
@@ -71,7 +69,6 @@ const BUTTON_COLOR = Object.freeze({
     tailwindTextColor: 'text-black',
     tailwindFillColor: 'fill-black',
     tailwindBorderColor: 'border-black',
-    tailwindFocusBorderColor: 'focus:border-black',
     tailwindHoverBorderColor: 'hover:border-black',
   },
   OUTLINE_WHITE: {
@@ -80,7 +77,6 @@ const BUTTON_COLOR = Object.freeze({
     tailwindTextColor: 'text-white',
     tailwindFillColor: 'fill-white',
     tailwindBorderColor: 'border-white',
-    tailwindFocusBorderColor: 'focus:border-white',
     tailwindHoverBorderColor: 'hover:border-white',
   },
   SOLID_RED: {
@@ -89,7 +85,6 @@ const BUTTON_COLOR = Object.freeze({
     tailwindTextColor: 'text-white',
     tailwindFillColor: 'fill-white',
     tailwindBorderColor: 'border-rose-500',
-    tailwindFocusBorderColor: 'focus:border-black',
     tailwindHoverBorderColor: 'hover:border-rose-500',
   },
   SOLID_BLUE: {
@@ -98,7 +93,6 @@ const BUTTON_COLOR = Object.freeze({
     tailwindTextColor: 'text-white',
     tailwindFillColor: 'fill-white',
     tailwindBorderColor: 'border-sky-500',
-    tailwindFocusBorderColor: 'focus:border-black',
     tailwindHoverBorderColor: 'hover:border-sky-500',
   },
   SOLID_GREEN: {
@@ -107,7 +101,6 @@ const BUTTON_COLOR = Object.freeze({
     tailwindTextColor: 'text-white',
     tailwindFillColor: 'fill-white',
     tailwindBorderColor: 'border-emerald-500',
-    tailwindFocusBorderColor: 'focus:border-black',
     tailwindHoverBorderColor: 'hover:border-emerald-500',
   },
 });

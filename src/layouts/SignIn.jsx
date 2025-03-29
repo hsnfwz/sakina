@@ -5,6 +5,7 @@ import { supabase } from '../common/supabase.js';
 import Button from '../components/Button.jsx';
 import TextInput from '../components/TextInput.jsx';
 import { BUTTON_COLOR } from '../common/enums.js';
+import Anchor from '../components/Anchor.jsx';
 
 function SignIn() {
   const { authUser, isLoadingAuthUser, setAuthSession } =
@@ -79,12 +80,7 @@ function SignIn() {
             Log In
           </Button>
 
-          <Link
-            to="/forgot-password"
-            className="self-start text-neutral-700 underline"
-          >
-            Forgot Password
-          </Link>
+          <Anchor to="/forgot-password">Forgot Password</Anchor>
         </>
       )}
 

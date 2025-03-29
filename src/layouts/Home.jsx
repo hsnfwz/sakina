@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState, useRef } from 'react';
 import { Outlet, useNavigate, Link } from 'react-router';
 import { AuthContext } from '../common/context/AuthContextProvider.jsx';
-import NavPanel from '../components/NavPanel.jsx';
 import Header from '../components/Header.jsx';
+import Anchor from '../components/Anchor.jsx';
 
 // import Loading from '../components/Loading.jsx';
 // import { getFollowersBySenderProfileId } from '../common/database/followers.js';
@@ -116,26 +116,33 @@ function Home() {
   }, [isLoadingAuthUser, authUser]);
 
   if (!isLoadingAuthUser && authUser) {
-
-  
-  return (
-    <div className="flex w-full flex-col gap-4">
-      <Header>Home</Header>
-      <nav className="flex w-full bg-sky-500 text-white">
-        <Link className="px-4 py-2 text-xs" to="videos">
-          Videos
-        </Link>
-        <Link className="px-4 py-2 text-xs" to="clips">
-          Clips
-        </Link>
-        <Link className="px-4 py-2 text-xs" to="discussions">
-          Discussions
-        </Link>
-      </nav>
-      <Outlet />
-    </div>
-  );
-}
+    return (
+      <div className="flex w-full flex-col gap-4">
+        <Header>Home</Header>
+        <nav className="flex w-full">
+          <Anchor
+            active={
+              location.pathname === '/home' ||
+              location.pathname.includes('videos')
+            }
+            to="videos"
+          >
+            Videos
+          </Anchor>
+          <Anchor active={location.pathname.includes('clips')} to="clips">
+            Clips
+          </Anchor>
+          <Anchor
+            active={location.pathname.includes('discussions')}
+            to="discussions"
+          >
+            Discussions
+          </Anchor>
+        </nav>
+        <Outlet />
+      </div>
+    );
+  }
 }
 
 export default Home;

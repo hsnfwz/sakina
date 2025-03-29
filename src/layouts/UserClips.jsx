@@ -5,6 +5,7 @@ import { DataContext } from '../common/context/DataContextProvider.jsx';
 import Loading from '../components/Loading.jsx';
 import Loaded from '../components/Loaded.jsx';
 import ClipCard from '../components/ClipCard.jsx';
+import ClipCardGrid from '../components/ClipCardGrid.jsx';
 
 function UserClips() {
   const { activeUser } = useContext(DataContext);
@@ -48,9 +49,11 @@ function UserClips() {
 
   return (
     <div className="flex w-full flex-col gap-4">
-      {userClips.data.map((clip, index) => (
-        <ClipCard key={index} clip={clip} />
-      ))}
+      <ClipCardGrid>
+        {userClips.data.map((clip, index) => (
+          <ClipCard key={index} clip={clip} />
+        ))}
+      </ClipCardGrid>
       {!userClips.hasMore && <Loaded />}
       {isLoading && <Loading />}
     </div>

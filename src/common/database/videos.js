@@ -150,4 +150,10 @@ async function getHiddenVideosByUserId(
   }
 }
 
-export { getVideos, getVideosBySearchTerm, getVideosByUserId, getVideoById, getHiddenVideosByUserId };
+export {
+  getVideos,
+  getVideosBySearchTerm,
+  getVideosByUserId,
+  getVideoById,
+  getHiddenVideosByUserId,
+};

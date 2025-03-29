@@ -8,7 +8,6 @@ import { getDate } from '../common/helpers.js';
 import { BUTTON_COLOR } from '../common/enums.js';
 import Loading from '../components/Loading.jsx';
 import Loaded from '../components/Loaded.jsx';
-import SVGSolidCircle from '../components/svgs/solid/SVGSolidCircle.jsx';
 import SVGOutlineDoubleCheck from '../components/svgs/outline/SVGOutlineDoubleCheck.jsx';
 import Button from '../components/Button.jsx';
 import Header from '../components/Header.jsx';
@@ -103,18 +102,14 @@ function Notifications() {
             {notifications.data.map((notification, index) => (
               <div
                 key={notification.id}
-                ref={index === notifications.data.length - 1 ? elementRef : null}
+                ref={
+                  index === notifications.data.length - 1 ? elementRef : null
+                }
                 className="flex flex-col gap-2 py-4"
               >
                 {notification.is_read && (
                   <div className="fill-neutral-700">
                     <SVGOutlineDoubleCheck />
-                  </div>
-                )}
-
-                {!notification.is_read && (
-                  <div className="fill-sky-500">
-                    <SVGSolidCircle />
                   </div>
                 )}
 

@@ -18,6 +18,7 @@ import Loading from '../components/Loading';
 import Header from '../components/Header';
 import { BUTTON_COLOR } from '../common/enums';
 import { DataContext } from '../common/context/DataContextProvider';
+import Anchor from '../components/Anchor';
 
 function Explore() {
   const [usersFirstRef, usersFirstElementIsIntersecting] =
@@ -38,10 +39,14 @@ function Explore() {
     useElementIntersection();
 
   const {
-    users, setUsers,
-    videos, setVideos,
-    clips, setClips,
-    discussions, setDiscussions
+    users,
+    setUsers,
+    videos,
+    setVideos,
+    clips,
+    setClips,
+    discussions,
+    setDiscussions,
   } = useContext(DataContext);
 
   const usersRef = useRef();
@@ -54,8 +59,6 @@ function Explore() {
   useEffect(() => {
     async function initialize() {
       if (!users.hasInitialized) {
-        console.log('hi');
-
         setIsLoading(true);
 
         const [
@@ -73,7 +76,10 @@ function Explore() {
         setVideos({ data: videosResponse.data, hasInitialized: true });
         setClips({ data: clipsResponse.data, hasInitialized: true });
         setUsers({ data: usersResponse.data, hasInitialized: true });
-        setDiscussions({ data: discussionsResponse.data, hasInitialized: true });
+        setDiscussions({
+          data: discussionsResponse.data,
+          hasInitialized: true,
+        });
 
         setIsLoading(false);
       }
@@ -94,19 +100,16 @@ function Explore() {
               className="app_hide-scrollbar grid w-full snap-x snap-mandatory grid-flow-col justify-start gap-2 overflow-x-scroll overflow-y-hidden overscroll-x-contain"
             >
               {users.data.map((user, index) => (
-                <UserCard
-                  key={index}
-                  user={user}
-                  elementRef={index === 0 ? usersFirstRef : null}
-                />
+                <div key={index} className="w-[128px] snap-start">
+                  <UserCard
+                    user={user}
+                    elementRef={index === 0 ? usersFirstRef : null}
+                  />
+                </div>
               ))}
-              <Link
-                to="/users"
-                ref={usersLastRef}
-                className="bg-sky-500 border-sky-500 hover:bg-sky-700 flex snap-start self-center rounded-lg border-2 fill-white p-1 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
-              >
+              <Anchor to="/users" elementRef={usersLastRef}>
                 <SVGOutlineRegularArrowRight />
-              </Link>
+              </Anchor>
             </div>
           )}
           <div className="flex gap-2 self-end">
@@ -137,19 +140,16 @@ function Explore() {
               className="app_hide-scrollbar grid w-full snap-x snap-mandatory grid-flow-col justify-start gap-2 overflow-x-scroll overflow-y-hidden overscroll-x-contain"
             >
               {videos.data.map((video, index) => (
-                <VideoCard
-                  key={index}
-                  video={video}
-                  elementRef={index === 0 ? videosFirstRef : null}
-                />
+                <div key={index} className="w-[320px] snap-start">
+                  <VideoCard
+                    video={video}
+                    elementRef={index === 0 ? videosFirstRef : null}
+                  />
+                </div>
               ))}
-              <Link
-                to="/videos"
-                ref={videosLastRef}
-                className="bg-sky-500 border-sky-500 hover:bg-sky-700 flex snap-start self-center rounded-lg border-2 fill-white p-1 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
-              >
+              <Anchor to="/videos" elementRef={videosLastRef}>
                 <SVGOutlineRegularArrowRight />
-              </Link>
+              </Anchor>
             </div>
           )}
           <div className="flex gap-2 self-end">
@@ -180,19 +180,16 @@ function Explore() {
               className="app_hide-scrollbar grid w-full snap-x snap-mandatory grid-flow-col justify-start gap-2 overflow-x-scroll overflow-y-hidden overscroll-x-contain"
             >
               {clips.data.map((clip, index) => (
-                <ClipCard
-                  key={index}
-                  clip={clip}
-                  elementRef={index === 0 ? clipsFirstRef : null}
-                />
+                <div key={index} className="w-[320px] snap-start">
+                  <ClipCard
+                    clip={clip}
+                    elementRef={index === 0 ? clipsFirstRef : null}
+                  />
+                </div>
               ))}
-              <Link
-                to="/clips"
-                ref={clipsLastRef}
-                className="bg-sky-500 border-sky-500 hover:bg-sky-700 flex snap-start self-center rounded-lg border-2 fill-white p-1 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
-                >
+              <Anchor to="/clips" elementRef={clipsLastRef}>
                 <SVGOutlineRegularArrowRight />
-              </Link>
+              </Anchor>
             </div>
           )}
           <div className="flex gap-2 self-end">
@@ -223,19 +220,16 @@ function Explore() {
               className="app_hide-scrollbar grid w-full snap-x snap-mandatory grid-flow-col justify-start gap-2 overflow-x-scroll overflow-y-hidden overscroll-x-contain"
             >
               {discussions.data.map((discussion, index) => (
-                <DiscussionCard
-                  key={index}
-                  discussion={discussion}
-                  elementRef={index === 0 ? discussionsFirstRef : null}
-                />
+                <div key={index} className="w-[320px] snap-start">
+                  <DiscussionCard
+                    discussion={discussion}
+                    elementRef={index === 0 ? discussionsFirstRef : null}
+                  />
+                </div>
               ))}
-              <Link
-                to="/discussions"
-                ref={discussionsLastRef}
-                className="bg-sky-500 border-sky-500 hover:bg-sky-700 flex snap-start self-center rounded-lg border-2 fill-white p-1 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
-                >
+              <Anchor to="/discussions" elementRef={discussionsLastRef}>
                 <SVGOutlineRegularArrowRight />
-              </Link>
+              </Anchor>
             </div>
           )}
           <div className="flex gap-2 self-end">

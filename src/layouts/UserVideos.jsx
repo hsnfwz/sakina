@@ -5,6 +5,7 @@ import { DataContext } from '../common/context/DataContextProvider.jsx';
 import Loading from '../components/Loading.jsx';
 import Loaded from '../components/Loaded.jsx';
 import VideoCard from '../components/VideoCard.jsx';
+import VideoCardGrid from '../components/VideoCardGrid.jsx';
 
 function UserVideos() {
   const { activeUser } = useContext(DataContext);
@@ -48,9 +49,11 @@ function UserVideos() {
 
   return (
     <div className="flex w-full flex-col gap-4">
-      {userVideos.data.map((video, index) => (
-        <VideoCard key={index} video={video} />
-      ))}
+      <VideoCardGrid>
+        {userVideos.data.map((video, index) => (
+          <VideoCard key={index} video={video} />
+        ))}
+      </VideoCardGrid>
       {!userVideos.hasMore && <Loaded />}
       {isLoading && <Loading />}
     </div>

@@ -1,10 +1,10 @@
-import { Link } from 'react-router';
+import Anchor from '../components/Anchor';
 
 function ForbiddenLayout() {
   return (
     <div>
       <p>403 Forbidden</p>
-      <Link to="/">Return home</Link>
+      <Anchor to="/">Home</Anchor>
     </div>
   );
 }

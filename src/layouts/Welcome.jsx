@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { Link } from 'react-router';
 import { AuthContext } from '../common/context/AuthContextProvider';
 import Loading from '../components/Loading';
+import Anchor from '../components/Anchor';
 
 function Welcome() {
   const { authUser, isLoadingAuthUser } = useContext(AuthContext);
@@ -60,6 +61,10 @@ function Welcome() {
           )}
         </div>
       )}
+          <footer className="flex w-full flex-col gap-2 p-2">
+      <Anchor to="/">Sakina</Anchor>
+      <p>Copyright 2025 Sakina</p>
+    </footer>
     </div>
   );
 }

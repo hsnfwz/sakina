@@ -6,6 +6,7 @@ import Loaded from '../components/Loaded.jsx';
 import Loading from '../components/Loading.jsx';
 import UserCard from '../components/UserCard.jsx';
 import Header from '../components/Header.jsx';
+import UserCardGrid from '../components/UserCardGrid.jsx';
 
 function Users() {
   const { users, setUsers } = useContext(DataContext);
@@ -53,16 +54,15 @@ function Users() {
   return (
     <div className="flex w-full flex-col gap-4">
       <Header>Users</Header>
-      <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
+      <UserCardGrid>
         {users.data.map((user, index) => (
-          <div key={index} className="w-full flex justify-center text-center">
-            <UserCard
-              user={user}
-              elementRef={index === users.data.length - 1 ? elementRef : null}
-            />
-          </div>
+          <UserCard
+            key={index}
+            user={user}
+            elementRef={index === users.data.length - 1 ? elementRef : null}
+          />
         ))}
-      </div>
+      </UserCardGrid>
       {!users.hasMore && <Loaded />}
       {isLoading && <Loading />}
     </div>

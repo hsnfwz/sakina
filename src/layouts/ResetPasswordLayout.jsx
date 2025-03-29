@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
 import { supabase } from '../common/supabase.js';
 import TextInput from '../components/TextInput.jsx';
 import Button from '../components/Button.jsx';
 import { BUTTON_COLOR } from '../common/enums.js';
 import { expectedPasswordFormat } from '../common/helpers.js';
+import Anchor from '../components/Anchor.jsx';
 
 function ResetPasswordLayout() {
   const passwordCharacterMin = 8;
@@ -134,9 +134,7 @@ function ResetPasswordLayout() {
       {authMessage === 'PASSWORD_RESET' && (
         <>
           <p>Your password has been reset!</p>
-          <p>
-            Return to <Link to="/settings">Settings</Link>
-          </p>
+          <Anchor to="/settings">Settings</Anchor>
         </>
       )}
 

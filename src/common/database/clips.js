@@ -150,4 +150,10 @@ async function getHiddenClipsByUserId(
   }
 }
 
-export { getClips, getClipsBySearchTerm, getClipsByUserId, getClipById, getHiddenClipsByUserId };
+export {
+  getClips,
+  getClipsBySearchTerm,
+  getClipsByUserId,
+  getClipById,
+  getHiddenClipsByUserId,
+};

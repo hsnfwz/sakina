@@ -6,6 +6,7 @@ import Loaded from '../components/Loaded.jsx';
 import Loading from '../components/Loading.jsx';
 import DiscussionCard from '../components/DiscussionCard.jsx';
 import Header from '../components/Header.jsx';
+import DiscussionCardGrid from '../components/DiscussionCardGrid.jsx';
 
 function Discussions() {
   const { discussions, setDiscussions } = useContext(DataContext);
@@ -31,9 +32,7 @@ function Discussions() {
   async function _getDiscussions() {
     setIsLoading(true);
 
-    const { data, hasMore } = await getDiscussions(
-      discussions.data.length
-    );
+    const { data, hasMore } = await getDiscussions(discussions.data.length);
 
     const _discussions = {
       ...discussions,
@@ -57,13 +56,17 @@ function Discussions() {
   return (
     <div className="flex w-full flex-col gap-4">
       <Header>Discussions</Header>
-      <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
+      <DiscussionCardGrid>
         {discussions.data.map((discussion, index) => (
-          <div key={index} className="w-full">
-            <DiscussionCard key={index} discussion={discussion} elementRef={index === discussions.data.length - 1 ? elementRef : null} />
-          </div>
+          <DiscussionCard
+            key={index}
+            discussion={discussion}
+            elementRef={
+              index === discussions.data.length - 1 ? elementRef : null
+            }
+          />
         ))}
-      </div>
+      </DiscussionCardGrid>
       {!discussions.hasMore && <Loaded />}
       {isLoading && <Loading />}
     </div>

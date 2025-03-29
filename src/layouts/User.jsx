@@ -12,6 +12,7 @@ import { DataContext } from '../common/context/DataContextProvider.jsx';
 import { AuthContext } from '../common/context/AuthContextProvider.jsx';
 import Loading from '../components/Loading.jsx';
 import Button from '../components/Button.jsx';
+import Anchor from '../components/Anchor.jsx';
 
 function User() {
   const { username } = useParams();
@@ -162,18 +163,26 @@ function User() {
           )} */}
         </div>
 
-        <nav className="flex w-full bg-sky-500 text-white">
-          <Link className="px-4 py-2 text-xs" to="videos">
+        <nav className="flex w-full">
+          <Anchor
+            active={
+              location.pathname === `/users/${username}` ||
+              location.pathname.includes('videos')
+            }
+            to="videos"
+          >
             Videos
-          </Link>
-          <Link className="px-4 py-2 text-xs" to="clips">
+          </Anchor>
+          <Anchor active={location.pathname.includes('clips')} to="clips">
             Clips
-          </Link>
-          <Link className="px-4 py-2 text-xs" to="discussions">
+          </Anchor>
+          <Anchor
+            active={location.pathname.includes('discussions')}
+            to="discussions"
+          >
             Discussions
-          </Link>
+          </Anchor>
         </nav>
-
         <Outlet />
       </div>
     );

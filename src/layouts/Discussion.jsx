@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router";
-import { getDiscussionById } from "../common/database/discussions";
-import Loading from "../components/Loading";
+import { useEffect, useState } from 'react';
+import { useLocation, useParams } from 'react-router';
+import { getDiscussionById } from '../common/database/discussions';
+import Loading from '../components/Loading';
 
 function Discussion() {
   const { id } = useParams();
@@ -33,7 +33,7 @@ function Discussion() {
 
   if (discussion) {
     return (
-      <div className="w-full flex flex-col gap-4">
+      <div className="flex w-full flex-col gap-4">
         <h1>{discussion.title}</h1>
         <p>{discussion.description}</p>
       </div>

@@ -228,7 +228,7 @@ async function getDiscussionById(id) {
     console.log(error);
 
     return {
-      data: null
+      data: null,
     };
   }
 }
@@ -310,8 +310,6 @@ async function removePost(id) {
   }
 }
 
-
-
 async function getPendingPostsCount() {
   try {
     const { count, error } = await supabase
@@ -390,7 +388,6 @@ export {
   getDiscussionsByUserId,
   getDiscussionById,
   getHiddenDiscussionsByUserId,
-
   removeStorageObjectsByPostId,
   removePost,
   archivePost,

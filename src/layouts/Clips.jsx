@@ -6,6 +6,7 @@ import Loaded from '../components/Loaded';
 import Loading from '../components/Loading';
 import ClipCard from '../components/ClipCard';
 import Header from '../components/Header';
+import ClipCardGrid from '../components/ClipCardGrid';
 
 function Clips() {
   const { clips, setClips } = useContext(DataContext);
@@ -53,7 +54,7 @@ function Clips() {
   return (
     <div className="flex w-full flex-col gap-4">
       <Header>Clips</Header>
-      <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
+      <ClipCardGrid>
         {clips.data.map((clip, index) => (
           <div key={index} className="w-full">
             <ClipCard
@@ -62,7 +63,7 @@ function Clips() {
             />
           </div>
         ))}
-      </div>
+      </ClipCardGrid>
       {!clips.hasMore && <Loaded />}
       {isLoading && <Loading />}
     </div>

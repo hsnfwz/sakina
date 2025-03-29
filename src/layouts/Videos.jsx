@@ -6,6 +6,7 @@ import Loaded from '../components/Loaded';
 import Loading from '../components/Loading';
 import VideoCard from '../components/VideoCard';
 import Header from '../components/Header';
+import VideoCardGrid from '../components/VideoCardGrid';
 
 function Videos() {
   const { videos, setVideos } = useContext(DataContext);
@@ -53,7 +54,7 @@ function Videos() {
   return (
     <div className="flex w-full flex-col gap-4">
       <Header>Videos</Header>
-      <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
+      <VideoCardGrid>
         {videos.data.map((video, index) => (
           <div key={index} className="w-full">
             <VideoCard
@@ -62,7 +63,7 @@ function Videos() {
             />
           </div>
         ))}
-      </div>
+      </VideoCardGrid>
       {!videos.hasMore && <Loaded />}
       {isLoading && <Loading />}
     </div>

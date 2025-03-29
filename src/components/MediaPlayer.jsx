@@ -35,7 +35,6 @@ function MediaPlayer({ media, mediaType, width, height }) {
 
   const [elapsedDuration, setElapsedDuration] = useState(0);
 
-
   function handleMouseMove() {
     if (elapsedDuration !== media.duration) {
       if (!showControlsView) {
@@ -61,10 +60,10 @@ function MediaPlayer({ media, mediaType, width, height }) {
   }
 
   useEffect(() => {
-      const progress = (elapsedDuration / media.duration) * 100;
-      if (sliderRef && sliderRef.current) {
-        sliderRef.current.style.background = `linear-gradient(to right, white ${progress}%, var(--color-white-transparent) ${progress}%)`;
-      }
+    const progress = (elapsedDuration / media.duration) * 100;
+    if (sliderRef && sliderRef.current) {
+      sliderRef.current.style.background = `linear-gradient(to right, white ${progress}%, var(--color-white-transparent) ${progress}%)`;
+    }
   }, [elapsedDuration]);
 
   useEffect(() => {
@@ -142,125 +141,125 @@ function MediaPlayer({ media, mediaType, width, height }) {
     return <Loading />;
   }
 
-    return (
+  return (
+    <div
+      className={`relative flex justify-center`}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      ref={parentRef}
+    >
+      <video
+        ref={mediaRef}
+        width={width}
+        height={height}
+        controls={false}
+        className={`rounded-lg bg-black ${isLoadingMedia ? 'hidden' : 'block'} full relative aspect-[16/9]`}
+        autoPlay={true}
+        loop={false}
+        muted={isMuted}
+        onEnded={handleMediaEnd}
+        onCanPlay={() => setIsLoadingMedia(false)}
+        onTimeUpdate={(event) => {
+          setElapsedDuration(event.target.currentTime);
+        }}
+        onClick={() => setIsActiveMediaPlaying(!isActiveMediaPlaying)}
+        onDoubleClick={() => {
+          if (isFullscreen) {
+            document.exitFullscreen();
+          } else {
+            parentRef.current.requestFullscreen();
+          }
+        }}
+        src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/${mediaType}/${media.file_name}`}
+      />
       <div
-        className={`relative flex justify-center`}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        ref={parentRef}
-      >
-        <video
-          ref={mediaRef}
-          width={width}
-          height={height}
-          controls={false}
-          className={`rounded-lg bg-black ${isLoadingMedia ? 'hidden' : 'block'} full relative aspect-[16/9]`}
-          autoPlay={true}
-          loop={false}
-          muted={isMuted}
-          onEnded={handleMediaEnd}
-          onCanPlay={() => setIsLoadingMedia(false)}
-          onTimeUpdate={(event) => {
-            setElapsedDuration(event.target.currentTime);
-          }}
-          onClick={() => setIsActiveMediaPlaying(!isActiveMediaPlaying)}
-          onDoubleClick={() => {
-            if (isFullscreen) {
-              document.exitFullscreen();
-            } else {
-              parentRef.current.requestFullscreen();
-            }
-          }}
-          src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/${mediaType}/${media.file_name}`}
-        />
+        className={`pulse aspect-[16/9] w-full rounded-lg bg-neutral-200 ${isLoadingMedia ? 'block' : 'hidden'} `}
+      ></div>
+      {!isLoadingMedia && (
         <div
-          className={`pulse aspect-[16/9] w-full rounded-lg bg-neutral-200 ${isLoadingMedia ? 'block' : 'hidden'} `}
-        ></div>
-        {!isLoadingMedia && (
-          <div
-            className={`absolute bottom-0 left-0 flex w-full flex-col gap-4 rounded-b-lg bg-black/50 p-4 backdrop-blur-sm ${showControlsView ? 'opacity-100' : 'opacity-0'}`}
-          >
-            <Slider
-              max={media.duration}
-              value={elapsedDuration}
-              handleInput={(event) => {
-                setElapsedDuration(event.target.value);
-                mediaRef.current.currentTime = event.target.value;
-              }}
-              sliderRef={sliderRef}
-            />
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex gap-2 self-start">
-                {elapsedDuration === media.duration && (
-                  <Button
-                    color={BUTTON_COLOR.OUTLINE_WHITE}
-                    elementRef={resetButtonRef}
-                    handleClick={() => handlePlayPause(true)}
-                  >
-                    <SVGOutlineReset />
-                  </Button>
-                )}
-                {elapsedDuration !== media.duration && (
-                  <>
-                    <Button
-                      color={BUTTON_COLOR.OUTLINE_WHITE}
-                      elementRef={playPauseButtonRef}
-                      handleClick={() =>
-                        setIsActiveMediaPlaying(!isActiveMediaPlaying)
-                      }
-                    >
-                      {isActiveMediaPlaying ? (
-                        <SVGOutlinePause />
-                      ) : (
-                        <SVGOutlinePlay />
-                      )}
-                    </Button>
-                    <Button
-                      color={BUTTON_COLOR.OUTLINE_WHITE}
-                      elementRef={muteUnmuteButtonRef}
-                      handleClick={() => {
-                        if (isMuted) {
-                          mediaRef.current.muted = false;
-                        } else {
-                          mediaRef.current.muted = true;
-                        }
-
-                        setIsMuted(!isMuted);
-                      }}
-                    >
-                      {isMuted ? <SVGOutlineMute /> : <SVGOutlineUnmute />}
-                    </Button>
-                  </>
-                )}
-              </div>
-              <p className="text-white">
-                {formatDuration(elapsedDuration)} /{' '}
-                {formatDuration(media.duration)}
-              </p>
-              <div className="self-end">
+          className={`absolute bottom-0 left-0 flex w-full flex-col gap-4 rounded-b-lg bg-black/50 p-4 backdrop-blur-sm ${showControlsView ? 'opacity-100' : 'opacity-0'}`}
+        >
+          <Slider
+            max={media.duration}
+            value={elapsedDuration}
+            handleInput={(event) => {
+              setElapsedDuration(event.target.value);
+              mediaRef.current.currentTime = event.target.value;
+            }}
+            sliderRef={sliderRef}
+          />
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex gap-2 self-start">
+              {elapsedDuration === media.duration && (
                 <Button
                   color={BUTTON_COLOR.OUTLINE_WHITE}
-                  elementRef={expandCollapseButtonRef}
-                  handleClick={() => {
-                    if (isFullscreen) {
-                      document.exitFullscreen();
-                    } else {
-                      parentRef.current.requestFullscreen();
-                    }
-                  }}
+                  elementRef={resetButtonRef}
+                  handleClick={() => handlePlayPause(true)}
                 >
-                  {isFullscreen ? (
-                    <SVGOutlineCollapseArrow />
-                  ) : (
-                    <SVGOutlineExpandArrow />
-                  )}
+                  <SVGOutlineReset />
                 </Button>
-              </div>
+              )}
+              {elapsedDuration !== media.duration && (
+                <>
+                  <Button
+                    color={BUTTON_COLOR.OUTLINE_WHITE}
+                    elementRef={playPauseButtonRef}
+                    handleClick={() =>
+                      setIsActiveMediaPlaying(!isActiveMediaPlaying)
+                    }
+                  >
+                    {isActiveMediaPlaying ? (
+                      <SVGOutlinePause />
+                    ) : (
+                      <SVGOutlinePlay />
+                    )}
+                  </Button>
+                  <Button
+                    color={BUTTON_COLOR.OUTLINE_WHITE}
+                    elementRef={muteUnmuteButtonRef}
+                    handleClick={() => {
+                      if (isMuted) {
+                        mediaRef.current.muted = false;
+                      } else {
+                        mediaRef.current.muted = true;
+                      }
+
+                      setIsMuted(!isMuted);
+                    }}
+                  >
+                    {isMuted ? <SVGOutlineMute /> : <SVGOutlineUnmute />}
+                  </Button>
+                </>
+              )}
+            </div>
+            <p className="text-white">
+              {formatDuration(elapsedDuration)} /{' '}
+              {formatDuration(media.duration)}
+            </p>
+            <div className="self-end">
+              <Button
+                color={BUTTON_COLOR.OUTLINE_WHITE}
+                elementRef={expandCollapseButtonRef}
+                handleClick={() => {
+                  if (isFullscreen) {
+                    document.exitFullscreen();
+                  } else {
+                    parentRef.current.requestFullscreen();
+                  }
+                }}
+              >
+                {isFullscreen ? (
+                  <SVGOutlineCollapseArrow />
+                ) : (
+                  <SVGOutlineExpandArrow />
+                )}
+              </Button>
             </div>
           </div>
-        )}
-      </div>
-    );
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default MediaPlayer;

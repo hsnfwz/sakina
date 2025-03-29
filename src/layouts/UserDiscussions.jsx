@@ -5,6 +5,7 @@ import { DataContext } from '../common/context/DataContextProvider.jsx';
 import Loading from '../components/Loading.jsx';
 import Loaded from '../components/Loaded.jsx';
 import DiscussionCard from '../components/DiscussionCard.jsx';
+import DiscussionCardGrid from '../components/DiscussionCardGrid.jsx';
 
 function UserDiscussions() {
   const { activeUser } = useContext(DataContext);
@@ -48,9 +49,11 @@ function UserDiscussions() {
 
   return (
     <div className="flex w-full flex-col gap-4">
-      {userDiscussions.data.map((discussion, index) => (
-        <DiscussionCard key={index} discussion={discussion} />
-      ))}
+      <DiscussionCardGrid>
+        {userDiscussions.data.map((discussion, index) => (
+          <DiscussionCard key={index} discussion={discussion} />
+        ))}
+      </DiscussionCardGrid>
       {!userDiscussions.hasMore && <Loaded />}
       {isLoading && <Loading />}
     </div>

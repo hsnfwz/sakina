@@ -34,7 +34,12 @@ function Video() {
 
   if (video) {
     return (
-      <MediaPlayer media={video} mediaType="videos" width={1920} height={1080} />
+      <MediaPlayer
+        media={video}
+        mediaType="videos"
+        width={1920}
+        height={1080}
+      />
     );
   }
 }

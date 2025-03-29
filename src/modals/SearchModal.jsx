@@ -1,12 +1,13 @@
 import { useContext } from 'react';
-import { Link, useLocation } from 'react-router';
+import { useLocation } from 'react-router';
 import { ModalContext } from '../common/context/ModalContextProvider';
-import Modal from '../components/Modal';
-import SearchBar from '../components/SearchBar';
 import { getUsersBySearchTerm } from '../common/database/users';
 import { getVideosBySearchTerm } from '../common/database/videos';
 import { getClipsBySearchTerm } from '../common/database/clips';
 import { getDiscussionsBySearchTerm } from '../common/database/discussions';
+import Modal from '../components/Modal';
+import SearchBar from '../components/SearchBar';
+import Anchor from '../components/Anchor';
 
 function SearchModal() {
   const { showModal } = useContext(ModalContext);
@@ -16,19 +17,22 @@ function SearchModal() {
   if (showModal.type === 'SEARCH_MODAL') {
     return (
       <Modal>
-        <nav className="flex w-full bg-black text-white">
-          <Link className="px-4 py-2 text-xs" to="#users">
-            Users
-          </Link>
-          <Link className="px-4 py-2 text-xs" to="#videos">
+        <nav className="flex w-full">
+          <Anchor
+            active={location.hash === '' || location.hash === '#videos'}
+            to="#videos"
+          >
             Videos
-          </Link>
-          <Link className="px-4 py-2 text-xs" to="#clips">
+          </Anchor>
+          <Anchor active={location.hash === '#clips'} to="#clips">
             Clips
-          </Link>
-          <Link className="px-4 py-2 text-xs" to="#discussions">
+          </Anchor>
+          <Anchor active={location.hash === '#discussions'} to="#discussions">
             Discussions
-          </Link>
+          </Anchor>
+          <Anchor active={location.hash === '#users'} to="#users">
+            Users
+          </Anchor>
         </nav>
         {(location.hash === '' || location.hash === '#users') && (
           <div>
