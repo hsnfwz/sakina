@@ -53,8 +53,8 @@ const BUTTON_COLOR = Object.freeze({
     tailwindTextColor: 'text-white',
     tailwindFillColor: 'fill-white',
     tailwindBorderColor: 'border-black',
-    tailwindBorderFocusColor: 'focus:border-black',
-    tailwindBorderHoverColor: 'hover:border-black',
+    tailwindFocusBorderColor: 'focus:border-black',
+    tailwindHoverBorderColor: 'hover:border-black',
   },
   OUTLINE_BLACK: {
     tailwindBackgroundColor: 'bg-transparent',
@@ -62,8 +62,8 @@ const BUTTON_COLOR = Object.freeze({
     tailwindTextColor: 'text-black',
     tailwindFillColor: 'fill-black',
     tailwindBorderColor: 'border-black',
-    tailwindBorderFocusColor: 'focus:border-black',
-    tailwindBorderHoverColor: 'hover:border-black',
+    tailwindFocusBorderColor: 'focus:border-black',
+    tailwindHoverBorderColor: 'hover:border-black',
   },
   SOLID_WHITE: {
     tailwindBackgroundColor: 'bg-white',
@@ -71,8 +71,8 @@ const BUTTON_COLOR = Object.freeze({
     tailwindTextColor: 'text-black',
     tailwindFillColor: 'fill-black',
     tailwindBorderColor: 'border-black',
-    tailwindBorderFocusColor: 'focus:border-black',
-    tailwindBorderHoverColor: 'hover:border-black'
+    tailwindFocusBorderColor: 'focus:border-black',
+    tailwindHoverBorderColor: 'hover:border-black',
   },
   OUTLINE_WHITE: {
     tailwindBackgroundColor: 'bg-transparent',
@@ -80,8 +80,8 @@ const BUTTON_COLOR = Object.freeze({
     tailwindTextColor: 'text-white',
     tailwindFillColor: 'fill-white',
     tailwindBorderColor: 'border-white',
-    tailwindBorderFocusColor: 'focus:border-white',
-    tailwindBorderHoverColor: 'hover:border-white',
+    tailwindFocusBorderColor: 'focus:border-white',
+    tailwindHoverBorderColor: 'hover:border-white',
   },
   SOLID_RED: {
     tailwindBackgroundColor: 'bg-rose-500',
@@ -89,8 +89,8 @@ const BUTTON_COLOR = Object.freeze({
     tailwindTextColor: 'text-white',
     tailwindFillColor: 'fill-white',
     tailwindBorderColor: 'border-rose-500',
-    tailwindBorderFocusColor: 'focus:border-rose-500',
-    tailwindBorderHoverColor: 'hover:border-rose-700',
+    tailwindFocusBorderColor: 'focus:border-black',
+    tailwindHoverBorderColor: 'hover:border-rose-500',
   },
   SOLID_BLUE: {
     tailwindBackgroundColor: 'bg-sky-500',
@@ -98,8 +98,8 @@ const BUTTON_COLOR = Object.freeze({
     tailwindTextColor: 'text-white',
     tailwindFillColor: 'fill-white',
     tailwindBorderColor: 'border-sky-500',
-    tailwindBorderFocusColor: 'focus:border-sky-500',
-    tailwindBorderHoverColor: 'hover:border-sky-700',
+    tailwindFocusBorderColor: 'focus:border-black',
+    tailwindHoverBorderColor: 'hover:border-sky-500',
   },
   SOLID_GREEN: {
     tailwindBackgroundColor: 'bg-emerald-500',
@@ -107,28 +107,9 @@ const BUTTON_COLOR = Object.freeze({
     tailwindTextColor: 'text-white',
     tailwindFillColor: 'fill-white',
     tailwindBorderColor: 'border-emerald-500',
-    tailwindBorderFocusColor: 'focus:border-emerald-500',
-    tailwindBorderHoverColor: 'hover:border-emerald-700',
+    tailwindFocusBorderColor: 'focus:border-black',
+    tailwindHoverBorderColor: 'hover:border-emerald-500',
   },
 });
 
-const SEARCH_TYPE = Object.freeze({
-  POST_IMAGES: {
-    type: 'POST_IMAGES',
-    placeholder: 'Search Images',
-  },
-  POST_VIDEOS: {
-    type: 'POST_VIDEOS',
-    placeholder: 'Search Videos',
-  },
-  POST_DISCUSSIONS: {
-    type: 'POST_DISCUSSIONS',
-    placeholder: 'Search Discussions',
-  },
-  PROFILES: {
-    type: 'PROFILES',
-    placeholder: 'Search Profiles',
-  },
-});
-
-export { UPLOAD_TYPE, ORDER_BY, BUTTON_COLOR, SEARCH_TYPE };
+export { UPLOAD_TYPE, ORDER_BY, BUTTON_COLOR };

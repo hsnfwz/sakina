@@ -119,4 +119,35 @@ async function getVideoById(id) {
   }
 }
 
-export { getVideos, getVideosBySearchTerm, getVideosByUserId, getVideoById };
+async function getHiddenVideosByUserId(
+  userId,
+  startIndex = 0,
+  limit = 6,
+  orderBy = ORDER_BY.NEW
+) {
+  try {
+    const { data, error } = await supabase
+      .from('videos')
+      .select('*, user:user_id(*)')
+      .eq('is_hidden', true)
+      .eq('user_id', userId)
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      data: [],
+      hasMore: false,
+    };
+  }
+}
+
+export { getVideos, getVideosBySearchTerm, getVideosByUserId, getVideoById, getHiddenVideosByUserId };

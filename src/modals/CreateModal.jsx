@@ -181,9 +181,9 @@ function CreateModal() {
         user_id: authUser.id,
         title,
         description,
-        clip_file_name: clipFile.meta.objectName,
-        clip_duration: clipFile.meta.duration,
-        clip_thumbnail_file_name: clipThumbnailFile
+        file_name: clipFile.meta.objectName,
+        duration: clipFile.meta.duration,
+        thumbnail_file_name: clipThumbnailFile
           ? clipThumbnailFile.meta.objectName
           : null,
       })
@@ -199,9 +199,9 @@ function CreateModal() {
         user_id: authUser.id,
         title,
         description,
-        video_file_name: videoFile.meta.objectName,
-        video_duration: videoFile.meta.duration,
-        video_thumbnail_file_name: videoThumbnailFile
+        file_name: videoFile.meta.objectName,
+        duration: videoFile.meta.duration,
+        thumbnail_file_name: videoThumbnailFile
           ? videoThumbnailFile.meta.objectName
           : null,
       })

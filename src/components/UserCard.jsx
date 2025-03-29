@@ -11,7 +11,7 @@ function UserCard({ user, elementRef }) {
       onClick={() => setShowModal({ type: null, data: null })}
       to={`/users/${user.username}`}
       state={{ user }}
-      className="w-[128px] snap-start rounded-lg"
+      className="block w-[128px] snap-start rounded-lg"
       ref={elementRef}
     >
       <div className="flex w-full flex-col gap-2 rounded-lg">
@@ -21,7 +21,7 @@ function UserCard({ user, elementRef }) {
             alt={user.avatar_file_name}
             width={128}
             height={128}
-            className={`aspect-square w-full rounded-full object-center ${isLoadingImage ? 'hidden' : 'block'}`}
+            className={`aspect-square rounded-full object-center ${isLoadingImage ? 'hidden' : 'block'}`}
             onLoad={() => setIsLoadingImage(false)}
           />
         )}
@@ -30,7 +30,7 @@ function UserCard({ user, elementRef }) {
         )}
         {user.avatar_file_name && (
           <div
-            className={`aspect-square animate-pulse rounded-full bg-neutral-200 ${isLoadingImage ? 'block' : 'hidden'}`}
+            className={`aspect-square animate-pulse w-[128px] rounded-full bg-neutral-200 ${isLoadingImage ? 'block' : 'hidden'}`}
           ></div>
         )}
         <h1>{user.username}</h1>

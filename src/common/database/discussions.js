@@ -211,66 +211,44 @@ async function removeStorageObjectsByPostId(postId) {
   }
 }
 
-async function getPostById(id) {
+async function getDiscussionById(id) {
   try {
     const { data, error } = await supabase
-      .from('posts')
+      .from('discussions')
       .select('*, user:user_id(*)')
-      .eq('is_archived', false)
+      .eq('is_hidden', false)
       .eq('id', id);
 
     if (error) throw error;
 
-    await getPostImagesVideos(data);
-
     return {
       data,
     };
   } catch (error) {
     console.log(error);
-  }
-}
-
-async function getAcceptedPostById(id) {
-  try {
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*, user:user_id(*)')
-      .eq('status', 'ACCEPTED')
-      .eq('is_archived', false)
-      .eq('id', id);
-
-    if (error) throw error;
-
-    await getPostImagesVideos(data);
 
     return {
-      data,
+      data: null
     };
-  } catch (error) {
-    console.log(error);
   }
 }
 
-async function getPendingPostsByProfileId(
-  profileId,
+async function getHiddenDiscussionsByUserId(
+  userId,
   startIndex = 0,
   limit = 6,
   orderBy = ORDER_BY.NEW
 ) {
   try {
     const { data, error } = await supabase
-      .from('posts')
+      .from('discussions')
       .select('*, user:user_id(*)')
-      .eq('status', 'PENDING')
-      .eq('is_archived', false)
-      .eq('user_id', profileId)
+      .eq('is_hidden', true)
+      .eq('user_id', userId)
       .order(orderBy.columnName, { ascending: orderBy.isAscending })
       .range(startIndex, startIndex + limit - 1);
 
     if (error) throw error;
-
-    await getPostImagesVideos(data);
 
     return {
       data,
@@ -278,63 +256,11 @@ async function getPendingPostsByProfileId(
     };
   } catch (error) {
     console.log(error);
-  }
-}
-
-async function getRejectedPostsByProfileId(
-  profileId,
-  startIndex = 0,
-  limit = 6,
-  orderBy = ORDER_BY.NEW
-) {
-  try {
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*, user:user_id(*)')
-      .eq('status', 'REJECTED')
-      .eq('is_archived', false)
-      .eq('user_id', profileId)
-      .order(orderBy.columnName, { ascending: orderBy.isAscending })
-      .range(startIndex, startIndex + limit - 1);
-
-    if (error) throw error;
-
-    await getPostImagesVideos(data);
 
     return {
-      data,
-      hasMore: data.length === limit,
+      data: [],
+      hasMore: false,
     };
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function getArchivedPostsByProfileId(
-  profileId,
-  startIndex = 0,
-  limit = 6,
-  orderBy = ORDER_BY.NEW
-) {
-  try {
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*, user:user_id(*)')
-      .eq('is_archived', true)
-      .eq('user_id', profileId)
-      .order(orderBy.columnName, { ascending: orderBy.isAscending })
-      .range(startIndex, startIndex + limit - 1);
-
-    if (error) throw error;
-
-    await getPostImagesVideos(data);
-
-    return {
-      data,
-      hasMore: data.length === limit,
-    };
-  } catch (error) {
-    console.log(error);
   }
 }
 
@@ -384,61 +310,7 @@ async function removePost(id) {
   }
 }
 
-async function getAcceptedImagePosts(
-  startIndex = 0,
-  limit = 6,
-  orderBy = ORDER_BY.NEW
-) {
-  try {
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*, user:user_id(*)')
-      .eq('status', 'ACCEPTED')
-      .eq('type', 'IMAGE')
-      .eq('is_archived', false)
-      .order(orderBy.columnName, { ascending: orderBy.isAscending })
-      .range(startIndex, startIndex + limit - 1);
 
-    if (error) throw error;
-
-    await getImagePostFiles(data);
-
-    return {
-      data,
-      hasMore: data.length === limit,
-    };
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function getAcceptedVideoPosts(
-  startIndex = 0,
-  limit = 6,
-  orderBy = ORDER_BY.NEW
-) {
-  try {
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*, user:user_id(*)')
-      .eq('status', 'ACCEPTED')
-      .eq('type', 'VIDEO')
-      .eq('is_archived', false)
-      .order(orderBy.columnName, { ascending: orderBy.isAscending })
-      .range(startIndex, startIndex + limit - 1);
-
-    if (error) throw error;
-
-    await getVideoPostFiles(data);
-
-    return {
-      data,
-      hasMore: data.length === limit,
-    };
-  } catch (error) {
-    console.log(error);
-  }
-}
 
 async function getPendingPostsCount() {
   try {
@@ -516,17 +388,13 @@ export {
   getDiscussions,
   getDiscussionsBySearchTerm,
   getDiscussionsByUserId,
+  getDiscussionById,
+  getHiddenDiscussionsByUserId,
+
   removeStorageObjectsByPostId,
-  getArchivedPostsByProfileId,
-  getPendingPostsByProfileId,
-  getRejectedPostsByProfileId,
-  getPostById,
-  getAcceptedPostById,
   removePost,
   archivePost,
   unarchivePost,
-  getAcceptedImagePosts,
-  getAcceptedVideoPosts,
   getPendingPostsCount,
   getViewedPostsByProfileId,
   getAcceptedPostsByReceiverProfileIds,

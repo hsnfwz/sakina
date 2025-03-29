@@ -10,7 +10,7 @@ function DiscussionCard({ discussion, elementRef }) {
       onClick={() => setShowModal({ type: null, data: null })}
       to={`/discussions/${discussion.id}`}
       state={{ discussion }}
-      className="w-[320px] snap-start rounded-lg border-2 border-neutral-200"
+      className="block w-[320px] snap-start rounded-lg border-2 border-neutral-200"
       ref={elementRef}
     >
       <div className="flex w-full flex-col gap-2 rounded-lg p-2">

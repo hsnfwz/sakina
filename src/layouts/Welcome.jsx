@@ -9,7 +9,7 @@ function Welcome() {
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center gap-16 p-4">
       <Link
-        className="absolute top-4 left-4 rounded-full border-2 border-transparent px-4 py-2 text-center text-2xl font-bold focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden"
+        className="absolute top-4 left-4 rounded-lg border-2 border-transparent px-4 py-2 text-center text-2xl font-bold focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden"
         to="/"
       >
         Sakina
@@ -27,7 +27,7 @@ function Welcome() {
         <div className="flex flex-col items-center gap-4 md:flex-row">
           {authUser && (
             <Link
-              className="rounded-full border-2 border-transparent bg-sky-500 px-4 py-2 text-center text-2xl text-white hover:bg-sky-700 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden"
+              className="rounded-lg border-2 border-transparent bg-sky-500 px-4 py-2 text-center text-2xl text-white hover:bg-sky-700 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden"
               to="/home"
             >
               Home
@@ -37,13 +37,13 @@ function Welcome() {
             <>
               <div className="flex gap-2">
                 <Link
-                  className="rounded-full border-2 border-transparent bg-emerald-500 px-4 py-2 text-center text-2xl text-white hover:bg-emerald-700 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden"
+                  className="rounded-lg border-2 border-transparent bg-emerald-500 px-4 py-2 text-center text-2xl text-white hover:bg-emerald-700 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden"
                   to="/sign-up"
                 >
                   Sign Up
                 </Link>
                 <Link
-                  className="rounded-full border-2 border-emerald-500 px-4 py-2 text-center text-2xl text-emerald-500 hover:border-emerald-700 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden"
+                  className="rounded-lg border-2 border-emerald-500 px-4 py-2 text-center text-2xl text-emerald-500 hover:border-emerald-700 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden"
                   to="/sign-in"
                 >
                   Sign In
@@ -51,7 +51,7 @@ function Welcome() {
               </div>
               <p className="text-center">or</p>
               <Link
-                className="rounded-full border-2 border-transparent bg-sky-500 px-4 py-2 text-center text-2xl text-white hover:bg-sky-700 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden"
+                className="rounded-lg border-2 border-transparent bg-sky-500 px-4 py-2 text-center text-2xl text-white hover:bg-sky-700 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden"
                 to="/explore"
               >
                 Explore

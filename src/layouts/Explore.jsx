@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useContext } from 'react';
 import { Link } from 'react-router';
 
 import { getVideos } from '../common/database/videos';
@@ -10,81 +10,90 @@ import VideoCard from '../components/VideoCard';
 import ClipCard from '../components/ClipCard';
 import UserCard from '../components/UserCard';
 import DiscussionCard from '../components/DiscussionCard';
-import IconButton from '../components/IconButton';
+import Button from '../components/Button';
 import SVGOutlineArrowLeft from '../components/svgs/outline/SVGOutlineArrowLeft';
 import SVGOutlineArrowRight from '../components/svgs/outline/SVGOutlineArrowRight';
 import SVGOutlineRegularArrowRight from '../components/svgs/outline/SVGOutlineRegularArrowRight';
 import Loading from '../components/Loading';
+import Header from '../components/Header';
+import { BUTTON_COLOR } from '../common/enums';
+import { DataContext } from '../common/context/DataContextProvider';
 
 function Explore() {
   const [usersFirstRef, usersFirstElementIsIntersecting] =
-    useElementIntersection(1);
+    useElementIntersection();
   const [usersLastRef, usersLastElementIsIntersecting] =
-    useElementIntersection(1);
+    useElementIntersection();
   const [videosFirstRef, videosFirstElementIsIntersecting] =
-    useElementIntersection(1);
+    useElementIntersection();
   const [videosLastRef, videosLastElementIsIntersecting] =
-    useElementIntersection(1);
+    useElementIntersection();
   const [clipsFirstRef, clipsFirstElementIsIntersecting] =
-    useElementIntersection(1);
+    useElementIntersection();
   const [clipsLastRef, clipsLastElementIsIntersecting] =
-    useElementIntersection(1);
+    useElementIntersection();
   const [discussionsFirstRef, discussionsFirstElementIsIntersecting] =
-    useElementIntersection(1);
+    useElementIntersection();
   const [discussionsLastRef, discussionsLastElementIsIntersecting] =
-    useElementIntersection(1);
+    useElementIntersection();
+
+  const {
+    users, setUsers,
+    videos, setVideos,
+    clips, setClips,
+    discussions, setDiscussions
+  } = useContext(DataContext);
 
   const usersRef = useRef();
   const videosRef = useRef();
   const clipsRef = useRef();
   const discussionsRef = useRef();
 
-  const [users, setUsers] = useState([]);
-  const [videos, setVideos] = useState([]);
-  const [clips, setClips] = useState([]);
-  const [discussions, setDiscussions] = useState([]);
-
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     async function initialize() {
-      setIsLoading(true);
+      if (!users.hasInitialized) {
+        console.log('hi');
 
-      const [
-        videosResponse,
-        clipsResponse,
-        usersResponse,
-        discussionsResponse,
-      ] = await Promise.all([
-        getVideos(),
-        getClips(),
-        getUsers(),
-        getDiscussions(),
-      ]);
+        setIsLoading(true);
 
-      setVideos(videosResponse.data);
-      setClips(clipsResponse.data);
-      setUsers(usersResponse.data);
-      setDiscussions(discussionsResponse.data);
+        const [
+          videosResponse,
+          clipsResponse,
+          usersResponse,
+          discussionsResponse,
+        ] = await Promise.all([
+          getVideos(),
+          getClips(),
+          getUsers(),
+          getDiscussions(),
+        ]);
 
-      setIsLoading(false);
+        setVideos({ data: videosResponse.data, hasInitialized: true });
+        setClips({ data: clipsResponse.data, hasInitialized: true });
+        setUsers({ data: usersResponse.data, hasInitialized: true });
+        setDiscussions({ data: discussionsResponse.data, hasInitialized: true });
+
+        setIsLoading(false);
+      }
     }
 
     initialize();
   }, []);
 
   return (
-    <div className="flex w-full flex-col gap-4 p-4">
+    <div className="flex w-full flex-col gap-4">
       {isLoading && <Loading />}
       {!isLoading && (
         <>
-          <h1>Users</h1>
-          {users.length > 0 && (
+          <Header>Users</Header>
+          {users.data.length > 0 && (
             <div
               ref={usersRef}
               className="app_hide-scrollbar grid w-full snap-x snap-mandatory grid-flow-col justify-start gap-2 overflow-x-scroll overflow-y-hidden overscroll-x-contain"
             >
-              {users.map((user, index) => (
+              {users.data.map((user, index) => (
                 <UserCard
                   key={index}
                   user={user}
@@ -94,38 +103,40 @@ function Explore() {
               <Link
                 to="/users"
                 ref={usersLastRef}
-                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
+                className="bg-sky-500 border-sky-500 hover:bg-sky-700 flex snap-start self-center rounded-lg border-2 fill-white p-1 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
               >
                 <SVGOutlineRegularArrowRight />
               </Link>
             </div>
           )}
           <div className="flex gap-2 self-end">
-            <IconButton
+            <Button
+              color={BUTTON_COLOR.SOLID_GREEN}
               isDisabled={usersFirstElementIsIntersecting}
               handleClick={() => {
                 usersRef.current.scrollBy({ left: -320, behavior: 'smooth' });
               }}
             >
               <SVGOutlineArrowLeft />
-            </IconButton>
-            <IconButton
+            </Button>
+            <Button
+              color={BUTTON_COLOR.SOLID_GREEN}
               isDisabled={usersLastElementIsIntersecting}
               handleClick={() => {
                 usersRef.current.scrollBy({ left: 320, behavior: 'smooth' });
               }}
             >
               <SVGOutlineArrowRight />
-            </IconButton>
+            </Button>
           </div>
 
-          <h1>Videos</h1>
-          {videos.length > 0 && (
+          <Header>Videos</Header>
+          {videos.data.length > 0 && (
             <div
               ref={videosRef}
               className="app_hide-scrollbar grid w-full snap-x snap-mandatory grid-flow-col justify-start gap-2 overflow-x-scroll overflow-y-hidden overscroll-x-contain"
             >
-              {videos.map((video, index) => (
+              {videos.data.map((video, index) => (
                 <VideoCard
                   key={index}
                   video={video}
@@ -135,38 +146,40 @@ function Explore() {
               <Link
                 to="/videos"
                 ref={videosLastRef}
-                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
+                className="bg-sky-500 border-sky-500 hover:bg-sky-700 flex snap-start self-center rounded-lg border-2 fill-white p-1 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
               >
                 <SVGOutlineRegularArrowRight />
               </Link>
             </div>
           )}
           <div className="flex gap-2 self-end">
-            <IconButton
+            <Button
+              color={BUTTON_COLOR.SOLID_GREEN}
               isDisabled={videosFirstElementIsIntersecting}
               handleClick={() => {
                 videosRef.current.scrollBy({ left: -320, behavior: 'smooth' });
               }}
             >
               <SVGOutlineArrowLeft />
-            </IconButton>
-            <IconButton
+            </Button>
+            <Button
+              color={BUTTON_COLOR.SOLID_GREEN}
               isDisabled={videosLastElementIsIntersecting}
               handleClick={() => {
                 videosRef.current.scrollBy({ left: 320, behavior: 'smooth' });
               }}
             >
               <SVGOutlineArrowRight />
-            </IconButton>
+            </Button>
           </div>
 
-          <h1>Clips</h1>
-          {clips.length > 0 && (
+          <Header>Clips</Header>
+          {clips.data.length > 0 && (
             <div
               ref={clipsRef}
               className="app_hide-scrollbar grid w-full snap-x snap-mandatory grid-flow-col justify-start gap-2 overflow-x-scroll overflow-y-hidden overscroll-x-contain"
             >
-              {clips.map((clip, index) => (
+              {clips.data.map((clip, index) => (
                 <ClipCard
                   key={index}
                   clip={clip}
@@ -176,38 +189,40 @@ function Explore() {
               <Link
                 to="/clips"
                 ref={clipsLastRef}
-                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
-              >
+                className="bg-sky-500 border-sky-500 hover:bg-sky-700 flex snap-start self-center rounded-lg border-2 fill-white p-1 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
+                >
                 <SVGOutlineRegularArrowRight />
               </Link>
             </div>
           )}
           <div className="flex gap-2 self-end">
-            <IconButton
+            <Button
+              color={BUTTON_COLOR.SOLID_GREEN}
               isDisabled={clipsFirstElementIsIntersecting}
               handleClick={() => {
                 clipsRef.current.scrollBy({ left: -320, behavior: 'smooth' });
               }}
             >
               <SVGOutlineArrowLeft />
-            </IconButton>
-            <IconButton
+            </Button>
+            <Button
+              color={BUTTON_COLOR.SOLID_GREEN}
               isDisabled={clipsLastElementIsIntersecting}
               handleClick={() => {
                 clipsRef.current.scrollBy({ left: 320, behavior: 'smooth' });
               }}
             >
               <SVGOutlineArrowRight />
-            </IconButton>
+            </Button>
           </div>
 
-          <h1>Discussions</h1>
-          {discussions.length > 0 && (
+          <Header>Discussions</Header>
+          {discussions.data.length > 0 && (
             <div
               ref={discussionsRef}
               className="app_hide-scrollbar grid w-full snap-x snap-mandatory grid-flow-col justify-start gap-2 overflow-x-scroll overflow-y-hidden overscroll-x-contain"
             >
-              {discussions.map((discussion, index) => (
+              {discussions.data.map((discussion, index) => (
                 <DiscussionCard
                   key={index}
                   discussion={discussion}
@@ -217,14 +232,15 @@ function Explore() {
               <Link
                 to="/discussions"
                 ref={discussionsLastRef}
-                className="flex snap-start self-center rounded-full border-2 border-transparent fill-black p-1 hover:bg-neutral-200 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
-              >
+                className="bg-sky-500 border-sky-500 hover:bg-sky-700 flex snap-start self-center rounded-lg border-2 fill-white p-1 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
+                >
                 <SVGOutlineRegularArrowRight />
               </Link>
             </div>
           )}
           <div className="flex gap-2 self-end">
-            <IconButton
+            <Button
+              color={BUTTON_COLOR.SOLID_GREEN}
               isDisabled={discussionsFirstElementIsIntersecting}
               handleClick={() => {
                 discussionsRef.current.scrollBy({
@@ -234,8 +250,9 @@ function Explore() {
               }}
             >
               <SVGOutlineArrowLeft />
-            </IconButton>
-            <IconButton
+            </Button>
+            <Button
+              color={BUTTON_COLOR.SOLID_GREEN}
               isDisabled={discussionsLastElementIsIntersecting}
               handleClick={() => {
                 discussionsRef.current.scrollBy({
@@ -245,7 +262,7 @@ function Explore() {
               }}
             >
               <SVGOutlineArrowRight />
-            </IconButton>
+            </Button>
           </div>
         </>
       )}

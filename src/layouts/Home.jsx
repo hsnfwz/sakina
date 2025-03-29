@@ -115,7 +115,7 @@ function Home() {
   }, [isLoadingAuthUser, authUser]);
 
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex w-full flex-col gap-4">
       <nav className="flex w-full bg-sky-500 text-white">
         <Link className="px-4 py-2 text-xs" to="videos">
           Videos
@@ -127,9 +127,7 @@ function Home() {
           Discussions
         </Link>
       </nav>
-      <div className="flex w-full flex-col p-4">
-        <Outlet />
-      </div>
+      <Outlet />
     </div>
   );
 }

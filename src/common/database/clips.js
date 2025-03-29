@@ -97,4 +97,57 @@ async function getClipsByUserId(
   }
 }
 
-export { getClips, getClipsBySearchTerm, getClipsByUserId };
+async function getClipById(id) {
+  try {
+    const { data, error } = await supabase
+      .from('clips')
+      .select('*, user:user_id(*)')
+      .eq('is_hidden', false)
+      .eq('id', id);
+
+    if (error) throw error;
+
+    return {
+      data,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      data: null,
+    };
+  }
+}
+
+async function getHiddenClipsByUserId(
+  userId,
+  startIndex = 0,
+  limit = 6,
+  orderBy = ORDER_BY.NEW
+) {
+  try {
+    const { data, error } = await supabase
+      .from('clips')
+      .select('*, user:user_id(*)')
+      .eq('is_hidden', true)
+      .eq('user_id', userId)
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      data: [],
+      hasMore: false,
+    };
+  }
+}
+
+export { getClips, getClipsBySearchTerm, getClipsByUserId, getClipById, getHiddenClipsByUserId };

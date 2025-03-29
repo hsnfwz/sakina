@@ -3,282 +3,103 @@ import { Link } from 'react-router';
 import { useLocation } from 'react-router';
 import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 import { AuthContext } from '../common/context/AuthContextProvider';
-import Button from './Button';
-import SVGSolidHome from './svgs/solid/SVGSolidHome';
-import SVGOutlineHome from './svgs/outline/SVGOutlineHome';
-import SVGSolidCompass from './svgs/solid/SVGSolidCompass';
-import SVGOutlineCompass from './svgs/outline/SVGOutlineCompass';
-import SVGSolidBell from './svgs/solid/SVGSolidBell';
-import SVGOutlineBell from './svgs/outline/SVGOutlineBell';
-import SVGSolidUser from './svgs/solid/SVGSolidUser';
-import SVGOutlineUser from './svgs/outline/SVGOutlineUser';
-import SVGSolidSettings from './svgs/solid/SVGSolidSettings';
-import SVGOutlineSettings from './svgs/outline/SVGOutlineSettings';
-import SVGSolidShield from './svgs/solid/SVGSolidShield';
-import SVGOutlineShield from './svgs/outline/SVGOutlineShield';
-import SVGOutlinePlus from './svgs/outline/SVGOutlinePlus';
-import SVGSolidUserArrow from './svgs/solid/SVGSolidUserArrow';
-import SVGSolidUserPlus from './svgs/solid/SVGSolidUserPlus';
-import SVGOutlineUserArrow from './svgs/outline/SVGOutlineUserArrow';
-import SVGOutlineUserPlus from './svgs/outline/SVGOutlineUserPlus';
 import { BUTTON_COLOR } from '../common/enums';
-import { formatCount } from '../common/helpers.js';
+import SVGOutlineHome from './svgs/outline/SVGOutlineHome';
+import SVGOutlineCompass from './svgs/outline/SVGOutlineCompass';
+import SVGOutlineBell from './svgs/outline/SVGOutlineBell';
+import SVGOutlineUser from './svgs/outline/SVGOutlineUser';
+import SVGOutlineSettings from './svgs/outline/SVGOutlineSettings';
+import SVGOutlinePlus from './svgs/outline/SVGOutlinePlus';
+import SVGOutlineSearch from './svgs/outline/SVGOutlineSearch.jsx';
+import Button from './Button';
 
 function NavBar() {
+  const location = useLocation();
   const { authUser } = useContext(AuthContext);
   const { setShowModal } = useContext(ModalContext);
 
   return (
-    <nav className="flex w-full bg-black text-white">
+    <nav className="flex w-full gap-1 rounded-lg bg-neutral-200 p-1">
+      <Button
+        handleClick={() => setShowModal({ type: 'SEARCH_MODAL' })}
+        color={BUTTON_COLOR.SOLID_GREEN}
+      >
+        <SVGOutlineSearch />
+      </Button>
       {authUser && (
-        <Link className="px-4 py-2 text-xs" to="/home">
-          Home
+        <Link
+          className={`w-full rounded-lg border-2 border-transparent bg-white hover:border-sky-500 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden ${location.pathname.includes('/home') ? 'fill-sky-500' : ''} flex items-center justify-center`}
+          to="/home"
+        >
+          <SVGOutlineHome />
         </Link>
       )}
-
-      <Link className="px-4 py-2 text-xs" to="/explore">
-        Explore
+      <Link
+        className={`w-full rounded-lg border-2 border-transparent bg-white hover:border-sky-500 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden ${location.pathname.includes('/explore') ? 'fill-sky-500' : ''} flex items-center justify-center`}
+        to="/explore"
+      >
+        <SVGOutlineCompass />
       </Link>
-
       {authUser && (
         <>
-          <Link className="px-4 py-2 text-xs" to="/inbox">
-            Inbox
-          </Link>
           <Link
-            className="px-4 py-2 text-xs"
+            className={`w-full rounded-lg border-2 border-transparent bg-white hover:border-sky-500 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden ${location.pathname.includes('/users') ? 'fill-sky-500' : ''} flex items-center justify-center`}
             state={{ user: authUser }}
             to={`/users/${authUser.username}`}
           >
-            {authUser.username}
+            {authUser.avatar_file_name && (
+              <img
+                src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/avatars/${authUser.avatar_file_name}`}
+                alt={authUser.username}
+                width={32}
+                height={32}
+                className={`rounded-full border-2 ${location.pathname.includes('/users') ? 'border-sky-500' : 'border-transparent'}`}
+              />
+            )}
+            {!authUser.avatar_file_name && <SVGOutlineUser />}
           </Link>
-          <Link className="px-4 py-2 text-xs" to="/settings">
-            Settings
+          <Link
+            className={`w-full rounded-lg border-2 border-transparent bg-white hover:border-sky-500 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden ${location.pathname.includes('/notifications') ? 'fill-sky-500' : ''} flex items-center justify-center`}
+            to="/notifications"
+          >
+            <SVGOutlineBell />
+          </Link>
+          <Link
+            className={`w-full rounded-lg border-2 border-transparent bg-white hover:border-sky-500 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden ${location.pathname.includes('/settings') ? 'fill-sky-500' : ''} flex items-center justify-center`}
+            to="/settings"
+          >
+            <SVGOutlineSettings />
           </Link>
         </>
       )}
 
       {authUser && (
-        <button
-          type="button"
-          className="px-4 py-2 text-xs"
-          onClick={() => setShowModal({ type: 'CREATE_MODAL' })}
+        <Button
+          handleClick={() => setShowModal({ type: 'CREATE_MODAL' })}
+          color={BUTTON_COLOR.SOLID_GREEN}
         >
-          Create
-        </button>
+          <SVGOutlinePlus />
+        </Button>
       )}
-      <button
-        type="button"
-        className="px-4 py-2 text-xs"
-        onClick={() => setShowModal({ type: 'SEARCH_MODAL' })}
-      >
-        Search
-      </button>
+
+      {!authUser && (
+        <>
+          <Link
+            className={`w-full rounded-lg border-2 border-transparent bg-white hover:border-sky-500 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden ${location.pathname.includes('/sign-in') ? 'text-sky-500' : ''} flex items-center justify-center`}
+            to="/sign-in"
+          >
+            Sign In
+          </Link>
+          <Link
+            className={`w-full rounded-lg border-2 border-transparent bg-white hover:border-sky-500 focus:border-2 focus:border-black focus:ring-0 focus:outline-hidden ${location.pathname.includes('/sign-up') ? 'text-sky-500' : ''} flex items-center justify-center`}
+            to="/sign-up"
+          >
+            Sign Up
+          </Link>
+        </>
+      )}
     </nav>
   );
 }
-
-// function NavBar({
-//   notificationsCount,
-//   isLoadingNotificationsCount,
-//   postsCount,
-//   isLoadingPostsCount,
-//   pendingPostsCount,
-//   isLoadingPendingPostsCount,
-// }) {
-//   const { user } = useContext(AuthContext);
-//   const { setShowModal } = useContext(ModalContext);
-//   const location = useLocation();
-
-//   return (
-//     <div className="fixed left-0 top-0 z-40 hidden h-full w-full max-w-[200px] border-r-2 border-neutral-700 bg-black p-4 sm:block">
-//       <nav className="flex h-full w-full flex-col gap-4 sm:overflow-auto">
-//         {user && user.user_role === 'SUPER_ADMIN' && (
-//           <Link
-//             to="/admin"
-//             className={`${location.pathname.includes('/admin') ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
-//           >
-//             <div className="relative left-0 top-0">
-//               {location.pathname.includes('/admin') && (
-//                 <div className="relative left-0 top-0">
-//                   <SVGSolidShield />
-//                 </div>
-//               )}
-//               {!location.pathname.includes('/admin') && (
-//                 <div className="relative left-0 top-0">
-//                   <SVGOutlineShield />
-//                 </div>
-//               )}
-//               {!isLoadingPendingPostsCount && pendingPostsCount > 0 && (
-//                 <span className="absolute -right-2 -top-2 rounded-full bg-rose-500 p-1 text-xs text-black">
-//                   {formatCount(pendingPostsCount)}
-//                 </span>
-//               )}
-//             </div>
-
-//             <span
-//               className={`${location.pathname.includes('/admin') ? 'text-sky-500' : 'text-black'}`}
-//             >
-//               Admin
-//             </span>
-//           </Link>
-//         )}
-//         <Link
-//           to="/"
-//           className={`${location.pathname === '/' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
-//         >
-//           <div className="relative left-0 top-0">
-//             {location.pathname === '/' && (
-//               <div className="relative left-0 top-0">
-//                 <SVGSolidHome />
-//               </div>
-//             )}
-//             {location.pathname !== '/' && (
-//               <div className="relative left-0 top-0">
-//                 <SVGOutlineHome />
-//               </div>
-//             )}
-//             {!isLoadingPostsCount && postsCount > 0 && (
-//               <span className="absolute -right-2 -top-2 rounded-full bg-rose-500 p-1 text-xs text-black">
-//                 {formatCount(postsCount)}
-//               </span>
-//             )}
-//           </div>
-
-//           <span
-//             className={`${location.pathname === '/' ? 'text-sky-500' : 'text-black'}`}
-//           >
-//             Home
-//           </span>
-//         </Link>
-
-//         <Link
-//           to="/explore"
-//           className={`${location.pathname.includes('/explore') ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
-//         >
-//           {location.pathname.includes('/explore') && <SVGSolidCompass />}
-//           {!location.pathname.includes('/explore') && <SVGOutlineCompass />}
-//           <span
-//             className={`${location.pathname.includes('/explore') ? 'text-sky-500' : 'text-black'}`}
-//           >
-//             Explore
-//           </span>
-//         </Link>
-//         {user && (
-//           <Link
-//             to="/notifications"
-//             className={`${location.pathname.includes('/notifications') ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
-//           >
-//             <div className="relative left-0 top-0">
-//               {location.pathname.includes('/notifications') && (
-//                 <div className="relative left-0 top-0">
-//                   <SVGSolidBell />
-//                 </div>
-//               )}
-//               {!location.pathname.includes('/notifications') && (
-//                 <div className="relative left-0 top-0">
-//                   <SVGOutlineBell />
-//                 </div>
-//               )}
-//               {!isLoadingNotificationsCount && notificationsCount > 0 && (
-//                 <span className="absolute -right-2 -top-2 rounded-full bg-rose-500 p-1 text-xs text-black">
-//                   {formatCount(notificationsCount)}
-//                 </span>
-//               )}
-//             </div>
-
-//             <span
-//               className={`${location.pathname.includes('/notifications') ? 'text-sky-500' : 'text-black'}`}
-//             >
-//               Notifications
-//             </span>
-//           </Link>
-//         )}
-//         {user && (
-//           <Link
-//             to={`/profile/${user.username}`}
-//             state={{ profile: user }}
-//             className={`${location.pathname.includes(`/profile/${user.username}`) ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
-//           >
-//             {location.pathname.includes(`/profile/${user.username}`) && (
-//               <SVGSolidUser />
-//             )}
-//             {!location.pathname.includes(`/profile/${user.username}`) && (
-//               <SVGOutlineUser />
-//             )}
-//             <span
-//               className={`${location.pathname.includes(`/profile/${user.username}`) ? 'text-sky-500' : 'text-black'}`}
-//             >
-//               Profile
-//             </span>
-//           </Link>
-//         )}
-//         {user && (
-//           <Link
-//             to="/settings"
-//             className={`${location.pathname === '/settings' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
-//           >
-//             {location.pathname === '/settings' && <SVGSolidSettings />}
-//             {location.pathname !== '/settings' && <SVGOutlineSettings />}
-//             <span
-//               className={`${location.pathname === '/settings' ? 'text-sky-500' : 'text-black'}`}
-//             >
-//               Settings
-//             </span>
-//           </Link>
-//         )}
-//         {user && (
-//           <Button
-//             handleClick={() => setShowModal({ type: 'CREATE_MODAL' })}
-//             color={BUTTON_COLOR.GREEN}
-//           >
-//             <SVGOutlinePlus />
-//             <span>Create</span>
-//           </Button>
-//         )}
-//         {!user && (
-//           <>
-//             <Link
-//               onClick={() =>
-//                 setShowModal({
-//                   type: null,
-//                   data: null,
-//                 })
-//               }
-//               to="/log-in"
-//               className={`${location.pathname === '/log-in' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
-//             >
-//               {location.pathname === '/log-in' && <SVGSolidUserArrow />}
-//               {location.pathname !== '/log-in' && <SVGOutlineUserArrow />}
-//               <span
-//                 className={`${location.pathname === '/log-in' ? 'text-sky-500' : 'text-black'}`}
-//               >
-//                 Log In
-//               </span>
-//             </Link>
-//             <Link
-//               onClick={() =>
-//                 setShowModal({
-//                   type: null,
-//                   data: null,
-//                 })
-//               }
-//               to="/sign-up"
-//               className={`${location.pathname === '/sign-up' ? 'fill-sky-500' : 'fill-white'} flex gap-4 rounded-lg border-2 border-transparent bg-black p-2 hover:bg-neutral-700 focus:border-2 focus:border-white focus:outline-hidden focus:ring-0`}
-//             >
-//               {location.pathname === '/sign-up' && <SVGSolidUserPlus />}
-//               {location.pathname !== '/sign-up' && <SVGOutlineUserPlus />}
-//               <span
-//                 className={`${location.pathname === '/sign-up' ? 'text-sky-500' : 'text-black'}`}
-//               >
-//                 Sign Up
-//               </span>
-//             </Link>
-//           </>
-//         )}
-//       </nav>
-//     </div>
-//   );
-// }
 
 export default NavBar;

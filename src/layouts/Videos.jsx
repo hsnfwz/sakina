@@ -1,16 +1,15 @@
 import { useEffect, useContext, useRef, useState } from 'react';
+import { DataContext } from '../common/context/DataContextProvider';
+import { useElementIntersection } from '../common/hooks';
+import { getVideos } from '../common/database/videos';
 import Loaded from '../components/Loaded';
 import Loading from '../components/Loading';
-import { getVideos } from '../common/database/videos';
-import { useElementIntersection } from '../common/hooks';
-import VideoPreview from '../components/VideoPreview';
-import { DataContext } from '../common/context/DataContextProvider';
+import VideoCard from '../components/VideoCard';
+import Header from '../components/Header';
 
 function Videos() {
   const { videos, setVideos } = useContext(DataContext);
-
   const [elementRef, intersectingElement] = useElementIntersection();
-
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -52,23 +51,20 @@ function Videos() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-(--breakpoint-md) flex-col">
-      <div className="app_hide-scrollbar flex h-[calc(100vh-120px)] w-full snap-y snap-mandatory flex-col gap-2 overflow-y-scroll overscroll-y-contain">
+    <div className="flex w-full flex-col gap-4">
+      <Header>Videos</Header>
+      <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
         {videos.data.map((video, index) => (
-          <div
-            key={index}
-            className="flex min-h-[calc(100vh-120px)] w-full snap-start flex-col items-center justify-center gap-2"
-            ref={index === videos.data.length - 1 ? elementRef : null}
-          >
-            <div className="h-full w-full py-4">
-              <VideoPreview video={video} isAutoPlay={false} />
-            </div>
+          <div key={index} className="w-full">
+            <VideoCard
+              video={video}
+              elementRef={index === videos.data.length - 1 ? elementRef : null}
+            />
           </div>
         ))}
       </div>
-      {/* 
       {!videos.hasMore && <Loaded />}
-      {isLoading && <Loading />} */}
+      {isLoading && <Loading />}
     </div>
   );
 }

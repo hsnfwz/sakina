@@ -13,8 +13,8 @@ import HomeVideos from './layouts/HomeVideos.jsx';
 import Explore from './layouts/Explore.jsx';
 import Videos from './layouts/Videos.jsx';
 import Clips from './layouts/Clips.jsx';
-import ExploreDiscussions from './layouts/ExploreDiscussions.jsx';
-import ExploreProfiles from './layouts/ExploreProfiles.jsx';
+import Discussions from './layouts/Discussions.jsx';
+import Users from './layouts/Users.jsx';
 import Video from './layouts/Video.jsx';
 import Clip from './layouts/Clip.jsx';
 import Discussion from './layouts/Discussion.jsx';
@@ -78,14 +78,14 @@ const router = createBrowserRouter([
       {
         path: '/discussions',
         children: [
-          { index: true, Component: ExploreDiscussions },
+          { index: true, Component: Discussions },
           { path: ':id', Component: Discussion },
         ],
       },
       {
         path: '/users',
         children: [
-          { index: true, Component: ExploreProfiles },
+          { index: true, Component: Users },
           {
             path: ':username',
             Component: User,
@@ -121,39 +121,42 @@ createRoot(root).render(
 );
 
 /* 
-  - look into making classes with tailwind properties to avoid using hardcoded enum values
 
+    - user card design
 
-    - FIX: scroll position and intersections for infinite scrolls and intersection
-    - ensure all changes to content is updated in the global state
-    - make inputs green when they are correctly inputted to indicate progress to the user
-    - make inputs red when they are incorrectly inputted to indicate error to the user
-    - hide/unhide content
-    - edit content
+    - add skip 5 seconds forward and back for video using arrow keys
+    - show preview of post before submission
+
+    - look into making classes with tailwind properties to avoid using hardcoded enum values
+    - restore scroll position 
+
     - @ mentions
+    - hide/unhide content
+    - edit content - ensure all changes to content is updated in the global state
+
+    - notifications for activity by people you follow
     - notifications
       - is_read
       - auto-expire notifications within x time
       - auto-delete rejected posts within 24 hours
 
-    - counts for followers, following, posts, comments, likes, views
-    - make sure custom inputs can listen to important keys (enter, spacebar, etc.)
-    - show preview of post before submission
+    - make inputs green when they are correctly inputted to indicate progress to the user
+    - make inputs red when they are incorrectly inputted to indicate error to the user
 
     FUTURE:
+    - livestreaming
+    - counts for all types of content
     - allow user to select a video frame to set as their thumbnail
     - allow users to block/mute/remove user discussing unwanted topics on their videos
-    - pined content
+    - pinned content
     - scheduled content
     - expired content
-    - notifications for activity by people you follow
     - analytics page
     - stories (24 hours) + archived stories
     - playlists
     - collections (similar to albums and playlists)
     - rewards and promotion/spotlight system
-    - message and sharing
-    - livestreaming
+    - messaging and sharing
     - email change page flow
     - delete account - mark user as 'inactive' and keep all content, simply hide the user info from posts
     - verified users, banned users

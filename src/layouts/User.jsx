@@ -14,8 +14,8 @@ import Loading from '../components/Loading.jsx';
 import Button from '../components/Button.jsx';
 
 function User() {
-  const location = useLocation();
   const { username } = useParams();
+  const location = useLocation();
   const { authUser, isLoadingAuthUser } = useContext(AuthContext);
   const {
     activeUser,
@@ -117,7 +117,7 @@ function User() {
     return (
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-4">
-          <div className="aspect-square w-full max-w-[128px] rounded-full border-2 border-transparent">
+          <div className="aspect-square w-full max-w-[128px] rounded-lg border-2 border-transparent">
             {activeUser.avatar_file_name && (
               <img
                 src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/avatars/${activeUser.avatar_file_name}`}
@@ -134,7 +134,7 @@ function User() {
               ></div>
             )}
             {!activeUser.avatar_file_name && (
-              <div className="aspect-square max-h-[128px] w-full max-w-[128px] rounded-full bg-neutral-200"></div>
+              <div className="aspect-square w-full max-w-[128px] rounded-full bg-neutral-200"></div>
             )}
           </div>
           <h1>

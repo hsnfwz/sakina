@@ -1,7 +1,7 @@
 import { useContext, useRef, useState } from 'react';
 import { useLocation } from 'react-router';
-import { Link } from 'react-router';
 import { BUTTON_COLOR } from '../common/enums.js';
+import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 import TextInput from './TextInput.jsx';
 import Loading from './Loading.jsx';
 import Loaded from './Loaded.jsx';
@@ -10,7 +10,6 @@ import UserCard from './UserCard.jsx';
 import VideoCard from './VideoCard.jsx';
 import ClipCard from './ClipCard.jsx';
 import DiscussionCard from './DiscussionCard.jsx';
-import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 
 function SearchBar({ placeholder, handleSearch }) {
   const location = useLocation();

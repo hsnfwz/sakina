@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 import { ModalContext } from '../common/context/ModalContextProvider';
-import IconButton from './IconButton';
+import Button from './Button';
 import SVGOutlineX from './svgs/outline/SVGOutlineX';
 import { useLocation, useNavigate } from 'react-router';
 
@@ -61,9 +61,9 @@ function Modal({ children, isDisabled }) {
     >
       <div className="m-auto flex w-full max-w-(--breakpoint-md) flex-col gap-4 rounded-lg bg-white p-4">
         <div className="flex justify-end">
-          <IconButton isDisabled={isDisabled} handleClick={closeModal}>
+          <Button isDisabled={isDisabled} handleClick={closeModal}>
             <SVGOutlineX />
-          </IconButton>
+          </Button>
         </div>
         <div className="mx-auto flex h-full w-full max-w-(--breakpoint-md) flex-col gap-4">
           {children}

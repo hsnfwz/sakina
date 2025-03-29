@@ -30,6 +30,8 @@ function Settings() {
   const [email, setEmail] = useState('');
   const [authMessage, setAuthMessage] = useState('');
 
+  const [isLoadingImage, setIsLoadingImage] = useState(true);
+
   useEffect(() => {
     if (!isLoadingAuthUser && !authUser) {
       navigate('/');
@@ -168,7 +170,7 @@ function Settings() {
         <button
           type="button"
           onClick={() => setShowModal({ type: 'AVATAR_MODAL' })}
-          className="w-full max-w-[128px] self-start rounded-full border-2 border-transparent hover:border-white focus:border-2 focus:border-white focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
+          className="w-full max-w-[128px] self-start rounded-lg border-2 border-transparent hover:border-white focus:border-2 focus:border-white focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
         >
           {authUser.avatar_file_name && (
             <img
@@ -176,8 +178,14 @@ function Settings() {
               alt={authUser.avatar_file_name}
               width={128}
               height={128}
-              className="aspect-square w-full max-w-[128px] rounded-full bg-neutral-200 object-cover"
+              className={`aspect-square w-full max-w-[128px] rounded-full bg-neutral-200 object-cover ${isLoadingImage ? 'hidden' : 'block'}`}
+              onLoad={() => setIsLoadingImage(false)}
             />
+          )}
+          {authUser.avatar_file_name && (
+            <div
+              className={`aspect-square animate-pulse rounded-full bg-neutral-200 ${isLoadingImage ? 'block' : 'hidden'}`}
+            ></div>
           )}
           {!authUser.avatar_file_name && (
             <div className="aspect-square w-full max-w-[128px] rounded-full bg-neutral-200"></div>
