@@ -150,10 +150,33 @@ async function getHiddenVideosByUserId(
   }
 }
 
+async function updateVideoById(id, payload) {
+  try {
+    const { data, error } = await supabase
+      .from('videos')
+      .update(payload)
+      .eq('id', id)
+      .select();
+
+    if (error) throw error;
+
+    return {
+      data,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      data: null,
+    };
+  }
+}
+
 export {
   getVideos,
   getVideosBySearchTerm,
   getVideosByUserId,
   getVideoById,
   getHiddenVideosByUserId,
+  updateVideoById,
 };

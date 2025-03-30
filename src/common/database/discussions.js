@@ -382,12 +382,35 @@ async function getAcceptedPostsByReceiverProfileIds(
   }
 }
 
+async function updateDiscussionById(id, payload) {
+  try {
+    const { data, error } = await supabase
+      .from('discussions')
+      .update(payload)
+      .eq('id', id)
+      .select();
+
+    if (error) throw error;
+
+    return {
+      data,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      data: null,
+    };
+  }
+}
+
 export {
   getDiscussions,
   getDiscussionsBySearchTerm,
   getDiscussionsByUserId,
   getDiscussionById,
   getHiddenDiscussionsByUserId,
+  updateDiscussionById,
   removeStorageObjectsByPostId,
   removePost,
   archivePost,

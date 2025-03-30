@@ -2,27 +2,27 @@ import { useContext, useEffect } from 'react';
 import { ModalContext } from '../common/context/ModalContextProvider';
 import Button from './Button';
 import SVGOutlineX from './svgs/outline/SVGOutlineX';
-import { useLocation, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 
-function Modal({ children, isDisabled }) {
-  const { setShowModal } = useContext(ModalContext);
-
-  const location = useLocation();
+function Modal({ children, isDisabled, show }) {
+  const { setModal } = useContext(ModalContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    disableBodyScroll();
+    if (show) {
+      disableBodyScroll();
 
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        closeModal();
-      }
-    });
-
-    return () => {
-      enableBodyScroll();
-    };
-  }, []);
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeModal();
+        }
+      });
+  
+      return () => {
+        enableBodyScroll();
+      };
+    }
+  }, [show]);
 
   function enableBodyScroll() {
     const body = document.querySelector('body');
@@ -43,20 +43,20 @@ function Modal({ children, isDisabled }) {
   }
 
   function clearShowModal() {
-    setShowModal({ type: null, data: null });
+    setModal({ type: null, data: null });
   }
 
   function closeModal() {
     if (!isDisabled) {
       enableBodyScroll();
       clearShowModal();
-      navigate(location.pathname);
+      navigate(location.pathname, { replace: true });
     }
   }
 
   return (
     <div
-      className="fixed top-0 left-0 z-50 h-screen w-full overflow-y-auto bg-black/75 p-4 backdrop-blur-lg"
+      className={`fixed top-0 left-0 z-50 h-screen w-full overflow-y-auto bg-black/75 p-4 backdrop-blur-lg ${show ? 'block' : 'hidden'}`}
       onClick={handleModalClickOutside}
     >
       <div className="m-auto flex w-full max-w-(--breakpoint-md) flex-col gap-4 rounded-lg bg-white p-4">

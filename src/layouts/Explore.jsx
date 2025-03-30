@@ -16,6 +16,7 @@ import SVGOutlineArrowRight from '../components/svgs/outline/SVGOutlineArrowRigh
 import SVGOutlineRegularArrowRight from '../components/svgs/outline/SVGOutlineRegularArrowRight';
 import Loading from '../components/Loading';
 import Header from '../components/Header';
+import Subheader from '../components/Subheader';
 import { BUTTON_COLOR } from '../common/enums';
 import { DataContext } from '../common/context/DataContextProvider';
 import Anchor from '../components/Anchor';
@@ -90,10 +91,11 @@ function Explore() {
 
   return (
     <div className="flex w-full flex-col gap-4">
+      <Header>Explore</Header>
       {isLoading && <Loading />}
       {!isLoading && (
         <>
-          <Header>Users</Header>
+          <Subheader>Users</Subheader>
           {users.data.length > 0 && (
             <div
               ref={usersRef}
@@ -133,7 +135,7 @@ function Explore() {
             </Button>
           </div>
 
-          <Header>Videos</Header>
+          <Subheader>Videos</Subheader>
           {videos.data.length > 0 && (
             <div
               ref={videosRef}
@@ -173,7 +175,7 @@ function Explore() {
             </Button>
           </div>
 
-          <Header>Clips</Header>
+          <Subheader>Clips</Subheader>
           {clips.data.length > 0 && (
             <div
               ref={clipsRef}
@@ -213,7 +215,7 @@ function Explore() {
             </Button>
           </div>
 
-          <Header>Discussions</Header>
+          <Subheader>Discussions</Subheader>
           {discussions.data.length > 0 && (
             <div
               ref={discussionsRef}

@@ -172,6 +172,7 @@ import { ModalContextProvider } from './common/context/ModalContextProvider.jsx'
 import NavBar from './components/NavBar.jsx';
 import CreateModal from './modals/CreateModal.jsx';
 import SearchModal from './modals/SearchModal.jsx';
+import EditModal from './modals/EditModal.jsx';
 
 function App() {
   const location = useLocation();
@@ -186,6 +187,7 @@ function App() {
                 <NavBar />
                 <CreateModal />
                 <SearchModal />
+                <EditModal />
               </>
             )}
             <Outlet />

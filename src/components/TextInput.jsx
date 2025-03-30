@@ -1,7 +1,28 @@
-function TextInput({ handleInput, placeholder, label, value, isDisabled }) {
+function TextInput({
+  handleInput,
+  placeholder,
+  label,
+  value,
+  isDisabled,
+  limit,
+}) {
   return (
     <div className="flex w-full flex-col gap-2">
-      {label && <label htmlFor={placeholder}>{label}</label>}
+      {label && (
+        <label
+          htmlFor={placeholder}
+          className="flex w-full justify-between gap-2"
+        >
+          <span>{label}</span>
+          {limit && (
+            <span
+              className={`self-end ${value.length > limit.max ? 'text-rose-500' : 'text-black'}`}
+            >
+              {value.length}{limit.max && ` / ${limit.max}`}
+            </span>
+          )}
+        </label>
+      )}
       <input
         id={placeholder}
         type="text"

@@ -150,10 +150,33 @@ async function getHiddenClipsByUserId(
   }
 }
 
+async function updateClipById(id, payload) {
+  try {
+    const { data, error } = await supabase
+      .from('clips')
+      .update(payload)
+      .eq('id', id)
+      .select();
+
+    if (error) throw error;
+
+    return {
+      data,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      data: null,
+    };
+  }
+}
+
 export {
   getClips,
   getClipsBySearchTerm,
   getClipsByUserId,
   getClipById,
   getHiddenClipsByUserId,
+  updateClipById,
 };

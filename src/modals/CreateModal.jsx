@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router';
 import DefaultStore from '@uppy/store-default';
-import { UPLOAD_TYPE } from '../common/enums';
+import { CHARACTER_LIMIT, UPLOAD_TYPE } from '../common/enums';
 import { formatFileName } from '../common/helpers';
 import { useUppyWithSupabase } from '../common/hooks';
 import { supabase } from '../common/supabase';
@@ -21,12 +21,21 @@ function CreateModal() {
 
   const location = useLocation();
   const { authUser } = useContext(AuthContext);
-  const { showModal, setShowModal } = useContext(ModalContext);
+  const { modal, setModal } = useContext(ModalContext);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (modal.type === 'CREATE_MODAL') {
+      setShow(true);
+    } else {
+      setShow(false);
+    }
+  }, [modal]);
 
   const uppyClip = useUppyWithSupabase({
     store: new DefaultStore(),
@@ -225,9 +234,8 @@ function CreateModal() {
     if (error) console.log(error);
   }
 
-  if (showModal.type === 'CREATE_MODAL') {
     return (
-      <Modal isDisabled={isUploading}>
+      <Modal isDisabled={isUploading} show={show}>
         <nav className="flex w-full">
           {authUser && authUser.is_verified && (
             <>
@@ -333,33 +341,26 @@ function CreateModal() {
         )}
 
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <p
-              className={`self-end ${title.length > titleCharacterLimit ? 'text-rose-500' : 'text-black'}`}
-            >
-              {title.length} / {titleCharacterLimit}
-            </p>
-            <TextInput
-              handleInput={(event) => setTitle(event.target.value)}
-              placeholder="Title"
-              value={title}
-              isDisabled={isUploading}
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <p
-              className={`self-end ${description.length > descriptionCharacterLimit ? 'text-rose-500' : 'text-black'}`}
-            >
-              {description.length} / {descriptionCharacterLimit}
-            </p>
-            <Textarea
-              handleInput={(event) => setDescription(event.target.value)}
-              placeholder="Description"
-              value={description}
-              isDisabled={isUploading}
-            />
-          </div>
+          <TextInput
+            handleInput={(event) => setTitle(event.target.value)}
+            placeholder="Title"
+            value={title}
+            isDisabled={isUploading}
+            label="Title"
+            limit={CHARACTER_LIMIT.TITLE}
+          />
+          <Textarea
+            handleInput={(event) => setDescription(event.target.value)}
+            placeholder="Description"
+            value={description}
+            isDisabled={isUploading}
+            label="Description"
+            limit={CHARACTER_LIMIT.DESCRIPTION}
+          />
+          <Toggle
+            handleChange={() => setIsAnonymous(!isAnonymous)}
+            isChecked={isAnonymous}
+          >Anonymous</Toggle>
         </div>
 
         {(location.hash === '' || location.hash === '#video') && (
@@ -370,7 +371,7 @@ function CreateModal() {
                 setDescription('');
                 uppyVideo.cancelAll();
                 uppyVideoThumbnail.cancelAll();
-                setShowModal({
+                setModal({
                   type: null,
                   data: null,
                 });
@@ -418,7 +419,7 @@ function CreateModal() {
                 setTitle('');
                 setDescription('');
 
-                setShowModal({ type: null, data: null });
+                setModal({ type: null, data: null });
               }}
             >
               Submit
@@ -434,7 +435,7 @@ function CreateModal() {
                 setDescription('');
                 uppyClip.cancelAll();
                 uppyClipThumbnail.cancelAll();
-                setShowModal({
+                setModal({
                   type: null,
                   data: null,
                 });
@@ -482,7 +483,7 @@ function CreateModal() {
                 setTitle('');
                 setDescription('');
 
-                setShowModal({ type: null, data: null });
+                setModal({ type: null, data: null });
               }}
             >
               Submit
@@ -491,20 +492,12 @@ function CreateModal() {
         )}
 
         {location.hash === '#discussion' && (
-          <>
-            <div className="flex items-center gap-2">
-              <Toggle
-                handleChange={() => setIsAnonymous(!isAnonymous)}
-                isChecked={isAnonymous}
-              />
-              <p>Anonymous</p>
-            </div>
             <div className="flex gap-2 self-end">
               <Button
                 handleClick={() => {
                   setTitle('');
                   setDescription('');
-                  setShowModal({
+                  setModal({
                     type: null,
                     data: null,
                   });
@@ -528,17 +521,15 @@ function CreateModal() {
                   setDescription('');
                   setIsAnonymous(false);
 
-                  setShowModal({ type: null, data: null });
+                  setModal({ type: null, data: null });
                 }}
               >
                 Submit
               </Button>
             </div>
-          </>
         )}
       </Modal>
     );
-  }
 }
 
 export default CreateModal;

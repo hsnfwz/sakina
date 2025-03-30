@@ -1,6 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
-import { getVideosByUserId } from '../common/database/videos.js';
+import { useOutletContext } from 'react-router';
+import {
+  getVideosByUserId,
+  updateVideoById,
+} from '../common/database/videos.js';
 import { AuthContext } from '../common/context/AuthContextProvider.jsx';
+import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 import Loading from '../components/Loading.jsx';
 import Loaded from '../components/Loaded.jsx';
 import ContentTableGrid from '../components/ContentTableGrid.jsx';
@@ -8,20 +13,13 @@ import ContentTableCard from '../components/ContentTableCard.jsx';
 
 function SettingsVideos() {
   const { authUser } = useContext(AuthContext);
+  const { videos, setVideos } = useOutletContext();
+  const { setModal } = useContext(ModalContext);
   const [isLoading, setIsLoading] = useState(false);
-
-
-  // TODO: pass this from the outlet in settings so we dont keep fetching when switching between subpages
-  const [videos, setVideos] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
 
   useEffect(() => {
     if (authUser) {
       if (!videos.hasInitialized) {
-
         getVideos();
       }
     }
@@ -55,9 +53,24 @@ function SettingsVideos() {
   return (
     <div className="flex w-full flex-col gap-4">
       <ContentTableGrid>
-      {videos.data.map((video, index) => (
-        <ContentTableCard key={index} content={video} />
-      ))}
+        {videos.data.map((video, index) => (
+          <ContentTableCard
+            key={index}
+            content={video}
+            handleEdit={() =>
+              setModal({
+                type: 'EDIT_MODAL',
+                data: {
+                  title: video.title,
+                  description: video.description,
+                  is_anonymous: video.is_anonymous,
+                  handleEdit: async (payload) =>
+                    await updateVideoById(video.id, payload),
+                },
+              })
+            }
+          />
+        ))}
       </ContentTableGrid>
       {!videos.hasMore && <Loaded />}
       {isLoading && <Loading />}

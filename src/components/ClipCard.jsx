@@ -3,12 +3,12 @@ import { Link } from 'react-router';
 import { ModalContext } from '../common/context/ModalContextProvider';
 
 function ClipCard({ clip, elementRef }) {
-  const { setShowModal } = useContext(ModalContext);
+  const { setModal } = useContext(ModalContext);
   const [isLoadingImage, setIsLoadingImage] = useState(true);
 
   return (
     <Link
-      onClick={() => setShowModal({ type: null, data: null })}
+      onClick={() => setModal({ type: null, data: null })}
       to={`/clips/${clip.id}`}
       state={{ clip }}
       className="block w-full rounded-lg"

@@ -1,5 +1,4 @@
 import { useContext, useState } from 'react';
-import { Link } from 'react-router';
 import { useLocation } from 'react-router';
 import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 import { AuthContext } from '../common/context/AuthContextProvider';
@@ -17,14 +16,14 @@ import Anchor from './Anchor.jsx';
 function NavBar() {
   const location = useLocation();
   const { authUser } = useContext(AuthContext);
-  const { setShowModal } = useContext(ModalContext);
+  const { setModal } = useContext(ModalContext);
 
   const [isLoadingImage, setIsLoadingImage] = useState(true);
 
   return (
     <nav className="flex w-full gap-2 rounded-lg">
       <Button
-        handleClick={() => setShowModal({ type: 'SEARCH_MODAL' })}
+        handleClick={() => setModal({ type: 'SEARCH_MODAL' })}
         color={BUTTON_COLOR.SOLID_GREEN}
       >
         <SVGOutlineSearch />
@@ -97,7 +96,7 @@ function NavBar() {
 
       {authUser && (
         <Button
-          handleClick={() => setShowModal({ type: 'CREATE_MODAL' })}
+          handleClick={() => setModal({ type: 'CREATE_MODAL' })}
           color={BUTTON_COLOR.SOLID_GREEN}
         >
           <SVGOutlinePlus />

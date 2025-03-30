@@ -3,11 +3,11 @@ import { Link } from 'react-router';
 import { ModalContext } from '../common/context/ModalContextProvider';
 
 function DiscussionCard({ discussion, elementRef }) {
-  const { setShowModal } = useContext(ModalContext);
+  const { setModal } = useContext(ModalContext);
 
   return (
     <Link
-      onClick={() => setShowModal({ type: null, data: null })}
+      onClick={() => setModal({ type: null, data: null })}
       to={`/discussions/${discussion.id}`}
       state={{ discussion }}
       className="block w-full rounded-lg border-2 border-neutral-200"

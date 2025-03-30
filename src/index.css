@@ -44,14 +44,8 @@ video::-webkit-media-controls {
 .app_toggle-label {
   position: relative;
   display: inline-block;
-  width: 60px;
-  height: 34px;
-}
-/* Hide default HTML checkbox */
-input[type='checkbox'] {
-  opacity: 0;
-  width: 0;
-  height: 0;
+  width: 64px;
+  height: 32px;
 }
 /* The slider */
 .app_toggle-span {
@@ -61,33 +55,41 @@ input[type='checkbox'] {
   left: 0;
   right: 0;
   bottom: 0;
-  /* background-color: #ccc; */
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-  border-radius: 34px;
+  background-color: oklch(0.922 0 0);
+  -webkit-transition: 300ms;
+  transition: 300ms;
+  border-radius: 8px;
 }
 .app_toggle-span:before {
   position: absolute;
   content: '';
-  height: 26px;
-  width: 26px;
+  height: 24px;
+  width: 24px;
   left: 4px;
   bottom: 4px;
   background-color: white;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-  border-radius: 50%;
+  -webkit-transition: 300ms;
+  transition: 300ms;
+  border-radius: 4px;
+}
+/* Hide default HTML checkbox */
+input[type='checkbox'] {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  outline: solid 2px transparent;
 }
 input[type='checkbox']:checked + .app_toggle-span {
   background-color: #2196f3;
+  outline: solid 2px transparent;
 }
 input[type='checkbox']:focus + .app_toggle-span {
-  box-shadow: 0 0 1px #2196f3;
+  outline: solid 2px black;
 }
 input[type='checkbox']:checked + .app_toggle-span:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
+  -webkit-transform: translateX(32px);
+  -ms-transform: translateX(32px);
+  transform: translateX(32px);
 }
 
 /* Custom Slider */

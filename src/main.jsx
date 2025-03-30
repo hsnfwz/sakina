@@ -31,6 +31,7 @@ import SettingsAccount from './layouts/SettingsAccount.jsx';
 import SettingsVideos from './layouts/SettingsVideos.jsx';
 import SettingsClips from './layouts/SettingsClips.jsx';
 import SettingsDiscussions from './layouts/SettingsDiscussions.jsx';
+import SearchModal from './modals/SearchModal.jsx';
 
 const router = createBrowserRouter([
   {
@@ -137,17 +138,18 @@ createRoot(root).render(
 );
 
 /* 
-    - discussions
+  - tab index - make sure we cannot access stuff behind modals
 
+  - refresh data after each edit/delete
+
+    - hide/unhide content
+
+    - creating discussions
     - explore - show newest and most popular this week
-
     - handle links for content and view more on explore page
-
     - modals opening animation
     - transitions between pages
-
     - fetch more when intersecting last element - check for all content pages
-
     - user card design
 
     VIDEO
@@ -160,8 +162,6 @@ createRoot(root).render(
     - restore scroll position 
 
     - @ mentions
-    - hide/unhide content
-    - edit content - ensure all changes to content is updated in the global state
 
     notifications
       - notification card

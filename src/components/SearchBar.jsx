@@ -1,7 +1,6 @@
-import { useContext, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useLocation } from 'react-router';
 import { BUTTON_COLOR } from '../common/enums.js';
-import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 import TextInput from './TextInput.jsx';
 import Loading from './Loading.jsx';
 import Loaded from './Loaded.jsx';
@@ -13,7 +12,6 @@ import DiscussionCard from './DiscussionCard.jsx';
 
 function SearchBar({ placeholder, handleSearch }) {
   const location = useLocation();
-  const { setShowModal } = useContext(ModalContext);
   const timerRef = useRef();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -49,6 +47,7 @@ function SearchBar({ placeholder, handleSearch }) {
         placeholder={placeholder}
         handleInput={handleInput}
         value={searchTerm}
+        label={placeholder}
       />
 
       {isLoadingSearchResults && <Loading />}

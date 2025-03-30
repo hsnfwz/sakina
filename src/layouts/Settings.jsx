@@ -1,18 +1,31 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router';
-import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 import { AuthContext } from '../common/context/AuthContextProvider.jsx';
-import { expectedUsernameFormat } from '../common/helpers.js';
-import { supabase } from '../common/supabase.js';
 import Header from '../components/Header.jsx';
 import Anchor from '../components/Anchor.jsx';
 
 function Settings() {
-  const timerRef = useRef();
-
   const navigate = useNavigate();
   const { authSession } = useContext(AuthContext);
-  const { authUser, isLoadingAuthUser, setAuthUser } = useContext(AuthContext);
+  const { authUser, isLoadingAuthUser } = useContext(AuthContext);
+
+  const [videos, setVideos] = useState({
+    data: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
+  const [clips, setClips] = useState({
+    data: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
+  const [discussions, setDiscussions] = useState({
+    data: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
 
   useEffect(() => {
     if (!isLoadingAuthUser && !authUser) {
@@ -34,32 +47,29 @@ function Settings() {
           >
             Account
           </Anchor>
-          <Anchor
-            active={
-              location.pathname.includes('videos')
-            }
-            to="videos"
-          >
+          <Anchor active={location.pathname.includes('videos')} to="videos">
             Videos
           </Anchor>
-          <Anchor
-            active={
-              location.pathname.includes('clips')
-            }
-            to="clips"
-          >
+          <Anchor active={location.pathname.includes('clips')} to="clips">
             Clips
           </Anchor>
           <Anchor
-            active={
-              location.pathname.includes('discussions')
-            }
+            active={location.pathname.includes('discussions')}
             to="discussions"
           >
             Discussions
           </Anchor>
         </nav>
-        <Outlet />
+        <Outlet
+          context={{
+            videos,
+            setVideos,
+            clips,
+            setClips,
+            discussions,
+            setDiscussions,
+          }}
+        />
       </div>
     );
   }

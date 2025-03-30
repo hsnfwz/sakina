@@ -7,14 +7,10 @@ import {
 import { supabase } from '../common/supabase.js';
 import TextInput from '../components/TextInput.jsx';
 import Button from '../components/Button.jsx';
-import { BUTTON_COLOR } from '../common/enums.js';
+import { BUTTON_COLOR, CHARACTER_LIMIT } from '../common/enums.js';
 import { AuthContext } from '../common/context/AuthContextProvider.jsx';
 
 function SignUp() {
-  const usernameCharacterMax = 40;
-  const usernameCharacterMin = 2;
-  const passwordCharacterMin = 8;
-
   const { authUser, isLoadingAuthUser } = useContext(AuthContext);
   const navigate = useNavigate('/');
 
@@ -145,19 +141,13 @@ function SignUp() {
       {authMessage !== 'CONFIRM_EMAIL' && (
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
               <TextInput
-                label="*Username"
+                label="Username"
                 handleInput={checkUsername}
                 placeholder="Username"
                 value={username}
+                limit={CHARACTER_LIMIT.USERNAME}
               />
-              <p
-                className={`self-end ${username.length > usernameCharacterMax ? 'text-rose-500' : 'text-black'}`}
-              >
-                {username.length} / {usernameCharacterMax}
-              </p>
-            </div>
             {authMessage === 'USERNAME_EXISTS' && (
               <p className="text-rose-500">Username already exists.</p>
             )}
@@ -171,7 +161,7 @@ function SignUp() {
 
           <div className="flex flex-col gap-4">
             <TextInput
-              label="*Email"
+              label="Email"
               handleInput={(e) => setEmail(e.target.value)}
               placeholder="Email"
               value={email}
@@ -200,19 +190,13 @@ function SignUp() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
               <TextInput
-                label="*Password"
+                label="Password"
                 handleInput={checkPassword}
                 placeholder="Password"
                 value={password}
+                limit={CHARACTER_LIMIT.PASSWORD}
               />
-              <p
-                className={`self-end ${password.length < passwordCharacterMin ? 'text-rose-500' : 'text-black'}`}
-              >
-                {password.length}
-              </p>
-            </div>
             {authMessage === 'WEAK_PASSWORD' && (
               <p className="text-rose-500">
                 Your password is weak. Please try a different password.
@@ -227,19 +211,13 @@ function SignUp() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
               <TextInput
-                label="*Re-enter Password"
+                label="Re-enter Password"
                 handleInput={checkReenterPassword}
                 placeholder="Re-enter Password"
                 value={reenterPassword}
+                limit={CHARACTER_LIMIT.PASSWORD}
               />
-              <p
-                className={`self-end ${reenterPassword.length < passwordCharacterMin ? 'text-rose-500' : 'text-black'}`}
-              >
-                {reenterPassword.length}
-              </p>
-            </div>
             {authMessage === 'REENTER_PASSWORD_NOT_EQUAL' && (
               <p className="text-rose-500">Must match password.</p>
             )}
@@ -248,13 +226,13 @@ function SignUp() {
           <Button
             isDisabled={
               isLoading ||
-              username.length > usernameCharacterMax ||
-              username.length < usernameCharacterMin ||
+              username.length > CHARACTER_LIMIT.USERNAME.max ||
+              username.length < CHARACTER_LIMIT.USERNAME.min ||
               !expectedUsernameFormat(username) ||
               authMessage === 'USERNAME_EXISTS' ||
               email.length === 0 ||
               !expectedPasswordFormat(password) ||
-              password.length < passwordCharacterMin ||
+              password.length < CHARACTER_LIMIT.PASSWORD.min ||
               reenterPassword !== password
             }
             handleClick={async () => await signUp()}

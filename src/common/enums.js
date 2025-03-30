@@ -105,4 +105,30 @@ const BUTTON_COLOR = Object.freeze({
   },
 });
 
-export { UPLOAD_TYPE, ORDER_BY, BUTTON_COLOR };
+const CHARACTER_LIMIT = Object.freeze({
+  TITLE: {
+    min: 1,
+    max: 100,
+  },
+  DESCRIPTION: {
+    min: 0,
+    max: 2000,
+  },
+  USERNAME: {
+    min: 3,
+    max: 40,
+  },
+  PASSWORD: {
+    min: 8,
+  },
+  NAME: {
+    min: 0,
+    max: 40,
+  },
+  BIO: {
+    min: 0,
+    max: 200,
+  }
+});
+
+export { UPLOAD_TYPE, ORDER_BY, BUTTON_COLOR, CHARACTER_LIMIT };

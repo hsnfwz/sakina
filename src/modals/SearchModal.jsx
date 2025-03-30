@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { ModalContext } from '../common/context/ModalContextProvider';
 import { getUsersBySearchTerm } from '../common/database/users';
@@ -10,13 +10,21 @@ import SearchBar from '../components/SearchBar';
 import Anchor from '../components/Anchor';
 
 function SearchModal() {
-  const { showModal } = useContext(ModalContext);
-
+  const { modal } = useContext(ModalContext);
   const location = useLocation();
 
-  if (showModal.type === 'SEARCH_MODAL') {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (modal.type === 'SEARCH_MODAL') {
+      setShow(true);
+    } else {
+      setShow(false);
+    }
+  }, [modal]);
+
     return (
-      <Modal>
+      <Modal show={show}>
         <nav className="flex w-full">
           <Anchor
             active={location.hash === '' || location.hash === '#videos'}
@@ -68,7 +76,6 @@ function SearchModal() {
         )}
       </Modal>
     );
-  }
 }
 
 export default SearchModal;

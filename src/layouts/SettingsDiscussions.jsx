@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
-import { getDiscussionsByUserId } from '../common/database/discussions.js';
+import { useOutletContext } from 'react-router';
+import { getDiscussionsByUserId, updateDiscussionById } from '../common/database/discussions.js';
 import { AuthContext } from '../common/context/AuthContextProvider.jsx';
+import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 import Loading from '../components/Loading.jsx';
 import Loaded from '../components/Loaded.jsx';
 import ContentTableGrid from '../components/ContentTableGrid.jsx';
@@ -8,20 +10,13 @@ import ContentTableCard from '../components/ContentTableCard.jsx';
 
 function SettingsDiscussions() {
   const { authUser } = useContext(AuthContext);
+  const { discussions, setDiscussions } = useOutletContext();
+  const { setModal } = useContext(ModalContext);
   const [isLoading, setIsLoading] = useState(false);
-
-
-  // TODO: pass this from the outlet in settings so we dont keep fetching when switching between subpages
-  const [discussions, setDiscussions] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
 
   useEffect(() => {
     if (authUser) {
       if (!discussions.hasInitialized) {
-
         getDiscussions();
       }
     }
@@ -55,9 +50,24 @@ function SettingsDiscussions() {
   return (
     <div className="flex w-full flex-col gap-4">
       <ContentTableGrid>
-      {discussions.data.map((discussion, index) => (
-        <ContentTableCard key={index} content={discussion} />
-      ))}
+        {discussions.data.map((discussion, index) => (
+          <ContentTableCard
+            key={index}
+            content={discussion}
+            handleEdit={() =>
+              setModal({
+                type: 'EDIT_MODAL',
+                data: {
+                  title: discussion.title,
+                  description: discussion.description,
+                  is_anonymous: discussion.is_anonymous,
+                  handleEdit: async (payload) =>
+                    await updateDiscussionById(discussion.id, payload),
+                },
+              })
+            }
+          />
+        ))}
       </ContentTableGrid>
       {!discussions.hasMore && <Loaded />}
       {isLoading && <Loading />}

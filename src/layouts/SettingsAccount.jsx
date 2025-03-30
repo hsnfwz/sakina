@@ -4,23 +4,18 @@ import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 import { AuthContext } from '../common/context/AuthContextProvider.jsx';
 import { expectedUsernameFormat } from '../common/helpers.js';
 import { supabase } from '../common/supabase.js';
-import { BUTTON_COLOR } from '../common/enums.js';
+import { BUTTON_COLOR, CHARACTER_LIMIT } from '../common/enums.js';
 import TextInput from '../components/TextInput.jsx';
 import Textarea from '../components/Textarea.jsx';
 import Button from '../components/Button.jsx';
 
 function SettingsAccount() {
-  const displayNameCharacterLimit = 40;
-  const usernameCharacterMax = 40;
-  const usernameCharacterMin = 2;
-  const bioCharacterLimit = 200;
-
   const timerRef = useRef();
 
   const navigate = useNavigate();
   const { authSession, setAuthSession } = useContext(AuthContext);
   const { authUser, isLoadingAuthUser, setAuthUser } = useContext(AuthContext);
-  const { setShowModal } = useContext(ModalContext);
+  const { setModal } = useContext(ModalContext);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -169,7 +164,7 @@ function SettingsAccount() {
       <div className="flex w-full flex-col gap-4">
         <button
           type="button"
-          onClick={() => setShowModal({ type: 'AVATAR_MODAL' })}
+          onClick={() => setModal({ type: 'AVATAR_MODAL' })}
           className="w-full max-w-[128px] self-start rounded-lg border-2 border-transparent hover:border-white focus:border-2 focus:border-white focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
         >
           {authUser.avatar_file_name && (
@@ -193,26 +188,20 @@ function SettingsAccount() {
         </button>
 
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <p
-              className={`self-end ${name.length > displayNameCharacterLimit ? 'text-rose-500' : 'text-black'}`}
-            >
-              {name.length} / {displayNameCharacterLimit}
-            </p>
             <TextInput
               handleInput={(e) => setName(e.target.value)}
               label="Name"
               placeholder="Name"
               value={name}
+              limit={CHARACTER_LIMIT.NAME}
             />
-          </div>
           <div className="self-end">
             <Button
               color={BUTTON_COLOR.BLUE}
               isDisabled={
                 isLoading ||
                 authUser.name === name ||
-                name.length > displayNameCharacterLimit
+                name.length > CHARACTER_LIMIT.NAME.max
               }
               isLoading={isLoading}
               handleClick={async () => await updateUserDisplayName()}
@@ -223,26 +212,20 @@ function SettingsAccount() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <p
-              className={`self-end ${bio.length > bioCharacterLimit ? 'text-rose-500' : 'text-black'}`}
-            >
-              {bio.length} / {bioCharacterLimit}
-            </p>
             <Textarea
               handleInput={(e) => setBio(e.target.value)}
               placeholder="Bio"
               label="Bio"
               value={bio}
+              limit={CHARACTER_LIMIT.BIO}
             />
-          </div>
           <div className="self-end">
             <Button
               color={BUTTON_COLOR.BLUE}
               isDisabled={
                 isLoading ||
                 authUser.bio === bio ||
-                bio.length > bioCharacterLimit
+                bio.length > CHARACTER_LIMIT.BIO.max
               }
               isLoading={isLoading}
               handleClick={async () => await updateUserBio()}
@@ -253,17 +236,13 @@ function SettingsAccount() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <p
-              className={`self-end ${username.length > usernameCharacterMax ? 'text-rose-500' : 'text-black'}`}
-            >
-              {username.length} / {usernameCharacterMax}
-            </p>
+
             <TextInput
               handleInput={checkUsername}
               placeholder="Username"
               label="Username"
               value={username}
+              limit={CHARACTER_LIMIT.USERNAME}
             />
             {authMessage === 'USERNAME_EXISTS' && (
               <p className="text-rose-500">Username already exists.</p>
@@ -277,15 +256,14 @@ function SettingsAccount() {
                 underscores (_), and periods (.) allowed.
               </p>
             )}
-          </div>
           <div className="self-end">
             <Button
               color={BUTTON_COLOR.BLUE}
               isDisabled={
                 isLoading ||
                 authUser.username === username ||
-                username.length > usernameCharacterMax ||
-                username.length < usernameCharacterMin ||
+                username.length > CHARACTER_LIMIT.USERNAME.max ||
+                username.length < CHARACTER_LIMIT.USERNAME.min ||
                 !expectedUsernameFormat(username) ||
                 authMessage === 'USERNAME_EXISTS'
               }

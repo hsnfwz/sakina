@@ -3,12 +3,12 @@ import { Link } from 'react-router';
 import { ModalContext } from '../common/context/ModalContextProvider';
 
 function VideoCard({ video, elementRef }) {
-  const { setShowModal } = useContext(ModalContext);
+  const { setModal } = useContext(ModalContext);
   const [isLoadingImage, setIsLoadingImage] = useState(true);
 
   return (
     <Link
-      onClick={() => setShowModal({ type: null, data: null })}
+      onClick={() => setModal({ type: null, data: null })}
       to={`/videos/${video.id}`}
       state={{ video }}
       className="block w-full rounded-lg"
