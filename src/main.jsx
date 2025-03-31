@@ -31,7 +31,6 @@ import SettingsAccount from './layouts/SettingsAccount.jsx';
 import SettingsVideos from './layouts/SettingsVideos.jsx';
 import SettingsClips from './layouts/SettingsClips.jsx';
 import SettingsDiscussions from './layouts/SettingsDiscussions.jsx';
-import SearchModal from './modals/SearchModal.jsx';
 
 const router = createBrowserRouter([
   {
@@ -138,41 +137,40 @@ createRoot(root).render(
 );
 
 /* 
+    - what is the purpose of having both a forgot password and reset password layout - look into this
+
+    - creating discussions
+    
+    video
+    - add skip 5 seconds forward and back for video using arrow keys
+    - enable/disable looping
+
     - tab index - make sure we cannot access stuff behind modals - focus trap
     - fix file upload button not opening when clicking space bar
     - style file upload button
-        
-    - user card design
-    - what is the purpose of having both a forgot password and reset password layout - look into this
 
+    - user card design
     - refresh data after each edit/delete
     - unhide content
-    - creating discussions
     - explore - show newest and most popular this week
     - handle links for content and "view more" on explore page
     - modals opening animation
     - transitions between pages
     - fetch more when intersecting last element - check for all content pages
 
-    VIDEO
-    - add skip 5 seconds forward and back for video using arrow keys
-    - enable/disable looping
-
     - show preview of post before submission
 
-    - look into making classes with tailwind properties to avoid using hardcoded enum values
-    - restore scroll position 
+    - look into making classes with tailwind properties to avoid using hardcoded enum values in js
+    - restore scroll position
 
     - @ mentions
 
     notifications
       - notification card
-      - notifications for activity by people you follow
+      - notifications for activity by people you follow - enable/disable preference
       - is_read
-      - auto-expire notifications within x time
-      - auto-delete rejected posts within 24 hours
 
-    - views, likes, follows, anonymous discussions
+    - views, likes, follows, anonymous
 
     sign-up/sign-in
     - make inputs green when they are correctly inputted to indicate progress to the user
