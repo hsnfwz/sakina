@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useContext } from 'react';
 import { Link } from 'react-router';
 
 import { getVideos } from '../common/database/videos';
-import { getClips } from '../common/database/clips';
+import { getClips } from '../common/database/videos';
 import { getUsers } from '../common/database/users';
 import { getDiscussions } from '../common/database/discussions';
 import { useElementIntersection } from '../common/hooks';

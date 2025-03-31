@@ -1,7 +1,7 @@
 import { useEffect, useContext, useRef, useState } from 'react';
 import { DataContext } from '../common/context/DataContextProvider';
 import { useElementIntersection } from '../common/hooks';
-import { getClips } from '../common/database/clips';
+import { getClips } from '../common/database/videos';
 import Loaded from '../components/Loaded';
 import Loading from '../components/Loading';
 import ClipCard from '../components/ClipCard';

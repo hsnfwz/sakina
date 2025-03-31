@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router';
-import { getClipsByUserId, updateClipById } from '../common/database/clips.js';
+import { getClipsByUserId, updateClipById } from '../common/database/videos';
 import { AuthContext } from '../common/context/AuthContextProvider.jsx';
 import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 import Loading from '../components/Loading.jsx';
@@ -66,6 +66,16 @@ function SettingsClips() {
                 },
               })
             }
+            handleHide={() => {
+              setModal({
+                type: 'HIDE_MODAL',
+                data: {
+                  title: clip.title,
+                  handleHide: async () =>
+                    await updateClipById(clip.id, { is_hidden: true }),
+                }
+              })
+            }}
           />
         ))}
       </ContentTableGrid>

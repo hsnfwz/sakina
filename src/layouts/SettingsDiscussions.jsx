@@ -66,6 +66,16 @@ function SettingsDiscussions() {
                 },
               })
             }
+            handleHide={() => {
+              setModal({
+                type: 'HIDE_MODAL',
+                data: {
+                  title: discussion.title,
+                  handleHide: async () =>
+                    await updateDiscussionById(discussion.id, { is_hidden: true }),
+                }
+              })
+            }}
           />
         ))}
       </ContentTableGrid>

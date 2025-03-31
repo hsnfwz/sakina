@@ -14,7 +14,7 @@ function ContentTableCard({ content, handleEdit, handleHide }) {
         <Button color={BUTTON_COLOR.SOLID_BLUE} handleClick={handleEdit}>
           <SVGOutlinePencil />
         </Button>
-        <Button color={BUTTON_COLOR.SOLID_RED}>
+        <Button color={BUTTON_COLOR.SOLID_RED} handleClick={handleHide}>
           <SVGOutlineArchive />
         </Button>
       </div>

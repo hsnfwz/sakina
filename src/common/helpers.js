@@ -126,6 +126,38 @@ function getHighlightText(mainText, subText) {
   return highlightText;
 }
 
+function handleFileAdded(file, bucketName) {
+  file.name =
+    formatFileName(file.name) + '_' + Date.now() + '.' + file.extension;
+
+  file.meta = {
+    ...file.meta,
+    bucketName,
+    objectName: file.name,
+    contentType: file.type,
+  };
+
+  if (
+    file.type === 'image/jpeg' ||
+    file.type === 'image/png' ||
+    file.type === 'image/gif'
+  ) {
+    const image = document.createElement('img');
+    image.addEventListener('load', (event) => {});
+    image.src = URL.createObjectURL(file.data);
+  } else if (
+    file.meta.type === 'video/mp4' ||
+    file.meta.type === 'video/mov' ||
+    file.meta.type === 'video/avi'
+  ) {
+    const video = document.createElement('video');
+    video.addEventListener('loadedmetadata', (event) => {
+      file.meta.duration = video.duration;
+    });
+    video.src = URL.createObjectURL(file.data);
+  }
+}
+
 export {
   expectedUsernameFormat,
   expectedPasswordFormat,
@@ -137,4 +169,5 @@ export {
   formatDuration,
   formatCount,
   getHighlightText,
+  handleFileAdded,
 };

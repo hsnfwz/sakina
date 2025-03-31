@@ -1,21 +1,29 @@
-import { useState, useContext, useRef } from 'react';
-// import { useUppyState } from '@uppy/react';
+import { useState, useContext, useRef, useEffect } from 'react';
 import DefaultStore from '@uppy/store-default';
 import { useUppyWithSupabase } from '../common/hooks';
+import { UPLOAD_TYPE } from '../common/enums';
 import { supabase } from '../common/supabase';
-import { ModalContext } from '../common/contexts';
+import { handleFileAdded } from '../common/helpers';
+import { ModalContext } from '../common/context/ModalContextProvider';
 import { AuthContext } from '../common/context/AuthContextProvider';
 import UploadFileButton from '../components/UploadFileButton';
 import Modal from '../components/Modal';
 import Button from '../components/Button';
-import { UPLOAD_TYPE } from '../common/enums';
 
 function AvatarModal() {
-  const { user, setUser } = useContext(AuthContext);
-  const { setShowModal } = useContext(ModalContext);
+  const { authUser, setAuthUser } = useContext(AuthContext);
+  const { modal, setModal } = useContext(ModalContext);
 
-  const [uploadStarted, setUploadStarted] = useState(false);
-  const [uploadCompleted, setUploadCompleted] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (modal.type === 'AVATAR_MODAL') {
+      setShow(true);
+    } else {
+      setShow(false);
+    }
+  }, [modal]);
 
   const uppyAvatar = useUppyWithSupabase({
     store: new DefaultStore(),
@@ -27,59 +35,64 @@ function AvatarModal() {
     },
   });
 
-  const uppyAvatarFiles = [];
-  // const uppyAvatarFiles = useUppyState(uppyAvatar, (state) =>
-  //   Object.values(state.files)
-  // );
-
   const avatarUploadFileButtonRef = useRef();
+  const [uppyAvatarFile, setUppyAvatarFile] = useState(null);
+  const [uppyAvatarFileUploadProgress, setUppyAvatarFileUploadProgress] =
+    useState(0);
 
-  async function updateUserAvatar(avatarId) {
+  useEffect(() => {
+    uppyAvatar.on('file-added', (file) => {
+      handleFileAdded(file, UPLOAD_TYPE.AVATAR.bucketName);
+      setUppyAvatarFile(file);
+    });
+    uppyAvatar.on('upload-complete', () => {
+      avatarUploadFileButtonRef.current.value = null;
+    });
+    uppyAvatar.on('upload-progress', (file, progress) =>
+      setUppyAvatarFileUploadProgress(file.progress.percentage)
+    );
+  }, [uppyAvatar]);
+
+  async function updateAvatar(file) {
     const { data } = await supabase
       .from('users')
-      .update({
-        avatar_id: avatarId,
-      })
-      .eq('id', user.id)
-      .select('*, avatar:avatar_id(*)');
-
-    setUser(data[0]);
-  }
-
-  async function addAvatar(file) {
-    const { data } = await supabase
-      .from('avatars')
-      .insert({
-        user_id: user.id,
-        name: file.meta.objectName,
-        width: file.meta.width,
-        height: file.meta.height,
-      })
+      .update({ avatar_file_name: file.meta.objectName, })
+      .eq('id', authUser.id)
       .select('*');
 
-    return data[0];
+    setAuthUser(data[0]);
   }
 
   return (
-    <Modal>
+    <Modal show={show} isDisabled={isUploading}>
       <div className="flex flex-col gap-4">
         <UploadFileButton
           id="uppyAvatar"
           uppy={uppyAvatar}
-          text={`Select Avatar (${uppyAvatarFiles.length}/1)`}
-          isDisabled={uploadStarted || uppyAvatarFiles.length === 1}
+          text={`Select Avatar`}
+          isDisabled={isUploading}
           allowedMimeTypes={UPLOAD_TYPE.AVATAR.mimeTypes.toString()}
           allowedFileSize={UPLOAD_TYPE.AVATAR.sizeLimit}
           bucketName={UPLOAD_TYPE.AVATAR.bucketName}
           uploadFileButtonRef={avatarUploadFileButtonRef}
         />
+                    {uppyAvatarFile && (
+              <div className="flex w-full justify-between gap-2 rounded-lg border-2 border-dotted p-2">
+                <p className="w-full">{uppyAvatarFile.data.name}</p>
+                {uppyAvatarFileUploadProgress > 0 && (
+                  <p className="font-bold">
+                    {uppyAvatarFileUploadProgress}%
+                  </p>
+                )}
+              </div>
+            )}
       </div>
       <div className="flex gap-2 self-end">
         <Button
-          isDisabled={uploadStarted}
+          isDisabled={isUploading}
           handleClick={() => {
             uppyAvatar.cancelAll();
-            setShowModal({
+            setModal({
               type: null,
               data: null,
             });
@@ -88,17 +101,18 @@ function AvatarModal() {
           Close
         </Button>
         <Button
-          isDisabled={
-            uploadStarted || uploadCompleted || uppyAvatarFiles.length === 0
-          }
+          isDisabled={!uppyAvatarFile || isUploading}
           handleClick={async () => {
+            setIsUploading(true);
             const result = await uppyAvatar.upload();
             if (result && result.failed.length === 0) {
-              const files = result.successful;
-              const avatar = await addAvatar(files[0]);
-              await updateUserAvatar(avatar.id);
+              const file = result.successful[0];
+              await updateAvatar(file);
             }
-            setShowModal({
+            setIsUploading(false);
+            setUppyAvatarFile(null);
+            setUppyAvatarFileUploadProgress(0);
+            setModal({
               type: null,
               data: null,
             });

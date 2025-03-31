@@ -1,16 +1,4 @@
 const UPLOAD_TYPE = Object.freeze({
-  CLIP: {
-    type: 'CLIP',
-    bucketName: 'clips',
-    mimeTypes: ['video/mp4', 'video/mov', 'video/avi'],
-    sizeLimit: 50000000, // 50 MB
-  },
-  CLIP_THUMBNAIL: {
-    type: 'CLIP_THUMBNAIL',
-    bucketName: 'clip-thumbnails',
-    mimeTypes: ['image/jpeg', 'image/png', 'image/gif'],
-    sizeLimit: 50000000, // 50 MB
-  },
   VIDEO: {
     type: 'VIDEO',
     bucketName: 'videos',

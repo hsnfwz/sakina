@@ -162,10 +162,8 @@ function SettingsAccount() {
   if (!isLoadingAuthUser && authSession && authUser) {
     return (
       <div className="flex w-full flex-col gap-4">
-        <button
-          type="button"
-          onClick={() => setModal({ type: 'AVATAR_MODAL' })}
-          className="w-full max-w-[128px] self-start rounded-lg border-2 border-transparent hover:border-white focus:border-2 focus:border-white focus:ring-0 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
+        <Button
+          handleClick={() => setModal({ type: 'AVATAR_MODAL' })}
         >
           {authUser.avatar_file_name && (
             <img
@@ -185,7 +183,7 @@ function SettingsAccount() {
           {!authUser.avatar_file_name && (
             <div className="aspect-square w-full max-w-[128px] rounded-full bg-neutral-200"></div>
           )}
-        </button>
+        </Button>
 
         <div className="flex flex-col gap-4">
             <TextInput

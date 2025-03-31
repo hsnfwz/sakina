@@ -1,8 +1,8 @@
 import { useState, useContext, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router';
+import { useLocation } from 'react-router';
 import DefaultStore from '@uppy/store-default';
-import { CHARACTER_LIMIT, UPLOAD_TYPE } from '../common/enums';
-import { formatFileName } from '../common/helpers';
+import { BUTTON_COLOR, CHARACTER_LIMIT, UPLOAD_TYPE } from '../common/enums';
+import { handleFileAdded } from '../common/helpers';
 import { useUppyWithSupabase } from '../common/hooks';
 import { supabase } from '../common/supabase';
 import { ModalContext } from '../common/context/ModalContextProvider';
@@ -14,6 +14,7 @@ import TextInput from '../components/TextInput';
 import Textarea from '../components/Textarea';
 import Button from '../components/Button';
 import Anchor from '../components/Anchor';
+import Radio from '../components/Radio';
 
 function CreateModal() {
   const titleCharacterLimit = 100;
@@ -25,6 +26,7 @@ function CreateModal() {
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [orientation, setOrientation] = useState('HORIZONTAL');
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [show, setShow] = useState(false);
@@ -36,26 +38,6 @@ function CreateModal() {
       setShow(false);
     }
   }, [modal]);
-
-  const uppyClip = useUppyWithSupabase({
-    store: new DefaultStore(),
-    restrictions: {
-      minNumberOfFiles: 1,
-      maxNumberOfFiles: 1,
-      maxFileSize: UPLOAD_TYPE.CLIP.sizeLimit,
-      allowedFileTypes: UPLOAD_TYPE.CLIP.mimeTypes,
-    },
-  });
-
-  const uppyClipThumbnail = useUppyWithSupabase({
-    store: new DefaultStore(),
-    restrictions: {
-      minNumberOfFiles: 0,
-      maxNumberOfFiles: 1,
-      maxFileSize: UPLOAD_TYPE.CLIP_THUMBNAIL.sizeLimit,
-      allowedFileTypes: UPLOAD_TYPE.CLIP_THUMBNAIL.mimeTypes,
-    },
-  });
 
   const uppyVideo = useUppyWithSupabase({
     store: new DefaultStore(),
@@ -79,13 +61,9 @@ function CreateModal() {
 
   const [uppyVideoFile, setUppyVideoFile] = useState(null);
   const [uppyVideoThumbnailFile, setUppyVideoThumbnailFile] = useState(null);
-  const [uppyClipFile, setUppyClipFile] = useState(null);
-  const [uppyClipThumbnailFile, setUppyClipThumbnailFile] = useState(null);
 
   const videoUploadFileButtonRef = useRef();
   const videoThumbnailUploadFileButtonRef = useRef();
-  const clipUploadFileButtonRef = useRef();
-  const clipThumbnailUploadFileButtonRef = useRef();
 
   const [uppyVideoFileUploadProgress, setUppyVideoFileUploadProgress] =
     useState(0);
@@ -93,44 +71,6 @@ function CreateModal() {
     uppyVideoThumbnailFileUploadProgress,
     setUppyVideoThumbnailFileUploadProgress,
   ] = useState(0);
-  const [uppyClipFileUploadProgress, setUppyClipFileUploadProgress] =
-    useState(0);
-  const [
-    uppyClipThumbnailFileUploadProgress,
-    setUppyClipThumbnailFileUploadProgress,
-  ] = useState(0);
-
-  function handleFileAdded(file, bucketName) {
-    file.name =
-      formatFileName(file.name) + '_' + Date.now() + '.' + file.extension;
-
-    file.meta = {
-      ...file.meta,
-      bucketName,
-      objectName: file.name,
-      contentType: file.type,
-    };
-
-    if (
-      file.type === 'image/jpeg' ||
-      file.type === 'image/png' ||
-      file.type === 'image/gif'
-    ) {
-      const image = document.createElement('img');
-      image.addEventListener('load', (event) => {});
-      image.src = URL.createObjectURL(file.data);
-    } else if (
-      file.meta.type === 'video/mp4' ||
-      file.meta.type === 'video/mov' ||
-      file.meta.type === 'video/avi'
-    ) {
-      const video = document.createElement('video');
-      video.addEventListener('loadedmetadata', (event) => {
-        file.meta.duration = video.duration;
-      });
-      video.src = URL.createObjectURL(file.data);
-    }
-  }
 
   useEffect(() => {
     uppyVideo.on('file-added', (file) => {
@@ -158,50 +98,6 @@ function CreateModal() {
     );
   }, [uppyVideoThumbnail]);
 
-  useEffect(() => {
-    uppyClip.on('file-added', (file) => {
-      handleFileAdded(file, UPLOAD_TYPE.CLIP.bucketName);
-      setUppyClipFile(file);
-    });
-    uppyClip.on('upload-complete', () => {
-      clipUploadFileButtonRef.current.value = null;
-    });
-    uppyClip.on('upload-progress', (file, progress) =>
-      setUppyClipFileUploadProgress(file.progress.percentage)
-    );
-  }, [uppyClip]);
-
-  useEffect(() => {
-    uppyClipThumbnail.on('file-added', (file) => {
-      handleFileAdded(file, UPLOAD_TYPE.CLIP_THUMBNAIL.bucketName);
-      setUppyClipThumbnailFile(file);
-    });
-    uppyClipThumbnail.on('upload-complete', () => {
-      clipThumbnailUploadFileButtonRef.current.value = null;
-    });
-    uppyClipThumbnail.on('upload-progress', (file, progress) =>
-      setUppyClipThumbnailFileUploadProgress(file.progress.percentage)
-    );
-  }, [uppyClipThumbnail]);
-
-  async function addClip(clipFile, clipThumbnailFile) {
-    const { data, error } = await supabase
-      .from('clips')
-      .insert({
-        user_id: authUser.id,
-        title,
-        description,
-        file_name: clipFile.meta.objectName,
-        duration: clipFile.meta.duration,
-        thumbnail_file_name: clipThumbnailFile
-          ? clipThumbnailFile.meta.objectName
-          : null,
-      })
-      .select('id');
-
-    return data[0];
-  }
-
   async function addVideo(videoFile, videoThumbnailFile) {
     const { data, error } = await supabase
       .from('videos')
@@ -209,6 +105,7 @@ function CreateModal() {
         user_id: authUser.id,
         title,
         description,
+        orientation,
         file_name: videoFile.meta.objectName,
         duration: videoFile.meta.duration,
         thumbnail_file_name: videoThumbnailFile
@@ -238,42 +135,38 @@ function CreateModal() {
       <Modal isDisabled={isUploading} show={show}>
         <nav className="flex w-full">
           {authUser && authUser.is_verified && (
-            <>
               <Anchor
                 active={location.hash === '' || location.hash === '#video'}
                 to="#video"
               >
                 Video
               </Anchor>
-              <Anchor active={location.hash === '#clip'} to="#clip">
-                Clip
-              </Anchor>
-            </>
           )}
           <Anchor active={location.hash === '#discussion'} to="#discussion">
             Discussion
           </Anchor>
         </nav>
         {(location.hash === '' || location.hash === '#video') && (
-          <>
-            <UploadFileButton
-              id="uppyVideo"
-              uppy={uppyVideo}
-              text={`Select Video`}
-              allowedMimeTypes={UPLOAD_TYPE.VIDEO.mimeTypes.toString()}
-              allowedFileSize={UPLOAD_TYPE.VIDEO.sizeLimit}
-              bucketName={UPLOAD_TYPE.VIDEO.bucketName}
-              uploadFileButtonRef={videoUploadFileButtonRef}
-              isDisabled={isUploading}
-            />
-            {uppyVideoFile && (
-              <div className="flex w-full justify-between gap-2 rounded-lg border-2 border-dotted p-2">
-                <p className="w-full">{uppyVideoFile.data.name}</p>
-                {uppyVideoFileUploadProgress > 0 && (
-                  <p className="font-bold">{uppyVideoFileUploadProgress}%</p>
-                )}
-              </div>
-            )}
+          <>            
+              <UploadFileButton
+                id="uppyVideo"
+                uppy={uppyVideo}
+                text={`Select Video`}
+                allowedMimeTypes={UPLOAD_TYPE.VIDEO.mimeTypes.toString()}
+                allowedFileSize={UPLOAD_TYPE.VIDEO.sizeLimit}
+                bucketName={UPLOAD_TYPE.VIDEO.bucketName}
+                uploadFileButtonRef={videoUploadFileButtonRef}
+                isDisabled={isUploading}
+                label="Video"
+              />
+              {uppyVideoFile && (
+                <div className="flex w-full justify-between gap-2 rounded-lg border-2 border-dotted p-2">
+                  <p className="w-full">{uppyVideoFile.data.name}</p>
+                  {uppyVideoFileUploadProgress > 0 && (
+                    <p className="font-bold">{uppyVideoFileUploadProgress}%</p>
+                  )}
+                </div>
+              )}
             <UploadFileButton
               id="uppyVideoThumbnail"
               uppy={uppyVideoThumbnail}
@@ -283,6 +176,8 @@ function CreateModal() {
               bucketName={UPLOAD_TYPE.VIDEO_THUMBNAIL.bucketName}
               uploadFileButtonRef={videoThumbnailUploadFileButtonRef}
               isDisabled={isUploading}
+              label="Thumbnail"
+
             />
             {uppyVideoThumbnailFile && (
               <div className="flex w-full justify-between gap-2 rounded-lg border-2 border-dotted p-2">
@@ -294,49 +189,13 @@ function CreateModal() {
                 )}
               </div>
             )}
-          </>
-        )}
-
-        {location.hash === '#clip' && (
-          <>
-            <UploadFileButton
-              id="uppyClip"
-              uppy={uppyClip}
-              text={`Select Clip`}
-              allowedMimeTypes={UPLOAD_TYPE.CLIP.mimeTypes.toString()}
-              allowedFileSize={UPLOAD_TYPE.CLIP.sizeLimit}
-              bucketName={UPLOAD_TYPE.CLIP.bucketName}
-              uploadFileButtonRef={clipUploadFileButtonRef}
-              isDisabled={isUploading}
-            />
-            {uppyClipFile && (
-              <div className="flex w-full justify-between gap-2 rounded-lg border-2 border-dotted p-2">
-                <p className="w-full">{uppyClipFile.data.name}</p>
-                {uppyClipFileUploadProgress > 0 && (
-                  <p className="font-bold">{uppyClipFileUploadProgress}%</p>
-                )}
-              </div>
-            )}
-            <UploadFileButton
-              id="uppyClipThumbnail"
-              uppy={uppyClipThumbnail}
-              text={`Select Thumbnail`}
-              allowedMimeTypes={UPLOAD_TYPE.CLIP_THUMBNAIL.mimeTypes.toString()}
-              allowedFileSize={UPLOAD_TYPE.CLIP_THUMBNAIL.sizeLimit}
-              bucketName={UPLOAD_TYPE.CLIP_THUMBNAIL.bucketName}
-              uploadFileButtonRef={clipThumbnailUploadFileButtonRef}
-              isDisabled={isUploading}
-            />
-            {uppyClipThumbnailFile && (
-              <div className="flex w-full justify-between gap-2 rounded-lg border-2 border-dotted p-2">
-                <p className="w-full">{uppyClipThumbnailFile.data.name}</p>
-                {uppyClipThumbnailFileUploadProgress > 0 && (
-                  <p className="font-bold">
-                    {uppyClipThumbnailFileUploadProgress}%
-                  </p>
-                )}
-              </div>
-            )}
+            <Radio value={orientation} fields={[['Horizontal', 'HORIZONTAL'], ['Vertical', 'VERTICAL']]} handleChange={() => {
+              if (orientation === 'VERTICAL') {
+                setOrientation('HORIZONTAL');
+              } else {
+                setOrientation('VERTICAL');
+              }
+            }} />
           </>
         )}
 
@@ -416,70 +275,6 @@ function CreateModal() {
                 setUppyVideoThumbnailFile(null);
                 setUppyVideoFileUploadProgress(0);
                 setUppyVideoThumbnailFileUploadProgress(0);
-                setTitle('');
-                setDescription('');
-
-                setModal({ type: null, data: null });
-              }}
-            >
-              Submit
-            </Button>
-          </div>
-        )}
-
-        {location.hash === '#clip' && (
-          <div className="flex gap-2 self-end">
-            <Button
-              handleClick={() => {
-                setTitle('');
-                setDescription('');
-                uppyClip.cancelAll();
-                uppyClipThumbnail.cancelAll();
-                setModal({
-                  type: null,
-                  data: null,
-                });
-              }}
-              isDisabled={isUploading}
-            >
-              Close
-            </Button>
-            <Button
-              isDisabled={
-                title.length === 0 ||
-                title.length > titleCharacterLimit ||
-                description.length > descriptionCharacterLimit ||
-                !uppyClipFile ||
-                !uppyClipThumbnailFile ||
-                isUploading
-              }
-              handleClick={async () => {
-                setIsUploading(true);
-
-                const [clipUploadResult, clipThumbnailUploadResult] =
-                  await Promise.all([
-                    uppyClip.upload(),
-                    uppyClipThumbnail.upload(),
-                  ]);
-
-                if (
-                  clipUploadResult &&
-                  clipUploadResult.failed.length === 0 &&
-                  clipThumbnailUploadResult &&
-                  clipThumbnailUploadResult.failed.length === 0
-                ) {
-                  const clipFile = clipUploadResult.successful[0];
-                  const clipThumbnailFile =
-                    clipThumbnailUploadResult.successful[0];
-
-                  await addClip(clipFile, clipThumbnailFile);
-                }
-
-                setIsUploading(false);
-                setUppyClipFile(null);
-                setUppyClipThumbnailFile(null);
-                setUppyClipFileUploadProgress(0);
-                setUppyClipThumbnailFileUploadProgress(0);
                 setTitle('');
                 setDescription('');
 

@@ -20,7 +20,6 @@
 
 :root {
   --color-white-transparent: rgba(255, 255, 255, 0.5);
-  --color-neutral-200: oklch(0.922 0 0);
 }
 
 body {
@@ -58,7 +57,7 @@ video::-webkit-media-controls {
   background-color: oklch(0.922 0 0);
   -webkit-transition: 300ms;
   transition: 300ms;
-  border-radius: 8px;
+  border-radius: 16px;
 }
 .app_toggle-span:before {
   position: absolute;
@@ -70,7 +69,7 @@ video::-webkit-media-controls {
   background-color: white;
   -webkit-transition: 300ms;
   transition: 300ms;
-  border-radius: 4px;
+  border-radius: 16px;
 }
 /* Hide default HTML checkbox */
 input[type='checkbox'] {
@@ -150,6 +149,82 @@ input[type='range']:focus::-moz-range-thumb {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+/* Custom Radio */
+/* Customize the label (the container) */
+.app_radio-container {
+  display: block;
+  position: relative;
+  padding-left: 40px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.app_radio-container input[type='radio'] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+  outline: solid 2px transparent;
+}
+
+/* Create a custom radio button */
+.app_radio-checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 24px;
+  width: 24px;
+  background-color: var(--color-neutral-200);
+  border-radius: 100%;
+  -webkit-transition: 300ms;
+  transition: 300ms;
+  outline: solid 2px transparent;
+}
+
+/* On mouse-over, add a grey background color */
+.app_radio-container:hover input[type='radio'] ~ .app_radio-checkmark {
+  background-color: var(--color-neutral-200);
+}
+
+/* When the radio button is checked, add a blue background */
+.app_radio-container input[type='radio']:checked ~ .app_radio-checkmark {
+  background-color: var(--color-sky-500);
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.app_radio-checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.app_radio-container input[type='radio']:checked ~ .app_radio-checkmark:after {
+  display: block;
+}
+
+.app_radio-container input[type='radio']:focus + .app_radio-checkmark {
+  outline: solid 2px black;
+}
+
+/* Style the indicator (dot/circle) */
+.app_radio-container .app_radio-checkmark:after {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+  background: white;
+}
+
+
 
 .app_animate-fill-slot {
   animation: animate-fill-slot 5s linear;

@@ -3,7 +3,7 @@ import { useLocation } from 'react-router';
 import { ModalContext } from '../common/context/ModalContextProvider';
 import { getUsersBySearchTerm } from '../common/database/users';
 import { getVideosBySearchTerm } from '../common/database/videos';
-import { getClipsBySearchTerm } from '../common/database/clips';
+import { getClipsBySearchTerm } from '../common/database/videos';
 import { getDiscussionsBySearchTerm } from '../common/database/discussions';
 import Modal from '../components/Modal';
 import SearchBar from '../components/SearchBar';
@@ -26,8 +26,11 @@ function SearchModal() {
     return (
       <Modal show={show}>
         <nav className="flex w-full">
+          <Anchor active={location.hash === '' || location.hash === '#users'} to="#users">
+            Users
+          </Anchor>
           <Anchor
-            active={location.hash === '' || location.hash === '#videos'}
+            active={location.hash === '#videos'}
             to="#videos"
           >
             Videos
@@ -37,9 +40,6 @@ function SearchModal() {
           </Anchor>
           <Anchor active={location.hash === '#discussions'} to="#discussions">
             Discussions
-          </Anchor>
-          <Anchor active={location.hash === '#users'} to="#users">
-            Users
           </Anchor>
         </nav>
         {(location.hash === '' || location.hash === '#users') && (

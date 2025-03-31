@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router';
-import { getClipsByUserId } from '../common/database/clips.js';
+import { getClipsByUserId } from '../common/database/videos';
 import { DataContext } from '../common/context/DataContextProvider.jsx';
 import Loading from '../components/Loading.jsx';
 import Loaded from '../components/Loaded.jsx';

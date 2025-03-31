@@ -173,6 +173,8 @@ import NavBar from './components/NavBar.jsx';
 import CreateModal from './modals/CreateModal.jsx';
 import SearchModal from './modals/SearchModal.jsx';
 import EditModal from './modals/EditModal.jsx';
+import AvatarModal from './modals/AvatarModal.jsx';
+import HideModal from './modals/HideModal.jsx';
 
 function App() {
   const location = useLocation();
@@ -185,9 +187,11 @@ function App() {
             {location.pathname !== '/' && (
               <>
                 <NavBar />
+                <AvatarModal />
                 <CreateModal />
                 <SearchModal />
                 <EditModal />
+                <HideModal />
               </>
             )}
             <Outlet />

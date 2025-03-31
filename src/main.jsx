@@ -80,7 +80,7 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: '/clips',
+        path: '/videos',
         children: [
           { index: true, Component: Clips },
           { path: ':id', Component: Clip },
@@ -138,19 +138,21 @@ createRoot(root).render(
 );
 
 /* 
-  - tab index - make sure we cannot access stuff behind modals
+    - tab index - make sure we cannot access stuff behind modals - focus trap
+    - fix file upload button not opening when clicking space bar
+    - style file upload button
+        
+    - user card design
+    - what is the purpose of having both a forgot password and reset password layout - look into this
 
-  - refresh data after each edit/delete
-
-    - hide/unhide content
-
+    - refresh data after each edit/delete
+    - unhide content
     - creating discussions
     - explore - show newest and most popular this week
-    - handle links for content and view more on explore page
+    - handle links for content and "view more" on explore page
     - modals opening animation
     - transitions between pages
     - fetch more when intersecting last element - check for all content pages
-    - user card design
 
     VIDEO
     - add skip 5 seconds forward and back for video using arrow keys
@@ -177,6 +179,8 @@ createRoot(root).render(
     - make inputs red when they are incorrectly inputted to indicate error to the user
 
     FUTURE:
+    - allow a single parent user account to manage multiple child user accounts (under the same email address)
+    - allow an account to have collaborators with permissions
     - livestreaming
     - counts for all types of content
     - allow user to select a video frame to set as their thumbnail
@@ -192,11 +196,10 @@ createRoot(root).render(
     - messaging and sharing
     - email change page flow
     - delete account - mark user as 'inactive' and keep all content, simply hide the user info from posts
-    - verified users, banned users
+    - banned users
     - captcha protection when signing up/logging in
     - RLS configuration for all tables
     - stripe subscriptions configuration - https://stripe.com/en-ca/payments
     - SMTP server configuration - https://supabase.com/docs/guides/auth/auth-smtp
     - auth email templates configuration - https://supabase.com/docs/guides/auth/auth-email-templates
-    - rate limit supabase requests for data and storage to avoid potential spam - ex: when a user constantly refreshes the page
   */

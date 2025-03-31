@@ -69,6 +69,16 @@ function SettingsVideos() {
                 },
               })
             }
+            handleHide={() => {
+              setModal({
+                type: 'HIDE_MODAL',
+                data: {
+                  title: video.title,
+                  handleHide: async () =>
+                    await updateVideoById(video.id, { is_hidden: true }),
+                }
+              })
+            }}
           />
         ))}
       </ContentTableGrid>
