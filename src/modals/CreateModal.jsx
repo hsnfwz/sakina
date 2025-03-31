@@ -135,29 +135,39 @@ function CreateModal() {
       <Modal isDisabled={isUploading} show={show}>
         <nav className="flex w-full">
           {authUser && authUser.is_verified && (
+            <>
               <Anchor
                 active={location.hash === '' || location.hash === '#video'}
                 to="#video"
+                handleClick={() => setOrientation('HORIZONTAL')}
               >
                 Video
               </Anchor>
+                            <Anchor
+                            active={location.hash === '#clip'}
+                            to="#clip"
+                            handleClick={() => setOrientation('VERTICAL')}
+                          >
+                            Clip
+                          </Anchor>
+                          </>
           )}
           <Anchor active={location.hash === '#discussion'} to="#discussion">
             Discussion
           </Anchor>
         </nav>
-        {(location.hash === '' || location.hash === '#video') && (
+        {location.hash !== '#discussion' && (
           <>            
               <UploadFileButton
                 id="uppyVideo"
                 uppy={uppyVideo}
-                text={`Select Video`}
+                text={`${orientation === 'HORIZONTAL' ? 'Select Video' : 'Select Clip'}`}
                 allowedMimeTypes={UPLOAD_TYPE.VIDEO.mimeTypes.toString()}
                 allowedFileSize={UPLOAD_TYPE.VIDEO.sizeLimit}
                 bucketName={UPLOAD_TYPE.VIDEO.bucketName}
                 uploadFileButtonRef={videoUploadFileButtonRef}
                 isDisabled={isUploading}
-                label="Video"
+                label={`${orientation === 'HORIZONTAL' ? 'Video' : 'Clip'}`}
               />
               {uppyVideoFile && (
                 <div className="flex w-full justify-between gap-2 rounded-lg border-2 border-dotted p-2">
@@ -189,13 +199,13 @@ function CreateModal() {
                 )}
               </div>
             )}
-            <Radio value={orientation} fields={[['Horizontal', 'HORIZONTAL'], ['Vertical', 'VERTICAL']]} handleChange={() => {
+            {/* <Radio value={orientation} fields={[['Horizontal', 'HORIZONTAL'], ['Vertical', 'VERTICAL']]} handleChange={() => {
               if (orientation === 'VERTICAL') {
                 setOrientation('HORIZONTAL');
               } else {
                 setOrientation('VERTICAL');
               }
-            }} />
+            }} /> */}
           </>
         )}
 

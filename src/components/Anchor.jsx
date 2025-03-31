@@ -1,8 +1,9 @@
 import { Link } from 'react-router';
 
-function Anchor({ children, to, state, active, elementRef }) {
+function Anchor({ children, to, state, active, elementRef, handleClick }) {
   return (
     <Link
+      onClick={handleClick}
       ref={elementRef}
       to={to}
       state={state}
