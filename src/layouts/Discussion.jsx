@@ -36,6 +36,7 @@ function Discussion() {
 
   useEffect(() => {
     if (!location.state?.discussion) {
+      resetDiscussion();
       getDiscussion();
     }
 
@@ -137,17 +138,17 @@ function Discussion() {
         )}
         <Subheader>Comments</Subheader>
         {comments.data.length > 0 && (
-          <div className="flex flex-col gap-4 w-full">
+          <div className="flex w-full flex-col gap-4">
             {comments.data.map((comment, index) => (
-              <div className="p-2 bg-neutral-200 rounded-lg">
-              <Comment
-                key={index}
-                comment={comment}
-                elementRef={
-                  index === comments.data.length - 1 ? elementRef : null
-                }
-                showLink={true}
-              />
+              <div className="rounded-lg bg-neutral-200 p-2" key={comment.id}>
+                <Comment
+                  key={index}
+                  comment={comment}
+                  elementRef={
+                    index === comments.data.length - 1 ? elementRef : null
+                  }
+                  showLink={true}
+                />
               </div>
             ))}
           </div>

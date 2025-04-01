@@ -20,9 +20,8 @@ function CreateModal() {
   const titleCharacterLimit = 100;
   const descriptionCharacterLimit = 2000;
 
-  const location = useLocation();
   const { authUser } = useContext(AuthContext);
-  const { modal, setModal } = useContext(ModalContext);
+  const { modal } = useContext(ModalContext);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -30,6 +29,7 @@ function CreateModal() {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [show, setShow] = useState(false);
+  const [view, setView] = useState('VIDEO');
 
   useEffect(() => {
     if (modal.type === 'CREATE_MODAL') {
@@ -131,32 +131,62 @@ function CreateModal() {
     if (error) console.log(error);
   }
 
+  function handleClose() {
+    setView('VIDEO');
+    setOrientation('HORIZONTAL');
+    setTitle('');
+    setDescription('');
+    setIsAnonymous(false);
+    setUppyVideoFile(null);
+    setUppyVideoThumbnailFile(null);
+    setUppyVideoFileUploadProgress(0);
+    setUppyVideoThumbnailFileUploadProgress(0);
+    if (videoUploadFileButtonRef.current) videoUploadFileButtonRef.current.value = null;
+    if (videoThumbnailUploadFileButtonRef.current) videoThumbnailUploadFileButtonRef.current.value = null;
+  }
+
   return (
-    <Modal isDisabled={isUploading} show={show}>
-      <nav className="flex w-full">
+    <Modal isDisabled={isUploading} show={show} handleClose={handleClose}>
+      <div className="flex w-full gap-2">
         {authUser && authUser.is_verified && (
           <>
-            <Anchor
-              active={location.hash === '' || location.hash === '#video'}
-              to="#video"
-              handleClick={() => setOrientation('HORIZONTAL')}
+            <button
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => {
+                setOrientation('HORIZONTAL');
+                setView('VIDEO');
+              }}
+              type="button"
+              className={`${view === 'VIDEO' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 hover:bg-sky-700 focus:z-50 focus:ring-0 focus:outline-2 focus:outline-black`}
             >
               Video
-            </Anchor>
-            <Anchor
-              active={location.hash === '#clip'}
-              to="#clip"
-              handleClick={() => setOrientation('VERTICAL')}
+            </button>
+            <button
+              onMouseDown={(event) => event.preventDefault()}
+              type="button"
+              className={`${view === 'CLIP' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 hover:bg-sky-700 focus:z-50 focus:ring-0 focus:outline-2 focus:outline-black`}
+              onClick={() => {
+                setOrientation('VERTICAL');
+
+                setView('CLIP');
+              }}
             >
               Clip
-            </Anchor>
+            </button>
           </>
         )}
-        <Anchor active={location.hash === '#discussion'} to="#discussion">
+        <button
+          type="button"
+          className={`${view === 'DISCUSSION' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 hover:bg-sky-700 focus:z-50 focus:ring-0 focus:outline-2 focus:outline-black`}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => {
+            setView('DISCUSSION');
+          }}
+        >
           Discussion
-        </Anchor>
-      </nav>
-      {location.hash !== '#discussion' && (
+        </button>
+      </div>
+      {view !== 'DISCUSSION' && (
         <>
           <UploadFileButton
             id="uppyVideo"
@@ -233,23 +263,9 @@ function CreateModal() {
         </Toggle>
       </div>
 
-      {(location.hash === '' || location.hash === '#video') && (
-        <div className="flex gap-2 self-end">
-          <Button
-            handleClick={() => {
-              setTitle('');
-              setDescription('');
-              uppyVideo.cancelAll();
-              uppyVideoThumbnail.cancelAll();
-              setModal({
-                type: null,
-                data: null,
-              });
-            }}
-            isDisabled={isUploading}
-          >
-            Close
-          </Button>
+      <div className="flex gap-2 self-end">
+        <Button handleClick={handleClose}>Close</Button>
+        {view === 'VIDEO' && (
           <Button
             isDisabled={
               title.length === 0 ||
@@ -282,35 +298,14 @@ function CreateModal() {
               }
 
               setIsUploading(false);
-              setUppyVideoFile(null);
-              setUppyVideoThumbnailFile(null);
-              setUppyVideoFileUploadProgress(0);
-              setUppyVideoThumbnailFileUploadProgress(0);
-              setTitle('');
-              setDescription('');
 
-              setModal({ type: null, data: null });
+              handleClose();
             }}
           >
             Submit
           </Button>
-        </div>
-      )}
-
-      {location.hash === '#discussion' && (
-        <div className="flex gap-2 self-end">
-          <Button
-            handleClick={() => {
-              setTitle('');
-              setDescription('');
-              setModal({
-                type: null,
-                data: null,
-              });
-            }}
-          >
-            Close
-          </Button>
+        )}
+        {view === 'DISCUSSION' && (
           <Button
             isDisabled={
               title.length === 0 ||
@@ -319,21 +314,15 @@ function CreateModal() {
             }
             handleClick={async () => {
               setIsUploading(true);
-
               await addDiscussion();
-
               setIsUploading(false);
-              setTitle('');
-              setDescription('');
-              setIsAnonymous(false);
-
-              setModal({ type: null, data: null });
+              handleClose();
             }}
           >
             Submit
           </Button>
-        </div>
-      )}
+        )}
+      </div>
     </Modal>
   );
 }

@@ -2,11 +2,9 @@ import { useContext, useEffect } from 'react';
 import { ModalContext } from '../common/context/ModalContextProvider';
 import Button from './Button';
 import SVGOutlineX from './svgs/outline/SVGOutlineX';
-import { useNavigate } from 'react-router';
 
-function Modal({ children, isDisabled, show }) {
+function Modal({ children, isDisabled, show, handleClose }) {
   const { setModal } = useContext(ModalContext);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (show) {
@@ -42,15 +40,11 @@ function Modal({ children, isDisabled, show }) {
     }
   }
 
-  function clearShowModal() {
-    setModal({ type: null, data: null });
-  }
-
   function closeModal() {
     if (!isDisabled) {
+      handleClose();
+      setModal({ type: null, data: null });
       enableBodyScroll();
-      clearShowModal();
-      navigate(location.pathname, { replace: true });
     }
   }
 

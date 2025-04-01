@@ -55,14 +55,11 @@ function Comment({ comment, elementRef }) {
   }
 
   return (
-    <div
-      className="flex w-full flex-col rounded-lg gap-2"
-      ref={elementRef}
-    >
+    <div className="flex w-full flex-col gap-2 rounded-lg" ref={elementRef}>
       <div className="flex gap-2">
         <DiscussionCard discussion={comment} />
         {authUser && (
-          <div className="flex flex-col gap-2 bg-white p-2 rounded-lg">
+          <div className="flex flex-col gap-2 rounded-lg bg-white p-2">
             <Button
               isDisabled={isLoadingNestedComments}
               color={BUTTON_COLOR.SOLID_GREEN}
@@ -115,9 +112,8 @@ function Comment({ comment, elementRef }) {
       {isExpanded && (
         <div className="flex w-full flex-col gap-2">
           {nestedComments[comment.id].data.map((_nestedComment, index) => (
-            <div className="ml-4">
+            <div className="ml-4" key={_nestedComment.id}>
               <Comment
-                key={index}
                 comment={_nestedComment}
                 getNestedComments={getNestedComments}
               />
