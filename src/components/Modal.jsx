@@ -17,7 +17,7 @@ function Modal({ children, isDisabled, show }) {
           closeModal();
         }
       });
-  
+
       return () => {
         enableBodyScroll();
       };

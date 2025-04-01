@@ -41,10 +41,7 @@ function Videos() {
     }
 
     _videos.hasMore = hasMore;
-
-    if (!videos.hasInitialized) {
-      _videos.hasInitialized = true;
-    }
+    _videos.hasInitialized = true;
 
     setVideos(_videos);
 

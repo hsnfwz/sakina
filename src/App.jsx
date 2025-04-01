@@ -175,6 +175,7 @@ import SearchModal from './modals/SearchModal.jsx';
 import EditModal from './modals/EditModal.jsx';
 import AvatarModal from './modals/AvatarModal.jsx';
 import HideModal from './modals/HideModal.jsx';
+import CommentModal from './modals/CommentModal.jsx';
 
 function App() {
   const location = useLocation();
@@ -192,6 +193,7 @@ function App() {
                 <SearchModal />
                 <EditModal />
                 <HideModal />
+                <CommentModal />
               </>
             )}
             <Outlet />

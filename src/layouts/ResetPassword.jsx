@@ -6,7 +6,7 @@ import { BUTTON_COLOR } from '../common/enums.js';
 import { expectedPasswordFormat } from '../common/helpers.js';
 import Anchor from '../components/Anchor.jsx';
 
-function ResetPasswordLayout() {
+function ResetPassword() {
   const passwordCharacterMin = 8;
 
   const [password, setPassword] = useState('');
@@ -126,7 +126,7 @@ function ResetPasswordLayout() {
               setIsLoading(false);
             }}
           >
-            Reset Password
+            Update Password
           </Button>
         </>
       )}
@@ -156,4 +156,4 @@ function ResetPasswordLayout() {
   );
 }
 
-export default ResetPasswordLayout;
+export default ResetPassword;

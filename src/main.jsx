@@ -23,6 +23,8 @@ import NotFound from './layouts/NotFound.jsx';
 import Settings from './layouts/Settings.jsx';
 import SignUp from './layouts/SignUp.jsx';
 import SignIn from './layouts/SignIn.jsx';
+import ForgotPassword from './layouts/ForgotPassword.jsx';
+import ResetPassword from './layouts/ResetPassword.jsx';
 import UserVideos from './layouts/UserVideos.jsx';
 import UserClips from './layouts/UserClips.jsx';
 import UserDiscussions from './layouts/UserDiscussions.jsx';
@@ -49,6 +51,16 @@ const router = createBrowserRouter([
       {
         path: '/sign-in',
         Component: SignIn,
+        index: true,
+      },
+      {
+        path: '/forgot-password',
+        Component: ForgotPassword,
+        index: true,
+      },
+      {
+        path: '/reset-password',
+        Component: ResetPassword,
         index: true,
       },
       {
@@ -137,67 +149,67 @@ createRoot(root).render(
 );
 
 /* 
-    - what is the purpose of having both a forgot password and reset password layout - look into this
+  - FIX closing comment modal refreshes the page
+  - FIX go back and forth between discussions doesnt save the comments
 
-    - creating discussions
-    
-    video
-    - add skip 5 seconds forward and back for video using arrow keys
-    - enable/disable looping
+  video
+  - add skip 5 seconds forward and back for video using arrow keys
+  - enable/disable looping
+  - autplay queue of videos (ex: playlists)
 
-    - tab index - make sure we cannot access stuff behind modals - focus trap
-    - fix file upload button not opening when clicking space bar
-    - style file upload button
+  - tab index - make sure we cannot access stuff behind modals - focus trap
+  - FIX file upload button not opening when clicking space bar
+  - style file upload button
 
-    - user card design
-    - refresh data after each edit/delete
-    - unhide content
-    - explore - show newest and most popular this week
-    - handle links for content and "view more" on explore page
-    - modals opening animation
-    - transitions between pages
-    - fetch more when intersecting last element - check for all content pages
+  - user card design
+  - refresh data after each edit/delete and make sure link state is refreshed too
+  - unhide content
+  - explore - show newest and most popular this week
+  - handle links for content
+  - modals opening animation
+  - transitions between pages
+  - fetch more when intersecting last element - check for all content pages
 
-    - show preview of post before submission
+  - show preview of post before submission
 
-    - look into making classes with tailwind properties to avoid using hardcoded enum values in js
-    - restore scroll position
+  - look into making classes with tailwind properties to avoid using hardcoded enum values in js
+  - restore scroll position
 
-    - @ mentions
+  - @ mentions
 
-    notifications
-      - notification card
-      - notifications for activity by people you follow - enable/disable preference
-      - is_read
+  notifications
+    - notification card
+    - notifications for activity by people you follow - enable/disable preference
+    - is_read
 
-    - views, likes, follows, anonymous
+  - views, likes, follows, anonymous
 
-    sign-up/sign-in
-    - make inputs green when they are correctly inputted to indicate progress to the user
-    - make inputs red when they are incorrectly inputted to indicate error to the user
+  sign-up/sign-in
+  - make inputs green when they are correctly inputted to indicate progress to the user
+  - make inputs red when they are incorrectly inputted to indicate error to the user
 
-    FUTURE:
-    - allow a single parent user account to manage multiple child user accounts (under the same email address)
-    - allow an account to have collaborators with permissions
-    - livestreaming
-    - counts for all types of content
-    - allow user to select a video frame to set as their thumbnail
-    - allow users to block/mute/remove user discussing unwanted topics on their videos
-    - pinned content
-    - scheduled content
-    - expired content
-    - analytics page
-    - stories (24 hours) + archived stories
-    - playlists
-    - collections (similar to albums and playlists)
-    - rewards and promotion/spotlight system
-    - messaging and sharing
-    - email change page flow
-    - delete account - mark user as 'inactive' and keep all content, simply hide the user info from posts
-    - banned users
-    - captcha protection when signing up/logging in
-    - RLS configuration for all tables
-    - stripe subscriptions configuration - https://stripe.com/en-ca/payments
-    - SMTP server configuration - https://supabase.com/docs/guides/auth/auth-smtp
-    - auth email templates configuration - https://supabase.com/docs/guides/auth/auth-email-templates
-  */
+  FUTURE:
+  - allow a single parent user account to manage multiple child user accounts (under the same email address)
+  - allow an account to have collaborators with permissions
+  - livestreaming
+  - counts for all types of content
+  - allow user to select a video frame to set as their thumbnail
+  - allow users to block/mute/remove user discussing unwanted topics on their videos
+  - pinned content
+  - scheduled content
+  - expired content
+  - analytics page
+  - stories (24 hours) + archived stories
+  - playlists
+  - collections (similar to albums and playlists)
+  - rewards and promotion/spotlight system
+  - messaging and sharing
+  - email change page flow
+  - delete account - mark user as 'inactive' and keep all content, simply hide the user info from posts
+  - banned users
+  - captcha protection when signing up/logging in
+  - RLS configuration for all tables
+  - stripe subscriptions configuration - https://stripe.com/en-ca/payments
+  - SMTP server configuration - https://supabase.com/docs/guides/auth/auth-smtp
+  - auth email templates configuration - https://supabase.com/docs/guides/auth/auth-email-templates
+*/

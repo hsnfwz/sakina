@@ -83,6 +83,14 @@ const BUTTON_COLOR = Object.freeze({
     tailwindBorderColor: 'border-sky-500',
     tailwindHoverBorderColor: 'hover:border-sky-500',
   },
+  OUTLINE_BLUE: {
+    tailwindBackgroundColor: 'bg-white',
+    tailwindHoverBackgroundColor: 'hover:bg-white',
+    tailwindTextColor: 'text-sky-500',
+    tailwindFillColor: 'fill-sky-500',
+    tailwindBorderColor: 'border-sky-500',
+    tailwindHoverBorderColor: 'hover:border-sky-700',
+  },
   SOLID_GREEN: {
     tailwindBackgroundColor: 'bg-emerald-500',
     tailwindHoverBackgroundColor: 'hover:bg-emerald-700',
@@ -116,7 +124,7 @@ const CHARACTER_LIMIT = Object.freeze({
   BIO: {
     min: 0,
     max: 200,
-  }
+  },
 });
 
 export { UPLOAD_TYPE, ORDER_BY, BUTTON_COLOR, CHARACTER_LIMIT };

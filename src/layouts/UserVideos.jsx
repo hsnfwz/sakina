@@ -37,10 +37,7 @@ function UserVideos() {
     }
 
     _userVideos.hasMore = hasMore;
-
-    if (!userVideos.hasInitialized) {
-      _userVideos.hasInitialized = true;
-    }
+    _userVideos.hasInitialized = true;
 
     setUserVideos(_userVideos);
 

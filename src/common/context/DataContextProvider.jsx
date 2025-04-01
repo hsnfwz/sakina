@@ -39,6 +39,14 @@ function DataContextProvider({ children }) {
     hasInitialized: false,
   });
 
+  const [comments, setComments] = useState({
+    data: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
+  const [nestedComments, setNestedComments] = useState({});
+
   const [users, setUsers] = useState({
     data: [],
     hasMore: true,
@@ -70,6 +78,7 @@ function DataContextProvider({ children }) {
   });
 
   const [activeUser, setActiveUser] = useState(null);
+  const [activeDiscussion, setActiveDiscussion] = useState(null);
 
   return (
     <DataContext.Provider
@@ -86,6 +95,10 @@ function DataContextProvider({ children }) {
         setClips,
         discussions,
         setDiscussions,
+        comments,
+        setComments,
+        nestedComments,
+        setNestedComments,
         users,
         setUsers,
         userVideos,
@@ -98,6 +111,8 @@ function DataContextProvider({ children }) {
         setNotifications,
         activeUser,
         setActiveUser,
+        activeDiscussion,
+        setActiveDiscussion,
       }}
     >
       {children}

@@ -1,6 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router';
-import { getDiscussionsByUserId, updateDiscussionById } from '../common/database/discussions.js';
+import {
+  getDiscussionsByUserId,
+  updateDiscussionById,
+} from '../common/database/discussions.js';
 import { AuthContext } from '../common/context/AuthContextProvider.jsx';
 import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 import Loading from '../components/Loading.jsx';
@@ -37,10 +40,7 @@ function SettingsDiscussions() {
     }
 
     _discussions.hasMore = hasMore;
-
-    if (!discussions.hasInitialized) {
-      _discussions.hasInitialized = true;
-    }
+    _discussions.hasInitialized = true;
 
     setDiscussions(_discussions);
 
@@ -72,9 +72,11 @@ function SettingsDiscussions() {
                 data: {
                   title: discussion.title,
                   handleHide: async () =>
-                    await updateDiscussionById(discussion.id, { is_hidden: true }),
-                }
-              })
+                    await updateDiscussionById(discussion.id, {
+                      is_hidden: true,
+                    }),
+                },
+              });
             }}
           />
         ))}

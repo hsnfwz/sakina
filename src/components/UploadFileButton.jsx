@@ -10,7 +10,7 @@ function UploadFileButton({
   allowedMimeTypes,
   allowedFileSize,
   uploadFileButtonRef,
-  label
+  label,
 }) {
   const [fileErrors, setFileErrors] = useState([]);
 
@@ -43,9 +43,7 @@ function UploadFileButton({
 
   return (
     <div className="flex w-full flex-col gap-2">
-      {label && (
-        <label>{label}</label>
-      )}
+      {label && <label>{label}</label>}
       <input
         id={id}
         multiple
@@ -58,7 +56,7 @@ function UploadFileButton({
         ref={uploadFileButtonRef}
       />
       <label
-        className="flex w-full items-center justify-center self-start rounded-lg border-2 border-emerald-500 p-2 text-center text-black peer-disabled:pointer-events-none peer-disabled:cursor-default peer-disabled:opacity-50 hover:cursor-pointer hover:bg-emerald-500 outline-2 outline-transparent focus:ring-0 focus:outline-black"
+        className="flex w-full items-center justify-center self-start rounded-lg border-2 border-emerald-500 p-2 text-center text-black outline-2 outline-transparent peer-disabled:pointer-events-none peer-disabled:cursor-default peer-disabled:opacity-50 hover:cursor-pointer hover:bg-emerald-500 focus:ring-0 focus:outline-black"
         htmlFor={id}
         tabIndex={0}
       >
@@ -74,9 +72,7 @@ function UploadFileButton({
               </p>
             ))}
           </div>
-          <Button handleClick={() => setFileErrors([])}>
-            Clear
-          </Button>
+          <Button handleClick={() => setFileErrors([])}>Clear</Button>
         </div>
       )}
     </div>

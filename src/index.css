@@ -199,7 +199,7 @@ input[type='range']:focus::-moz-range-thumb {
 
 /* Create the indicator (the dot/circle - hidden when not checked) */
 .app_radio-checkmark:after {
-  content: "";
+  content: '';
   position: absolute;
   display: none;
 }
@@ -223,8 +223,6 @@ input[type='range']:focus::-moz-range-thumb {
   border-radius: 100%;
   background: white;
 }
-
-
 
 .app_animate-fill-slot {
   animation: animate-fill-slot 5s linear;

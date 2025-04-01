@@ -10,13 +10,13 @@ function DiscussionCard({ discussion, elementRef }) {
       onClick={() => setModal({ type: null, data: null })}
       to={`/discussions/${discussion.id}`}
       state={{ discussion }}
-      className="block w-full rounded-lg border-2 border-neutral-200"
+      className="block w-full rounded-lg border-2 border-neutral-200 bg-white"
       ref={elementRef}
     >
       <div className="flex w-full flex-col gap-2 rounded-lg p-2">
         <h1>{discussion.title}</h1>
         {discussion.description && (
-          <p className="overflow-hidden text-ellipsis whitespace-nowrap">
+          <p className="overflow-hidden text-ellipsis">
             {discussion.description}
           </p>
         )}

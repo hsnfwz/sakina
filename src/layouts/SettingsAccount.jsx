@@ -162,9 +162,7 @@ function SettingsAccount() {
   if (!isLoadingAuthUser && authSession && authUser) {
     return (
       <div className="flex w-full flex-col gap-4">
-        <Button
-          handleClick={() => setModal({ type: 'AVATAR_MODAL' })}
-        >
+        <Button handleClick={() => setModal({ type: 'AVATAR_MODAL' })}>
           {authUser.avatar_file_name && (
             <img
               src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/avatars/${authUser.avatar_file_name}`}
@@ -186,13 +184,13 @@ function SettingsAccount() {
         </Button>
 
         <div className="flex flex-col gap-4">
-            <TextInput
-              handleInput={(e) => setName(e.target.value)}
-              label="Name"
-              placeholder="Name"
-              value={name}
-              limit={CHARACTER_LIMIT.NAME}
-            />
+          <TextInput
+            handleInput={(e) => setName(e.target.value)}
+            label="Name"
+            placeholder="Name"
+            value={name}
+            limit={CHARACTER_LIMIT.NAME}
+          />
           <div className="self-end">
             <Button
               color={BUTTON_COLOR.BLUE}
@@ -210,13 +208,13 @@ function SettingsAccount() {
         </div>
 
         <div className="flex flex-col gap-4">
-            <Textarea
-              handleInput={(e) => setBio(e.target.value)}
-              placeholder="Bio"
-              label="Bio"
-              value={bio}
-              limit={CHARACTER_LIMIT.BIO}
-            />
+          <Textarea
+            handleInput={(e) => setBio(e.target.value)}
+            placeholder="Bio"
+            label="Bio"
+            value={bio}
+            limit={CHARACTER_LIMIT.BIO}
+          />
           <div className="self-end">
             <Button
               color={BUTTON_COLOR.BLUE}
@@ -234,26 +232,25 @@ function SettingsAccount() {
         </div>
 
         <div className="flex flex-col gap-4">
-
-            <TextInput
-              handleInput={checkUsername}
-              placeholder="Username"
-              label="Username"
-              value={username}
-              limit={CHARACTER_LIMIT.USERNAME}
-            />
-            {authMessage === 'USERNAME_EXISTS' && (
-              <p className="text-rose-500">Username already exists.</p>
-            )}
-            {authMessage === 'USERNAME_AVAILABLE' && (
-              <p className="text-emerald-500">Username available!</p>
-            )}
-            {authMessage === 'USERNAME_FORMAT' && (
-              <p className="text-rose-500">
-                Only uppercase letters (A - Z), lowercase letters (a - z),
-                underscores (_), and periods (.) allowed.
-              </p>
-            )}
+          <TextInput
+            handleInput={checkUsername}
+            placeholder="Username"
+            label="Username"
+            value={username}
+            limit={CHARACTER_LIMIT.USERNAME}
+          />
+          {authMessage === 'USERNAME_EXISTS' && (
+            <p className="text-rose-500">Username already exists.</p>
+          )}
+          {authMessage === 'USERNAME_AVAILABLE' && (
+            <p className="text-emerald-500">Username available!</p>
+          )}
+          {authMessage === 'USERNAME_FORMAT' && (
+            <p className="text-rose-500">
+              Only uppercase letters (A - Z), lowercase letters (a - z),
+              underscores (_), and periods (.) allowed.
+            </p>
+          )}
           <div className="self-end">
             <Button
               color={BUTTON_COLOR.BLUE}

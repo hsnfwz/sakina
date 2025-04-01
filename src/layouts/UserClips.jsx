@@ -36,10 +36,7 @@ function UserClips() {
     }
 
     _userClips.hasMore = hasMore;
-
-    if (!userClips.hasInitialized) {
-      _userClips.hasInitialized = true;
-    }
+    _userClips.hasInitialized = true;
 
     setUserClips(_userClips);
 

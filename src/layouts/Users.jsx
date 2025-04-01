@@ -41,10 +41,7 @@ function Users() {
     }
 
     _users.hasMore = hasMore;
-
-    if (!users.hasInitialized) {
-      _users.hasInitialized = true;
-    }
+    _users.hasInitialized = true;
 
     setUsers(_users);
 

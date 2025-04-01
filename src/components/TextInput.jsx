@@ -18,7 +18,8 @@ function TextInput({
             <span
               className={`self-end ${value.length > limit.max ? 'text-rose-500' : 'text-black'}`}
             >
-              {value.length}{limit.max && ` / ${limit.max}`}
+              {value.length}
+              {limit.max && ` / ${limit.max}`}
             </span>
           )}
         </label>

@@ -40,10 +40,7 @@ function SettingsVideos() {
     }
 
     _videos.hasMore = hasMore;
-
-    if (!videos.hasInitialized) {
-      _videos.hasInitialized = true;
-    }
+    _videos.hasInitialized = true;
 
     setVideos(_videos);
 
@@ -76,8 +73,8 @@ function SettingsVideos() {
                   title: video.title,
                   handleHide: async () =>
                     await updateVideoById(video.id, { is_hidden: true }),
-                }
-              })
+                },
+              });
             }}
           />
         ))}

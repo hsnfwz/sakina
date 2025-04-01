@@ -43,10 +43,7 @@ function Discussions() {
     }
 
     _discussions.hasMore = hasMore;
-
-    if (!discussions.hasInitialized) {
-      _discussions.hasInitialized = true;
-    }
+    _discussions.hasInitialized = true;
 
     setDiscussions(_discussions);
 

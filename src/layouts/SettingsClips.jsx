@@ -37,10 +37,7 @@ function SettingsClips() {
     }
 
     _clips.hasMore = hasMore;
-
-    if (!clips.hasInitialized) {
-      _clips.hasInitialized = true;
-    }
+    _clips.hasInitialized = true;
 
     setClips(_clips);
 
@@ -73,8 +70,8 @@ function SettingsClips() {
                   title: clip.title,
                   handleHide: async () =>
                     await updateClipById(clip.id, { is_hidden: true }),
-                }
-              })
+                },
+              });
             }}
           />
         ))}

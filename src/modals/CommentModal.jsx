@@ -1,92 +1,104 @@
-import { useContext, useState } from 'react';
-import { ModalContext } from '../common/contexts';
+import { useContext, useState, useEffect } from 'react';
+import { ModalContext } from '../common/context/ModalContextProvider';
 import { AuthContext } from '../common/context/AuthContextProvider';
-import { supabase } from '../common/supabase';
+import { CHARACTER_LIMIT } from '../common/enums';
+import { addDiscussion } from '../common/database/discussions';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import Textarea from '../components/Textarea';
 import Toggle from '../components/Toggle';
-
-const descriptionCharacterLimit = 2000;
+import TextInput from '../components/TextInput';
+import { increment } from '../common/database/rpc';
 
 function CommentModal() {
-  const { user } = useContext(AuthContext);
-  const { showModal, setShowModal } = useContext(ModalContext);
+  const { authUser } = useContext(AuthContext);
+  const { modal, setModal } = useContext(ModalContext);
 
-  const [isAddingComment, setIsAddingComment] = useState(false);
-
+  const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [isAnonymous, setIsAnonymous] = useState(true);
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (modal.type === 'COMMENT_MODAL' && modal.data) {
+      setShow(true);
+    } else {
+      setShow(false);
+    }
+  }, [modal]);
 
   async function addComment() {
-    setIsAddingComment(true);
-    const { data, error } = await supabase
-      .from('comments')
-      .insert({
-        user_id: user.id,
-        post_id: showModal.data.postId,
-        parent_comment_id: showModal.data.parentCommentId,
-        description,
-        is_anonymous: isAnonymous,
-      })
-      .select('*');
+    setIsLoading(true);
 
-    if (error) {
-      console.log(error);
-    } else {
-      await supabase.rpc('increment', {
-        table_name: 'comments',
-        row_id: showModal.data.parentCommentId
-          ? showModal.data.parentCommentId
-          : showModal.data.postId,
-        row_column: 'comments_count',
-        increment_amount: 1,
-      });
-    }
-    setIsAddingComment(false);
+    await addDiscussion({
+      user_id: authUser.id,
+      parent_discussion_id: modal.data.parentDiscussionId,
+      title,
+      description,
+      is_anonymous: isAnonymous,
+    });
+
+    await increment(
+      'discussions',
+      modal.data.parentDiscussionId,
+      'comments_count',
+      1
+    );
+
+    setTitle('');
     setDescription('');
-    setIsAnonymous(true);
-    setShowModal({
+    setIsAnonymous(false);
+    setIsLoading(false);
+
+    setModal({
       type: null,
       data: null,
     });
   }
 
   return (
-    <Modal>
-      <h1 className="text-2xl font-bold">New Comment</h1>
-      <div className="flex flex-col gap-2">
-        <p>Post: {showModal.data.postId}</p>
-        {showModal.data.parentCommentId && (
-          <p>Comment: {showModal.data.parentCommentId}</p>
-        )}
-      </div>
-      <Toggle
-        handleChange={() => setIsAnonymous(!isAnonymous)}
-        label="Anonymous"
-        isChecked={isAnonymous}
+    <Modal show={show} isDisabled={isLoading}>
+      <TextInput
+        handleInput={(event) => setTitle(event.target.value)}
+        placeholder="Title"
+        value={title}
+        label="Title"
+        limit={CHARACTER_LIMIT.TITLE}
       />
-      <p
-        className={`self-end ${description.length > descriptionCharacterLimit ? 'text-rose-500' : 'text-black'}`}
-      >
-        {description.length} / {descriptionCharacterLimit}
-      </p>
       <Textarea
         handleInput={(event) => setDescription(event.target.value)}
-        placeholder="Comment"
+        placeholder="Description"
         value={description}
+        label="Description"
+        limit={CHARACTER_LIMIT.DESCRIPTION}
       />
+      <Toggle
+        handleChange={() => setIsAnonymous(!isAnonymous)}
+        isChecked={isAnonymous}
+      >
+        Anonymous
+      </Toggle>
       <div className="flex gap-2 self-end">
-        <Button handleClick={() => setDescription('')}>Clear</Button>
+        <Button
+          handleClick={() => {
+            setTitle('');
+            setDescription('');
+            setIsAnonymous(false);
+            setModal({ type: null, data: null });
+          }}
+        >
+          Close
+        </Button>
         <Button
           isDisabled={
-            isAddingComment ||
-            description === '' ||
-            description.length > descriptionCharacterLimit
+            isLoading ||
+            title.length === 0 ||
+            title.length > CHARACTER_LIMIT.TITLE.max ||
+            description.length > CHARACTER_LIMIT.DESCRIPTION.max
           }
-          isLoading={isAddingComment}
+          isLoading={isLoading}
           handleClick={async () => await addComment()}
-          isOutline={true}
         >
           Submit
         </Button>

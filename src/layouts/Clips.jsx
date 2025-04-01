@@ -41,10 +41,7 @@ function Clips() {
     }
 
     _clips.hasMore = hasMore;
-
-    if (!clips.hasInitialized) {
-      _clips.hasInitialized = true;
-    }
+    _clips.hasInitialized = true;
 
     setClips(_clips);
 

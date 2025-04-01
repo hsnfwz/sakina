@@ -56,7 +56,7 @@ function AvatarModal() {
   async function updateAvatar(file) {
     const { data } = await supabase
       .from('users')
-      .update({ avatar_file_name: file.meta.objectName, })
+      .update({ avatar_file_name: file.meta.objectName })
       .eq('id', authUser.id)
       .select('*');
 
@@ -76,16 +76,14 @@ function AvatarModal() {
           bucketName={UPLOAD_TYPE.AVATAR.bucketName}
           uploadFileButtonRef={avatarUploadFileButtonRef}
         />
-                    {uppyAvatarFile && (
-              <div className="flex w-full justify-between gap-2 rounded-lg border-2 border-dotted p-2">
-                <p className="w-full">{uppyAvatarFile.data.name}</p>
-                {uppyAvatarFileUploadProgress > 0 && (
-                  <p className="font-bold">
-                    {uppyAvatarFileUploadProgress}%
-                  </p>
-                )}
-              </div>
+        {uppyAvatarFile && (
+          <div className="flex w-full justify-between gap-2 rounded-lg border-2 border-dotted p-2">
+            <p className="w-full">{uppyAvatarFile.data.name}</p>
+            {uppyAvatarFileUploadProgress > 0 && (
+              <p className="font-bold">{uppyAvatarFileUploadProgress}%</p>
             )}
+          </div>
+        )}
       </div>
       <div className="flex gap-2 self-end">
         <Button

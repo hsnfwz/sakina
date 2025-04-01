@@ -382,6 +382,27 @@ async function getAcceptedPostsByReceiverProfileIds(
   }
 }
 
+async function addDiscussion(payload) {
+  try {
+    const { data, error } = await supabase
+      .from('discussions')
+      .insert(payload)
+      .select();
+
+    if (error) throw error;
+
+    return {
+      data,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      data: null,
+    };
+  }
+}
+
 async function updateDiscussionById(id, payload) {
   try {
     const { data, error } = await supabase
@@ -404,13 +425,46 @@ async function updateDiscussionById(id, payload) {
   }
 }
 
+async function getCommentsByParentDiscussionId(
+  parentDiscussionId,
+  startIndex = 0,
+  limit = 6,
+  orderBy = ORDER_BY.NEW
+) {
+  try {
+    const { data, error } = await supabase
+      .from('discussions')
+      .select('*, user:user_id(*)')
+      .eq('is_hidden', false)
+      .eq('parent_discussion_id', parentDiscussionId)
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      data: [],
+      hasMore: false,
+    };
+  }
+}
+
 export {
   getDiscussions,
   getDiscussionsBySearchTerm,
   getDiscussionsByUserId,
   getDiscussionById,
   getHiddenDiscussionsByUserId,
+  addDiscussion,
   updateDiscussionById,
+  getCommentsByParentDiscussionId,
   removeStorageObjectsByPostId,
   removePost,
   archivePost,

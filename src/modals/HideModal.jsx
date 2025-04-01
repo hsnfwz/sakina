@@ -27,7 +27,9 @@ function HideModal() {
 
   return (
     <Modal show={show} isDisabled={isLoading}>
-      <p>Do you want to archive <span className="font-bold">"{title}"</span>?</p>
+      <p>
+        Do you want to archive <span className="font-bold">"{title}"</span>?
+      </p>
       <div className="flex gap-2 self-end">
         <Button
           isDisabled={isLoading}

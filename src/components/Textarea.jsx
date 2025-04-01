@@ -1,4 +1,11 @@
-function Textarea({ handleInput, placeholder, label, value, isDisabled, limit }) {
+function Textarea({
+  handleInput,
+  placeholder,
+  label,
+  value,
+  isDisabled,
+  limit,
+}) {
   return (
     <div className="flex w-full flex-col gap-2">
       {label && (
@@ -11,7 +18,8 @@ function Textarea({ handleInput, placeholder, label, value, isDisabled, limit })
             <span
               className={`self-end ${value.length > limit.max ? 'text-rose-500' : 'text-black'}`}
             >
-              {value.length}{limit.max && ` / ${limit.max}`}
+              {value.length}
+              {limit.max && ` / ${limit.max}`}
             </span>
           )}
         </label>

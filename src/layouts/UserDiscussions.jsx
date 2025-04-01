@@ -37,10 +37,7 @@ function UserDiscussions() {
     }
 
     _userDiscussions.hasMore = hasMore;
-
-    if (!userDiscussions.hasInitialized) {
-      _userDiscussions.hasInitialized = true;
-    }
+    _userDiscussions.hasInitialized = true;
 
     setUserDiscussions(_userDiscussions);
 

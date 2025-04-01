@@ -38,7 +38,7 @@ function CommentLayout() {
       const _commentsTrackerItem = {
         ...commentsTracker[parentCommentId],
       };
-      _commentsTrackerItem.isExpand = !_commentsTrackerItem.isExpand;
+      _commentsTrackerItem.isExpanded = !_commentsTrackerItem.isExpanded;
       const _commentsTracker = { ...commentsTracker };
       _commentsTracker[parentCommentId] = _commentsTrackerItem;
       setCommentsList(_commentsTracker);
@@ -58,7 +58,7 @@ function CommentLayout() {
     } else {
       _commentsTrackerItem = {
         comments: [],
-        isExpand: true,
+        isExpanded: true,
         hasMore: true,
       };
     }

@@ -4,7 +4,7 @@ import TextInput from '../components/TextInput';
 import Button from '../components/Button';
 import { BUTTON_COLOR } from '../common/enums';
 
-function ForgotPasswordLayout() {
+function ForgotPassword() {
   const [isLoading, setIsLoading] = useState(false);
   const [authMessage, setAuthMessage] = useState(null);
   const [email, setEmail] = useState('');
@@ -31,7 +31,7 @@ function ForgotPasswordLayout() {
               setIsLoading(false);
             }}
           >
-            Reset Password
+            Get Link
           </Button>
         </>
       )}
@@ -46,4 +46,4 @@ function ForgotPasswordLayout() {
   );
 }
 
-export default ForgotPasswordLayout;
+export default ForgotPassword;

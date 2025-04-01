@@ -141,13 +141,13 @@ function SignUp() {
       {authMessage !== 'CONFIRM_EMAIL' && (
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-4">
-              <TextInput
-                label="Username"
-                handleInput={checkUsername}
-                placeholder="Username"
-                value={username}
-                limit={CHARACTER_LIMIT.USERNAME}
-              />
+            <TextInput
+              label="Username"
+              handleInput={checkUsername}
+              placeholder="Username"
+              value={username}
+              limit={CHARACTER_LIMIT.USERNAME}
+            />
             {authMessage === 'USERNAME_EXISTS' && (
               <p className="text-rose-500">Username already exists.</p>
             )}
@@ -190,13 +190,13 @@ function SignUp() {
           </div>
 
           <div className="flex flex-col gap-4">
-              <TextInput
-                label="Password"
-                handleInput={checkPassword}
-                placeholder="Password"
-                value={password}
-                limit={CHARACTER_LIMIT.PASSWORD}
-              />
+            <TextInput
+              label="Password"
+              handleInput={checkPassword}
+              placeholder="Password"
+              value={password}
+              limit={CHARACTER_LIMIT.PASSWORD}
+            />
             {authMessage === 'WEAK_PASSWORD' && (
               <p className="text-rose-500">
                 Your password is weak. Please try a different password.
@@ -211,13 +211,13 @@ function SignUp() {
           </div>
 
           <div className="flex flex-col gap-4">
-              <TextInput
-                label="Re-enter Password"
-                handleInput={checkReenterPassword}
-                placeholder="Re-enter Password"
-                value={reenterPassword}
-                limit={CHARACTER_LIMIT.PASSWORD}
-              />
+            <TextInput
+              label="Re-enter Password"
+              handleInput={checkReenterPassword}
+              placeholder="Re-enter Password"
+              value={reenterPassword}
+              limit={CHARACTER_LIMIT.PASSWORD}
+            />
             {authMessage === 'REENTER_PASSWORD_NOT_EQUAL' && (
               <p className="text-rose-500">Must match password.</p>
             )}
