@@ -1,5 +1,4 @@
 import { useState, useContext, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router';
 import DefaultStore from '@uppy/store-default';
 import { BUTTON_COLOR, CHARACTER_LIMIT, UPLOAD_TYPE } from '../common/enums';
 import { handleFileAdded } from '../common/helpers';
@@ -9,19 +8,13 @@ import { ModalContext } from '../common/context/ModalContextProvider';
 import { AuthContext } from '../common/context/AuthContextProvider';
 import UploadFileButton from '../components/UploadFileButton';
 import Modal from '../components/Modal';
-import Toggle from '../components/Toggle';
 import TextInput from '../components/TextInput';
 import Textarea from '../components/Textarea';
 import Button from '../components/Button';
-import Anchor from '../components/Anchor';
-import Radio from '../components/Radio';
 
 function CreateModal() {
-  const titleCharacterLimit = 100;
-  const descriptionCharacterLimit = 2000;
-
   const { authUser } = useContext(AuthContext);
-  const { modal } = useContext(ModalContext);
+  const { modal, setModal } = useContext(ModalContext);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -29,7 +22,7 @@ function CreateModal() {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [show, setShow] = useState(false);
-  const [view, setView] = useState('VIDEO');
+  const [view, setView] = useState('DISCUSSION');
 
   useEffect(() => {
     if (modal.type === 'CREATE_MODAL') {
@@ -141,8 +134,10 @@ function CreateModal() {
     setUppyVideoThumbnailFile(null);
     setUppyVideoFileUploadProgress(0);
     setUppyVideoThumbnailFileUploadProgress(0);
-    if (videoUploadFileButtonRef.current) videoUploadFileButtonRef.current.value = null;
-    if (videoThumbnailUploadFileButtonRef.current) videoThumbnailUploadFileButtonRef.current.value = null;
+    if (videoUploadFileButtonRef.current)
+      videoUploadFileButtonRef.current.value = null;
+    if (videoThumbnailUploadFileButtonRef.current)
+      videoThumbnailUploadFileButtonRef.current.value = null;
   }
 
   return (
@@ -157,14 +152,14 @@ function CreateModal() {
                 setView('VIDEO');
               }}
               type="button"
-              className={`${view === 'VIDEO' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 hover:bg-sky-700 focus:z-50 focus:ring-0 focus:outline-2 focus:outline-black`}
+              className={`${view === 'VIDEO' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
             >
               Video
             </button>
             <button
               onMouseDown={(event) => event.preventDefault()}
               type="button"
-              className={`${view === 'CLIP' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 hover:bg-sky-700 focus:z-50 focus:ring-0 focus:outline-2 focus:outline-black`}
+              className={`${view === 'CLIP' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
               onClick={() => {
                 setOrientation('VERTICAL');
 
@@ -173,20 +168,20 @@ function CreateModal() {
             >
               Clip
             </button>
+            <button
+              type="button"
+              className={`${view === 'DISCUSSION' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => {
+                setView('DISCUSSION');
+              }}
+            >
+              Discussion
+            </button>
           </>
         )}
-        <button
-          type="button"
-          className={`${view === 'DISCUSSION' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 hover:bg-sky-700 focus:z-50 focus:ring-0 focus:outline-2 focus:outline-black`}
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={() => {
-            setView('DISCUSSION');
-          }}
-        >
-          Discussion
-        </button>
       </div>
-      {view !== 'DISCUSSION' && (
+      {view !== 'DISCUSSION' && authUser && authUser.is_verified && (
         <>
           <UploadFileButton
             id="uppyVideo"
@@ -199,14 +194,14 @@ function CreateModal() {
             isDisabled={isUploading}
             label={`${orientation === 'HORIZONTAL' ? 'Video' : 'Clip'}`}
           />
-          {uppyVideoFile && (
+          {/* {uppyVideoFile && (
             <div className="flex w-full justify-between gap-2 rounded-lg border-2 border-dotted p-2">
               <p className="w-full">{uppyVideoFile.data.name}</p>
               {uppyVideoFileUploadProgress > 0 && (
                 <p className="font-bold">{uppyVideoFileUploadProgress}%</p>
               )}
             </div>
-          )}
+          )} */}
           <UploadFileButton
             id="uppyVideoThumbnail"
             uppy={uppyVideoThumbnail}
@@ -218,7 +213,7 @@ function CreateModal() {
             isDisabled={isUploading}
             label="Thumbnail"
           />
-          {uppyVideoThumbnailFile && (
+          {/* {uppyVideoThumbnailFile && (
             <div className="flex w-full justify-between gap-2 rounded-lg border-2 border-dotted p-2">
               <p className="w-full">{uppyVideoThumbnailFile.data.name}</p>
               {uppyVideoThumbnailFileUploadProgress > 0 && (
@@ -227,14 +222,7 @@ function CreateModal() {
                 </p>
               )}
             </div>
-          )}
-          {/* <Radio value={orientation} fields={[['Horizontal', 'HORIZONTAL'], ['Vertical', 'VERTICAL']]} handleChange={() => {
-              if (orientation === 'VERTICAL') {
-                setOrientation('HORIZONTAL');
-              } else {
-                setOrientation('VERTICAL');
-              }
-            }} /> */}
+          )} */}
         </>
       )}
 
@@ -255,22 +243,54 @@ function CreateModal() {
           label="Description"
           limit={CHARACTER_LIMIT.DESCRIPTION}
         />
-        <Toggle
-          handleChange={() => setIsAnonymous(!isAnonymous)}
-          isChecked={isAnonymous}
-        >
-          Anonymous
-        </Toggle>
+        <div className="flex flex-col gap-2">
+          <label>Anonymous</label>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              className={`${isAnonymous ? 'bg-white text-black' : 'bg-sky-500 text-white'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+              onMouseDown={(event) => event.preventDefault()}
+              color={
+                isAnonymous
+                  ? BUTTON_COLOR.OUTLINE_BLUE
+                  : BUTTON_COLOR.SOLID_BLUE
+              }
+              onClick={() => setIsAnonymous(false)}
+            >
+              No
+            </button>
+            <button
+              type="button"
+              className={`${isAnonymous ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+              onMouseDown={(event) => event.preventDefault()}
+              color={
+                isAnonymous
+                  ? BUTTON_COLOR.SOLID_BLUE
+                  : BUTTON_COLOR.OUTLINE_BLUE
+              }
+              onClick={() => setIsAnonymous(true)}
+            >
+              Yes
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="flex gap-2 self-end">
-        <Button handleClick={handleClose}>Close</Button>
-        {view === 'VIDEO' && (
+        <Button
+          handleClick={() => {
+            handleClose();
+            setModal({ type: null, data: null });
+          }}
+        >
+          Close
+        </Button>
+        {view !== 'DISCUSSION' && (
           <Button
             isDisabled={
               title.length === 0 ||
-              title.length > titleCharacterLimit ||
-              description.length > descriptionCharacterLimit ||
+              title.length > CHARACTER_LIMIT.TITLE.max ||
+              description.length > CHARACTER_LIMIT.DESCRIPTION.max ||
               !uppyVideoFile ||
               !uppyVideoThumbnailFile ||
               isUploading
@@ -298,8 +318,8 @@ function CreateModal() {
               }
 
               setIsUploading(false);
-
               handleClose();
+              setModal({ type: null, data: null });
             }}
           >
             Submit
@@ -309,14 +329,15 @@ function CreateModal() {
           <Button
             isDisabled={
               title.length === 0 ||
-              title.length > titleCharacterLimit ||
-              description.length > descriptionCharacterLimit
+              title.length > CHARACTER_LIMIT.TITLE.max ||
+              description.length > CHARACTER_LIMIT.DESCRIPTION.max
             }
             handleClick={async () => {
               setIsUploading(true);
               await addDiscussion();
               setIsUploading(false);
               handleClose();
+              setModal({ type: null, data: null });
             }}
           >
             Submit

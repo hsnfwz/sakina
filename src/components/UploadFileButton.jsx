@@ -43,8 +43,20 @@ function UploadFileButton({
 
   return (
     <div className="flex w-full flex-col gap-2">
-      {label && <label>{label}</label>}
+      <label>{text}</label>
       <input
+        id={id}
+        multiple
+        disabled={isDisabled}
+        name={name}
+        className="flex w-full items-center justify-center self-start rounded-lg border-2 border-emerald-500 bg-emerald-500 p-2 text-center text-white outline-2 outline-transparent transition-all peer-disabled:pointer-events-none peer-disabled:cursor-default peer-disabled:opacity-50 hover:cursor-pointer hover:bg-emerald-700 focus:z-50 focus:border-black focus:ring-0 focus:outline-0"
+        type="file"
+        accept={allowedMimeTypes}
+        onChange={handleChange}
+        ref={uploadFileButtonRef}
+      />
+
+      {/* <input
         id={id}
         multiple
         disabled={isDisabled}
@@ -61,7 +73,7 @@ function UploadFileButton({
         tabIndex={0}
       >
         {text}
-      </label>
+      </label> */}
 
       {fileErrors.length > 0 && (
         <div className="flex flex-col gap-4">

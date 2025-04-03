@@ -2,7 +2,6 @@ import { useContext, useEffect, useState, useRef } from 'react';
 import { ModalContext } from '../common/context/ModalContextProvider';
 import { getUsersBySearchTerm } from '../common/database/users';
 import { getVideosBySearchTerm } from '../common/database/videos';
-import { getClipsBySearchTerm } from '../common/database/videos';
 import { getDiscussionsBySearchTerm } from '../common/database/discussions';
 import { BUTTON_COLOR } from '../common/enums.js';
 import Modal from '../components/Modal';
@@ -12,11 +11,10 @@ import Loaded from '../components/Loaded.jsx';
 import Button from '../components/Button.jsx';
 import UserCard from '../components/UserCard.jsx';
 import VideoCard from '../components/VideoCard.jsx';
-import ClipCard from '../components/ClipCard.jsx';
 import DiscussionCard from '../components/DiscussionCard.jsx';
 
 function SearchModal() {
-  const { modal } = useContext(ModalContext);
+  const { modal, setModal } = useContext(ModalContext);
   const timerRef = useRef();
 
   const [show, setShow] = useState(false);
@@ -26,7 +24,7 @@ function SearchModal() {
   const [isLoadingSearchResults, setIsLoadingSearchResults] = useState(false);
   const [hasMoreSearchResults, setHasMoreSearchResults] = useState(true);
 
-  async function handleInput(event, search) {
+  async function handleInput(event, search, orientation) {
     setIsLoadingSearchResults(true);
 
     setSearchTerm(event.target.value);
@@ -38,7 +36,13 @@ function SearchModal() {
       setIsLoadingSearchResults(false);
     } else {
       timerRef.current = setTimeout(async () => {
-        const { data, hasMore } = await search(searchTerm);
+        let response;
+        if (orientation) {
+          response = await search(searchTerm, orientation);
+        } else {
+          response = await search(searchTerm);
+        }
+        const { data, hasMore } = response;
 
         setSearchResults(data);
         setHasMoreSearchResults(hasMore);
@@ -69,14 +73,14 @@ function SearchModal() {
             setView('USERS');
           }}
           type="button"
-          className={`${view === 'USERS' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 hover:bg-sky-700 focus:z-50 focus:ring-0 focus:outline-2 focus:outline-black`}
+          className={`${view === 'USERS' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
         >
           Users
         </button>
         <button
           onMouseDown={(event) => event.preventDefault()}
           type="button"
-          className={`${view === 'VIDEOS' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 hover:bg-sky-700 focus:z-50 focus:ring-0 focus:outline-2 focus:outline-black`}
+          className={`${view === 'VIDEOS' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
           onClick={() => {
             setView('VIDEOS');
           }}
@@ -85,7 +89,7 @@ function SearchModal() {
         </button>
         <button
           type="button"
-          className={`${view === 'CLIPS' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 hover:bg-sky-700 focus:z-50 focus:ring-0 focus:outline-2 focus:outline-black`}
+          className={`${view === 'CLIPS' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
           onMouseDown={(event) => event.preventDefault()}
           onClick={() => {
             setView('CLIPS');
@@ -95,7 +99,7 @@ function SearchModal() {
         </button>
         <button
           type="button"
-          className={`${view === 'DISCUSSIONS' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 hover:bg-sky-700 focus:z-50 focus:ring-0 focus:outline-2 focus:outline-black`}
+          className={`${view === 'DISCUSSIONS' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
           onMouseDown={(event) => event.preventDefault()}
           onClick={() => {
             setView('DISCUSSIONS');
@@ -116,7 +120,9 @@ function SearchModal() {
       {view === 'VIDEOS' && (
         <TextInput
           placeholder="Search videos by title or description"
-          handleInput={(event) => handleInput(event, getVideosBySearchTerm)}
+          handleInput={(event) =>
+            handleInput(event, getVideosBySearchTerm, 'HORIZONTAL')
+          }
           value={searchTerm}
           label="Search videos by title or description"
         />
@@ -124,7 +130,9 @@ function SearchModal() {
       {view === 'CLIPS' && (
         <TextInput
           placeholder="Search clips by title or description"
-          handleInput={(event) => handleInput(event, getClipsBySearchTerm)}
+          handleInput={(event) =>
+            handleInput(event, getVideosBySearchTerm, 'VERTICAL')
+          }
           value={searchTerm}
           label="Search clips by title or description"
         />
@@ -132,7 +140,9 @@ function SearchModal() {
       {view === 'DISCUSSIONS' && (
         <TextInput
           placeholder="Search discussions by title or description"
-          handleInput={(event) => handleInput(event, getDiscussionsBySearchTerm)}
+          handleInput={(event) =>
+            handleInput(event, getDiscussionsBySearchTerm)
+          }
           value={searchTerm}
           label="Search discussions by title or description"
         />
@@ -150,14 +160,14 @@ function SearchModal() {
           {view === 'VIDEOS' && (
             <>
               {searchResults.map((video, index) => (
-                <VideoCard key={index} video={video} />
+                <VideoCard key={index} video={video} orientation="HORIZONTAL" />
               ))}
             </>
           )}
           {view === 'CLIPS' && (
             <>
               {searchResults.map((clip, index) => (
-                <ClipCard key={index} clip={clip} />
+                <VideoCard key={index} video={clip} orientation="VERTICAL" />
               ))}
             </>
           )}
@@ -193,6 +203,16 @@ function SearchModal() {
         </>
       )}
       {isLoadingSearchResults && <Loading />}
+      <div className="flex gap-2 self-end">
+        <Button
+          handleClick={() => {
+            handleClose();
+            setModal({ type: null, data: null });
+          }}
+        >
+          Close
+        </Button>
+      </div>
     </Modal>
   );
 }

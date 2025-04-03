@@ -40,7 +40,7 @@ function NavBar() {
         {authUser && (
           <>
             <Anchor
-              active={location.pathname.includes('/users')}
+              active={location.pathname === `/users/${authUser.username}`}
               state={{ user: authUser }}
               to={`/users/${authUser.username}`}
             >
@@ -56,7 +56,7 @@ function NavBar() {
               )}
               {authUser.avatar_file_name && (
                 <div
-                  className={`aspect-square w-[24px] animate-pulse rounded-full bg-neutral-200 ${isLoadingImage ? 'block' : 'hidden'}`}
+                  className={`aspect-square w-[24px] animate-pulse rounded-full bg-neutral-100 ${isLoadingImage ? 'block' : 'hidden'}`}
                 ></div>
               )}
               {!authUser.avatar_file_name && <SVGOutlineUser />}

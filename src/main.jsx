@@ -12,11 +12,9 @@ import HomeDiscussions from './layouts/HomeDiscussions.jsx';
 import HomeVideos from './layouts/HomeVideos.jsx';
 import Explore from './layouts/Explore.jsx';
 import Videos from './layouts/Videos.jsx';
-import Clips from './layouts/Clips.jsx';
 import Discussions from './layouts/Discussions.jsx';
 import Users from './layouts/Users.jsx';
 import Video from './layouts/Video.jsx';
-import Clip from './layouts/Clip.jsx';
 import Discussion from './layouts/Discussion.jsx';
 import User from './layouts/User.jsx';
 import NotFound from './layouts/NotFound.jsx';
@@ -33,6 +31,7 @@ import SettingsAccount from './layouts/SettingsAccount.jsx';
 import SettingsVideos from './layouts/SettingsVideos.jsx';
 import SettingsClips from './layouts/SettingsClips.jsx';
 import SettingsDiscussions from './layouts/SettingsDiscussions.jsx';
+import UserActivity from './layouts/UserActivity.jsx';
 
 const router = createBrowserRouter([
   {
@@ -91,10 +90,10 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: '/videos',
+        path: '/clips',
         children: [
-          { index: true, Component: Clips },
-          { path: ':id', Component: Clip },
+          { index: true, Component: Videos },
+          { path: ':id', Component: Video },
         ],
       },
       {
@@ -116,6 +115,7 @@ const router = createBrowserRouter([
               { path: 'videos', Component: UserVideos },
               { path: 'clips', Component: UserClips },
               { path: 'discussions', Component: UserDiscussions },
+              { path: 'activity', Component: UserActivity },
             ],
           },
         ],
@@ -149,61 +149,66 @@ createRoot(root).render(
 );
 
 /* 
-  - FIX closing comment modal refreshes the page
-  - FIX go back and forth between discussions doesnt save the comments
+  - supabase avatar and thumbnail file size - research ideal file size and set the max
+  - unhide content
+
+  - fetch more when intersecting last element - check for all content pages
+  - dont let other users see another user's anonymous posts
+  - create/avatar modal upload progress indicator
+  - tab index - make sure we cannot access stuff behind modals - focus trap
+
+  - individual activity pages
+  - individual filtered explore pages
+
+  - loaders for all states
+
+  - likes for comments - every time we fetch comments/nested comments, get each their respective like record
+  - let a user set a view as "hidden" to mark it as history cleared - if they view the content again, "hidden" is set to false
+
+  - refresh data after each add/edit/delete and make sure link state is refreshed too
 
   video
   - add skip 5 seconds forward and back for video using arrow keys
   - enable/disable looping
   - autplay queue of videos (ex: playlists)
-
-  - tab index - make sure we cannot access stuff behind modals - focus trap
-  - FIX file upload button not opening when clicking space bar
-  - style file upload button
-
-  - user card design
-  - refresh data after each edit/delete and make sure link state is refreshed too
-  - unhide content
-  - explore - show newest and most popular this week
-  - handle links for content
-  - modals opening animation
-  - transitions between pages
-  - fetch more when intersecting last element - check for all content pages
-
-  - show preview of post before submission
-
-  - look into making classes with tailwind properties to avoid using hardcoded enum values in js
-  - restore scroll position
-
-  - @ mentions
+  - visually display audio using Web Audio API
 
   notifications
     - notification card
     - notifications for activity by people you follow - enable/disable preference
     - is_read
 
-  - views, likes, follows, anonymous
-
   sign-up/sign-in
   - make inputs green when they are correctly inputted to indicate progress to the user
   - make inputs red when they are incorrectly inputted to indicate error to the user
 
+  - show preview of post before submission
+  - @ mentions
+  - modals opening animation
+  - transitions between pages
+  - restore scroll position
+
   FUTURE:
+  - messaging and sharing
+  - ability to save for later - requires playlists
   - allow a single parent user account to manage multiple child user accounts (under the same email address)
   - allow an account to have collaborators with permissions
   - livestreaming
-  - counts for all types of content
   - allow user to select a video frame to set as their thumbnail
   - allow users to block/mute/remove user discussing unwanted topics on their videos
   - pinned content
   - scheduled content
   - expired content
   - analytics page
-  - stories (24 hours) + archived stories
-  - playlists
-  - collections (similar to albums and playlists)
-  - rewards and promotion/spotlight system
-  - messaging and sharing
+  - rewards/revenue and promotion/spotlight system
+  - stories (24 hours) + archived stories -> good for organizations when we implement them
+
+  FINAL
+  - look into new supabase UI for file uploads
+  - look into new supabase database broadcast for realtime changes
+  - look into supabase broadcast for messaging between clients
+  - dev and prod datatables
+  - rate limiting to avoid spamming the database
   - email change page flow
   - delete account - mark user as 'inactive' and keep all content, simply hide the user info from posts
   - banned users

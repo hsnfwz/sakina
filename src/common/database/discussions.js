@@ -1,10 +1,11 @@
 import { supabase } from '../supabase';
 import { ORDER_BY } from '../enums';
+import { getTodayAndLastWeekDateISO } from '../helpers';
 
 async function getDiscussions(
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.NEWEST
 ) {
   try {
     const { data, error } = await supabase
@@ -30,11 +31,44 @@ async function getDiscussions(
   }
 }
 
+async function getWeeklyDiscussions(
+  startIndex = 0,
+  limit = 6,
+  orderBy = ORDER_BY.LATEST
+) {
+  try {
+    const { today, lastWeek } = getTodayAndLastWeekDateISO();
+
+    const { data, error } = await supabase
+      .from('discussions')
+      .select('*, user:user_id(*)')
+      .eq('is_hidden', false)
+      .gte('updated_at', lastWeek)
+      .lte('updated_at', today)
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      data: [],
+      hasMore: false,
+    };
+  }
+}
+
 async function getDiscussionsBySearchTerm(
   searchTerm,
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.NEWEST
 ) {
   try {
     const query = searchTerm.toLowerCase().trim();
@@ -74,7 +108,7 @@ async function getDiscussionsByUserId(
   userId,
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.NEWEST
 ) {
   try {
     const { data, error } = await supabase
@@ -98,116 +132,6 @@ async function getDiscussionsByUserId(
       data: [],
       hasMore: false,
     };
-  }
-}
-
-async function getPostImagesVideos(posts) {
-  const postIds = posts.map((post) => post.id);
-
-  const [resultImages, resultVideos] = await Promise.all([
-    supabase.from('images').select('*').in('post_id', postIds),
-    supabase.from('videos').select('*').in('post_id', postIds),
-  ]);
-
-  if (resultImages.error) throw resultImages.error;
-  if (resultVideos.error) throw resultVideos.error;
-
-  posts.forEach((post) => {
-    post.images = [];
-    post.videos = [];
-
-    resultImages.data.forEach((image) => {
-      if (post.id === image.post_id) {
-        post.images.push(image);
-      }
-    });
-    resultVideos.data.forEach((video) => {
-      if (post.id === video.post_id) {
-        post.videos.push(video);
-      }
-    });
-  });
-}
-
-async function getImagePostFiles(posts) {
-  const postIds = posts.map((post) => post.id);
-
-  const { data, error } = await supabase
-    .from('images')
-    .select('*')
-    .in('post_id', postIds);
-
-  if (error) throw error;
-
-  posts.forEach((post) => {
-    post.images = [];
-
-    data.forEach((image) => {
-      if (post.id === image.post_id) {
-        post.images.push(image);
-      }
-    });
-  });
-}
-
-async function getVideoPostFiles(posts) {
-  const postIds = posts.map((post) => post.id);
-
-  const [resultImages, resultVideos] = await Promise.all([
-    supabase.from('images').select('*').in('post_id', postIds),
-    supabase.from('videos').select('*').in('post_id', postIds),
-  ]);
-
-  if (resultImages.error) throw resultImages.error;
-  if (resultVideos.error) throw resultVideos.error;
-
-  posts.forEach((post) => {
-    post.images = [];
-    post.videos = [];
-
-    resultImages.data.forEach((image) => {
-      if (post.id === image.post_id) {
-        post.images.push(image);
-      }
-    });
-    resultVideos.data.forEach((video) => {
-      if (post.id === video.post_id) {
-        post.videos.push(video);
-      }
-    });
-  });
-}
-
-async function removeStorageObjectsByPostId(postId) {
-  try {
-    const [resultImages, resultVideos] = await Promise.all([
-      supabase.from('images').select('name').eq('post_id', postId),
-      supabase.from('videos').select('name').eq('post_id', postId),
-    ]);
-
-    if (resultImages.error) throw resultImages.error;
-    if (resultVideos.error) throw resultVideos.error;
-
-    const imageFileNames = resultImages.data.map((image) => image.name);
-    const videoFileNames = resultVideos.data.map((video) => video.name);
-
-    if (imageFileNames.length > 0) {
-      const { data, error } = await supabase.storage
-        .from('images')
-        .remove(imageFileNames);
-
-      if (error) throw error;
-    }
-
-    if (videoFileNames.length > 0) {
-      const { data, error } = await supabase.storage
-        .from('videos')
-        .remove(videoFileNames);
-
-      if (error) throw error;
-    }
-  } catch (error) {
-    console.log(error);
   }
 }
 
@@ -237,7 +161,7 @@ async function getHiddenDiscussionsByUserId(
   userId,
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.NEWEST
 ) {
   try {
     const { data, error } = await supabase
@@ -261,124 +185,6 @@ async function getHiddenDiscussionsByUserId(
       data: [],
       hasMore: false,
     };
-  }
-}
-
-async function archivePost(id) {
-  try {
-    const { data, error } = await supabase
-      .from('posts')
-      .update({ is_archived: true })
-      .eq('id', id)
-      .select('*, user:user_id(*)');
-
-    if (error) throw error;
-
-    return {
-      data,
-    };
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function unarchivePost(id) {
-  try {
-    const { data, error } = await supabase
-      .from('posts')
-      .update({ is_archived: false })
-      .eq('id', id)
-      .select('*, user:user_id(*)');
-
-    if (error) throw error;
-
-    return {
-      data,
-    };
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function removePost(id) {
-  try {
-    const { error } = await supabase.from('posts').delete().eq('id', id);
-
-    if (error) throw error;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function getPendingPostsCount() {
-  try {
-    const { count, error } = await supabase
-      .from('posts')
-      .select('*', { count: 'estimated', head: true })
-      .eq('status', 'PENDING');
-
-    if (error) throw error;
-
-    return {
-      count,
-    };
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function getViewedPostsByProfileId(
-  profileId,
-  startIndex = 0,
-  limit = 6,
-  orderBy = ORDER_BY.NEW
-) {
-  try {
-    const { data, error } = await supabase
-      .from('views')
-      .select('*, post:post_id(*)')
-      .eq('user_id', profileId)
-      .order(orderBy.columnName, { ascending: orderBy.isAscending })
-      .range(startIndex, startIndex + limit - 1);
-
-    if (error) throw error;
-
-    await getPostImagesVideos(data);
-
-    return {
-      data,
-      hasMore: data.length === limit,
-    };
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function getAcceptedPostsByReceiverProfileIds(
-  receiverProfileIds,
-  startIndex = 0,
-  limit = 6,
-  orderBy = ORDER_BY.NEW
-) {
-  try {
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*, user:user_id(*)')
-      .eq('status', 'ACCEPTED')
-      .eq('is_archived', false)
-      .eq('is_anonymous', false)
-      .in('user_id', receiverProfileIds)
-      .order(orderBy.columnName, { ascending: orderBy.isAscending })
-      .range(startIndex, startIndex + limit - 1);
-
-    if (error) throw error;
-
-    return {
-      data,
-      hasMore: data.length === limit,
-    };
-  } catch (error) {
-    console.log(error);
   }
 }
 
@@ -429,7 +235,7 @@ async function getCommentsByParentDiscussionId(
   parentDiscussionId,
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.NEWEST
 ) {
   try {
     const { data, error } = await supabase
@@ -456,8 +262,57 @@ async function getCommentsByParentDiscussionId(
   }
 }
 
+
+
+async function getPendingPostsCount() {
+  try {
+    const { count, error } = await supabase
+      .from('posts')
+      .select('*', { count: 'estimated', head: true })
+      .eq('status', 'PENDING');
+
+    if (error) throw error;
+
+    return {
+      count,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+async function getAcceptedPostsByReceiverProfileIds(
+  receiverProfileIds,
+  startIndex = 0,
+  limit = 6,
+  orderBy = ORDER_BY.NEWEST
+) {
+  try {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*, user:user_id(*)')
+      .eq('status', 'ACCEPTED')
+      .eq('is_archived', false)
+      .eq('is_anonymous', false)
+      .in('user_id', receiverProfileIds)
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export {
   getDiscussions,
+  getWeeklyDiscussions,
   getDiscussionsBySearchTerm,
   getDiscussionsByUserId,
   getDiscussionById,
@@ -465,11 +320,7 @@ export {
   addDiscussion,
   updateDiscussionById,
   getCommentsByParentDiscussionId,
-  removeStorageObjectsByPostId,
-  removePost,
-  archivePost,
-  unarchivePost,
+
   getPendingPostsCount,
-  getViewedPostsByProfileId,
   getAcceptedPostsByReceiverProfileIds,
 };

@@ -22,18 +22,26 @@ function HideModal() {
     setIsLoading(true);
     await modal.data.handleHide();
     setIsLoading(false);
+    handleClose();
     setModal({ type: null, data: null });
   }
 
+  function handleClose() {
+    setTitle('');
+  }
+
   return (
-    <Modal show={show} isDisabled={isLoading}>
+    <Modal show={show} isDisabled={isLoading} handleClose={handleClose}>
       <p>
         Do you want to archive <span className="font-bold">"{title}"</span>?
       </p>
       <div className="flex gap-2 self-end">
         <Button
           isDisabled={isLoading}
-          handleClick={() => setModal({ type: null, data: null })}
+          handleClick={() => {
+            handleClose();
+            setModal({ type: null, data: null });
+          }}
         >
           No
         </Button>

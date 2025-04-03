@@ -1,11 +1,10 @@
 import { useEffect, useState, useRef, useContext } from 'react';
-import { getVideos } from '../common/database/videos';
-import { getClips } from '../common/database/videos';
+import { getWeeklyVideos } from '../common/database/videos';
 import { getUsers } from '../common/database/users';
-import { getDiscussions } from '../common/database/discussions';
+import { getWeeklyDiscussions } from '../common/database/discussions';
 import { DataContext } from '../common/context/DataContextProvider';
+import { ORDER_BY } from '../common/enums';
 import VideoCard from '../components/VideoCard';
-import ClipCard from '../components/ClipCard';
 import UserCard from '../components/UserCard';
 import DiscussionCard from '../components/DiscussionCard';
 import Loading from '../components/Loading';
@@ -16,42 +15,186 @@ import HorizontalScrollCard from '../components/HorizontalScrollCard';
 
 function Explore() {
   const {
-    users,
-    setUsers,
-    videos,
-    setVideos,
-    clips,
-    setClips,
-    discussions,
-    setDiscussions,
+    newestUsers,
+    setNewestUsers,
+    mostFollowedUsers,
+    setMostFollowedUsers,
+
+    latestDiscussions,
+    setLatestDiscussions,
+    mostLikedDiscussions,
+    setMostLikedDiscussions,
+    mostViewedDiscussions,
+    setMostViewedDiscussions,
+    mostDiscussedDiscussions,
+    setMostDiscussedDiscussions,
+
+    latestVideos,
+    setLatestVideos,
+    mostLikedVideos,
+    setMostLikedVideos,
+    mostViewedVideos,
+    setMostViewedVideos,
+    mostDiscussedVideos,
+    setMostDiscussedVideos,
+    latestClips,
+    setLatestClips,
+    mostLikedClips,
+    setMostLikedClips,
+    mostViewedClips,
+    setMostViewedClips,
+    mostDiscussedClips,
+    setMostDiscussedClips,
   } = useContext(DataContext);
 
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     async function initialize() {
-      if (!users.hasInitialized) {
+      if (!newestUsers.hasInitialized) {
         setIsLoading(true);
 
         const [
-          videosResponse,
-          clipsResponse,
-          usersResponse,
-          discussionsResponse,
+          latestVideosResponse,
+          mostLikedVideosResponse,
+          mostViewedVideosResponse,
+          mostDiscussedVideosResponse,
+
+          latestClipsResponse,
+          mostLikedClipsResponse,
+          mostViewedClipsResponse,
+          mostDiscussedClipsResponse,
+
+          latestDiscussionsResponse,
+          mostLikedDiscussionsResponse,
+          mostViewedDiscussionsResponse,
+          mostDiscussedDiscussionsResponse,
+
+          newestUsersResponse,
+          mostFollowedUsersResponse,
         ] = await Promise.all([
-          getVideos(),
-          getClips(),
-          getUsers(),
-          getDiscussions(),
+          getWeeklyVideos('HORIZONTAL', undefined, undefined, ORDER_BY.LATEST),
+          getWeeklyVideos(
+            'HORIZONTAL',
+            undefined,
+            undefined,
+            ORDER_BY.MOST_LIKED
+          ),
+          getWeeklyVideos(
+            'HORIZONTAL',
+            undefined,
+            undefined,
+            ORDER_BY.MOST_VIEWED
+          ),
+          getWeeklyVideos(
+            'HORIZONTAL',
+            undefined,
+            undefined,
+            ORDER_BY.MOST_DISCUSSED
+          ),
+
+          getWeeklyVideos('VERTICAL', undefined, undefined, ORDER_BY.LATEST),
+          getWeeklyVideos(
+            'VERTICAL',
+            undefined,
+            undefined,
+            ORDER_BY.MOST_LIKED
+          ),
+          getWeeklyVideos(
+            'VERTICAL',
+            undefined,
+            undefined,
+            ORDER_BY.MOST_VIEWED
+          ),
+          getWeeklyVideos(
+            'VERTICAL',
+            undefined,
+            undefined,
+            ORDER_BY.MOST_DISCUSSED
+          ),
+
+          getWeeklyDiscussions(undefined, undefined, ORDER_BY.LATEST),
+          getWeeklyDiscussions(
+            undefined,
+            undefined,
+            ORDER_BY.MOST_LIKED
+          ),
+          getWeeklyDiscussions(
+            undefined,
+            undefined,
+            ORDER_BY.MOST_VIEWED
+          ),
+          getWeeklyDiscussions(
+            undefined,
+            undefined,
+            ORDER_BY.MOST_DISCUSSED
+          ),
+
+          getUsers(
+            undefined,
+            undefined,
+            ORDER_BY.NEWEST
+          ),
+          getUsers(
+            undefined,
+            undefined,
+            ORDER_BY.MOST_FOLLOWED
+          ),
         ]);
 
-        setVideos({ data: videosResponse.data, hasInitialized: true });
-        setClips({ data: clipsResponse.data, hasInitialized: true });
-        setUsers({ data: usersResponse.data, hasInitialized: true });
-        setDiscussions({
-          data: discussionsResponse.data,
+        setLatestVideos({
+          data: latestVideosResponse.data,
           hasInitialized: true,
         });
+        setMostLikedVideos({
+          data: mostLikedVideosResponse.data,
+          hasInitialized: true,
+        });
+        setMostViewedVideos({
+          data: mostViewedVideosResponse.data,
+          hasInitialized: true,
+        });
+        setMostDiscussedVideos({
+          data: mostDiscussedVideosResponse.data,
+          hasInitialized: true,
+        });
+
+        setLatestClips({
+          data: latestClipsResponse.data,
+          hasInitialized: true,
+        });
+        setMostLikedClips({
+          data: mostLikedClipsResponse.data,
+          hasInitialized: true,
+        });
+        setMostViewedClips({
+          data: mostViewedClipsResponse.data,
+          hasInitialized: true,
+        });
+        setMostDiscussedClips({
+          data: mostDiscussedClipsResponse.data,
+          hasInitialized: true,
+        });
+
+        setLatestDiscussions({
+          data: latestDiscussionsResponse.data,
+          hasInitialized: true,
+        });
+        setMostLikedDiscussions({
+          data: mostLikedDiscussionsResponse.data,
+          hasInitialized: true,
+        });
+        setMostViewedDiscussions({
+          data: mostViewedDiscussionsResponse.data,
+          hasInitialized: true,
+        });
+        setMostDiscussedDiscussions({
+          data: mostDiscussedDiscussionsResponse.data,
+          hasInitialized: true,
+        });
+
+        setNewestUsers({ data: newestUsersResponse.data, hasInitialized: true });
+        setMostFollowedUsers({ data: mostFollowedUsersResponse.data, hasInitialized: true });
 
         setIsLoading(false);
       }
@@ -66,10 +209,10 @@ function Explore() {
       {isLoading && <Loading />}
       {!isLoading && (
         <>
-          <Subheader>Users</Subheader>
-          {users.data.length > 0 && (
+          <Subheader>Newest Users</Subheader>
+          {newestUsers.data.length > 0 && (
             <HorizontalScrollGrid to="/users">
-              {users.data.map((user, index) => (
+              {newestUsers.data.map((user, index) => (
                 <HorizontalScrollCard key={index} width={128}>
                   <UserCard user={user} />
                 </HorizontalScrollCard>
@@ -77,32 +220,142 @@ function Explore() {
             </HorizontalScrollGrid>
           )}
 
-          <Subheader>Videos</Subheader>
-          {videos.data.length > 0 && (
+<Subheader>Most Followed Users</Subheader>
+          {mostFollowedUsers.data.length > 0 && (
+            <HorizontalScrollGrid to="/users">
+              {mostFollowedUsers.data.map((user, index) => (
+                <HorizontalScrollCard key={index} width={128}>
+                  <UserCard user={user} />
+                </HorizontalScrollCard>
+              ))}
+            </HorizontalScrollGrid>
+          )}
+
+          <Subheader>Latest Videos This Week</Subheader>
+          {latestVideos.data.length > 0 && (
             <HorizontalScrollGrid to="/videos">
-              {videos.data.map((video, index) => (
+              {latestVideos.data.map((video, index) => (
                 <HorizontalScrollCard key={index} width={320}>
-                  <VideoCard video={video} />
+                  <VideoCard video={video} orientation="HORIZONTAL" />
                 </HorizontalScrollCard>
               ))}
             </HorizontalScrollGrid>
           )}
 
-          <Subheader>Clips</Subheader>
-          {clips.data.length > 0 && (
-            <HorizontalScrollGrid to="/clips">
-              {clips.data.map((clip, index) => (
+          <Subheader>Most Liked Videos This Week</Subheader>
+          {mostLikedVideos.data.length > 0 && (
+            <HorizontalScrollGrid to="/videos">
+              {mostLikedVideos.data.map((video, index) => (
                 <HorizontalScrollCard key={index} width={320}>
-                  <ClipCard clip={clip} />
+                  <VideoCard video={video} orientation="HORIZONTAL" />
                 </HorizontalScrollCard>
               ))}
             </HorizontalScrollGrid>
           )}
 
-          <Subheader>Discussions</Subheader>
-          {discussions.data.length > 0 && (
+          <Subheader>Most Viewed Videos This Week</Subheader>
+          {mostViewedVideos.data.length > 0 && (
+            <HorizontalScrollGrid to="/videos">
+              {mostViewedVideos.data.map((video, index) => (
+                <HorizontalScrollCard key={index} width={320}>
+                  <VideoCard video={video} orientation="HORIZONTAL" />
+                </HorizontalScrollCard>
+              ))}
+            </HorizontalScrollGrid>
+          )}
+
+          <Subheader>Most Discussed Videos This Week</Subheader>
+          {mostDiscussedVideos.data.length > 0 && (
+            <HorizontalScrollGrid to="/videos">
+              {mostDiscussedVideos.data.map((video, index) => (
+                <HorizontalScrollCard key={index} width={320}>
+                  <VideoCard video={video} orientation="HORIZONTAL" />
+                </HorizontalScrollCard>
+              ))}
+            </HorizontalScrollGrid>
+          )}
+
+          <Subheader>Latest Clips This Week</Subheader>
+          {latestClips.data.length > 0 && (
+            <HorizontalScrollGrid to="/videos">
+              {latestClips.data.map((video, index) => (
+                <HorizontalScrollCard key={index} width={320}>
+                  <VideoCard video={video} orientation="VERTICAL" />
+                </HorizontalScrollCard>
+              ))}
+            </HorizontalScrollGrid>
+          )}
+
+          <Subheader>Most Liked Clips This Week</Subheader>
+          {mostLikedClips.data.length > 0 && (
+            <HorizontalScrollGrid to="/videos">
+              {mostLikedClips.data.map((video, index) => (
+                <HorizontalScrollCard key={index} width={320}>
+                  <VideoCard video={video} orientation="VERTICAL" />
+                </HorizontalScrollCard>
+              ))}
+            </HorizontalScrollGrid>
+          )}
+
+          <Subheader>Most Viewed Clips This Week</Subheader>
+          {mostViewedClips.data.length > 0 && (
+            <HorizontalScrollGrid to="/videos">
+              {mostViewedClips.data.map((video, index) => (
+                <HorizontalScrollCard key={index} width={320}>
+                  <VideoCard video={video} orientation="VERTICAL" />
+                </HorizontalScrollCard>
+              ))}
+            </HorizontalScrollGrid>
+          )}
+
+          <Subheader>Most Discussed Clips This Week</Subheader>
+          {mostDiscussedClips.data.length > 0 && (
+            <HorizontalScrollGrid to="/videos">
+              {mostDiscussedClips.data.map((video, index) => (
+                <HorizontalScrollCard key={index} width={320}>
+                  <VideoCard video={video} orientation="VERTICAL" />
+                </HorizontalScrollCard>
+              ))}
+            </HorizontalScrollGrid>
+          )}
+
+          <Subheader>Latest Discussions</Subheader>
+          {latestDiscussions.data.length > 0 && (
             <HorizontalScrollGrid to="/discussions">
-              {discussions.data.map((discussion, index) => (
+              {latestDiscussions.data.map((discussion, index) => (
+                <HorizontalScrollCard key={index} width={320}>
+                  <DiscussionCard discussion={discussion} />
+                </HorizontalScrollCard>
+              ))}
+            </HorizontalScrollGrid>
+          )}
+
+<Subheader>Most Liked Discussions This Week</Subheader>
+          {mostLikedDiscussions.data.length > 0 && (
+            <HorizontalScrollGrid to="/discussions">
+              {mostLikedDiscussions.data.map((discussion, index) => (
+                <HorizontalScrollCard key={index} width={320}>
+                  <DiscussionCard discussion={discussion} />
+                </HorizontalScrollCard>
+              ))}
+            </HorizontalScrollGrid>
+          )}
+
+<Subheader>Most Viewed Discussions This Week</Subheader>
+          {mostViewedDiscussions.data.length > 0 && (
+            <HorizontalScrollGrid to="/discussions">
+              {mostViewedDiscussions.data.map((discussion, index) => (
+                <HorizontalScrollCard key={index} width={320}>
+                  <DiscussionCard discussion={discussion} />
+                </HorizontalScrollCard>
+              ))}
+            </HorizontalScrollGrid>
+          )}
+
+<Subheader>Most Commented Discussions This Week</Subheader>
+          {mostDiscussedDiscussions.data.length > 0 && (
+            <HorizontalScrollGrid to="/discussions">
+              {mostDiscussedDiscussions.data.map((discussion, index) => (
                 <HorizontalScrollCard key={index} width={320}>
                   <DiscussionCard discussion={discussion} />
                 </HorizontalScrollCard>

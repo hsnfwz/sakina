@@ -12,7 +12,7 @@ import Slider from '../components/Slider';
 import Loading from '../components/Loading';
 import { BUTTON_COLOR } from '../common/enums';
 
-function MediaPlayer({ media, mediaType, width, height }) {
+function MediaPlayer({ media, width, height }) {
   const mediaRef = useRef();
   const parentRef = useRef();
   const sliderRef = useRef();
@@ -170,10 +170,10 @@ function MediaPlayer({ media, mediaType, width, height }) {
             parentRef.current.requestFullscreen();
           }
         }}
-        src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/${mediaType}/${media.file_name}`}
+        src={`https://abitiahhgmflqcdphhww.supabase.co/storage/v1/object/public/videos/${media.file_name}`}
       />
       <div
-        className={`pulse aspect-[16/9] w-full rounded-lg bg-neutral-200 ${isLoadingMedia ? 'block' : 'hidden'} `}
+        className={`pulse aspect-[16/9] w-full rounded-lg bg-neutral-100 ${isLoadingMedia ? 'block' : 'hidden'} `}
       ></div>
       {!isLoadingMedia && (
         <div

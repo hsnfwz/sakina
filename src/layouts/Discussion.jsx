@@ -9,6 +9,17 @@ import { useElementIntersection } from '../common/hooks';
 import { AuthContext } from '../common/context/AuthContextProvider';
 import { ModalContext } from '../common/context/ModalContextProvider';
 import { BUTTON_COLOR } from '../common/enums';
+import { increment } from '../common/database/rpc';
+import {
+  addDiscussionView,
+  getDiscussionViewByUserIdAndDiscussionId,
+  updateDiscussionView,
+} from '../common/database/discussion-views';
+import {
+  addDiscussionLike,
+  getDiscussionLikeByUserIdAndDiscussionId,
+  removeDiscussionLike,
+} from '../common/database/discussion-likes';
 import Loading from '../components/Loading';
 import Button from '../components/Button';
 import Loaded from '../components/Loaded';
@@ -33,6 +44,10 @@ function Discussion() {
   } = useContext(DataContext);
   const [isLoadingDiscussion, setIsLoadingDiscussion] = useState(false);
   const [isLoadingComments, setIsLoadingComments] = useState(false);
+  const [discussionLike, setDiscussionLike] = useState(null);
+  const [discussionView, setDiscussionView] = useState(null);
+  const [isLoadingLike, setIsLoadingLike] = useState(false);
+  const [isLoadingView, setIsLoadingView] = useState(false);
 
   useEffect(() => {
     if (!location.state?.discussion) {
@@ -54,6 +69,15 @@ function Discussion() {
       }
     }
   }, [location]);
+
+  useEffect(() => {
+    if (authUser && activeDiscussion) {
+      if (authUser.id !== activeDiscussion.user_id) {
+        getDiscussionLike();
+        getDiscussionView();
+      }
+    }
+  }, [authUser, activeDiscussion]);
 
   useEffect(() => {
     if (activeDiscussion && !comments.hasInitialized) {
@@ -105,6 +129,40 @@ function Discussion() {
     setIsLoadingComments(false);
   }
 
+  async function getDiscussionLike() {
+    setIsLoadingLike(true);
+    const { data } = await getDiscussionLikeByUserIdAndDiscussionId(
+      authUser.id,
+      activeDiscussion.id
+    );
+    setDiscussionLike(data[0]);
+    setIsLoadingLike(false);
+  }
+
+  async function getDiscussionView() {
+    setIsLoadingView(true);
+    const { data } = await getDiscussionViewByUserIdAndDiscussionId(
+      authUser.id,
+      activeDiscussion.id
+    );
+    setDiscussionView(data[0]);
+
+    if (data[0]) {
+      await updateDiscussionView(data[0].id, {
+        updated_at: new Date(),
+      });
+    } else {
+      await addDiscussionView({
+        user_id: authUser.id,
+        discussion_id: activeDiscussion.id,
+      });
+    }
+
+    await increment('discussions', activeDiscussion.id, 'views_count', 1);
+
+    setIsLoadingView(false);
+  }
+
   if (isLoadingDiscussion) {
     return <Loading />;
   }
@@ -114,33 +172,50 @@ function Discussion() {
       <div className="flex w-full flex-col gap-4">
         <Header>{activeDiscussion.title}</Header>
         {activeDiscussion.description && <p>{activeDiscussion.description}</p>}
-        {authUser && (
-          <div className="flex gap-2">
+        <div className="flex gap-2">
+          <Button
+            color={BUTTON_COLOR.SOLID_GREEN}
+            handleClick={() => {
+              setModal({
+                type: 'COMMENT_MODAL',
+                data: {
+                  parentDiscussionId: activeDiscussion.id,
+                },
+              });
+            }}
+          >
+            <SVGOutlineChat />
+          </Button>
+          {authUser && authUser.id !== activeDiscussion.user_id && (
             <Button
-              color={BUTTON_COLOR.SOLID_GREEN}
-              handleClick={() => {
-                setModal({
-                  type: 'COMMENT_MODAL',
-                  data: {
-                    parentDiscussionId: activeDiscussion.id,
-                  },
-                });
+              color={
+                discussionLike
+                  ? BUTTON_COLOR.SOLID_RED
+                  : BUTTON_COLOR.OUTLINE_RED
+              }
+              handleClick={async () => {
+                if (discussionLike) {
+                  await removeDiscussionLike(discussionLike.id);
+                  setDiscussionLike(null);
+                } else {
+                  const { data } = await addDiscussionLike({
+                    user_id: authUser.id,
+                    discussion_id: activeDiscussion.id,
+                  });
+                  setDiscussionLike(data[0]);
+                }
               }}
             >
-              <SVGOutlineChat />
-              {/* <span className="px-2">{activeDiscussion.comments_count}</span> */}
-            </Button>
-            <Button color={BUTTON_COLOR.SOLID_RED} handleClick={() => {}}>
               <SVGOutlineHeart />
-              {/* <span className="px-2">{activeDiscussion.likes_count}</span> */}
             </Button>
-          </div>
-        )}
+          )}
+        </div>
+
         <Subheader>Comments</Subheader>
         {comments.data.length > 0 && (
           <div className="flex w-full flex-col gap-4">
             {comments.data.map((comment, index) => (
-              <div className="rounded-lg bg-neutral-200 p-2" key={comment.id}>
+              <div className="rounded-lg bg-neutral-100 p-2" key={comment.id}>
                 <Comment
                   key={index}
                   comment={comment}

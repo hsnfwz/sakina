@@ -43,7 +43,7 @@ function SignIn() {
       }
     } else {
       setAuthSession(data.session);
-      navigate('/');
+      navigate('/home');
     }
 
     setIsLoading(false);

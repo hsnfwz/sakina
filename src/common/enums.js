@@ -20,16 +20,28 @@ const UPLOAD_TYPE = Object.freeze({
 });
 
 const ORDER_BY = Object.freeze({
-  NEW: {
+  NEWEST: {
     columnName: 'created_at',
     isAscending: false,
   },
-  OLD: {
-    columnName: 'created_at',
-    isAscending: true,
+  LATEST: {
+    columnName: 'updated_at',
+    isAscending: false,
   },
-  TOP: {
+  MOST_VIEWED: {
+    columnName: 'views_count',
+    isAscending: false,
+  },
+  MOST_LIKED: {
     columnName: 'likes_count',
+    isAscending: false,
+  },
+  MOST_DISCUSSED: {
+    columnName: 'discussions_count',
+    isAscending: false,
+  },
+  MOST_FOLLOWED: {
+    columnName: 'followers_count',
     isAscending: false,
   },
 });
@@ -53,7 +65,7 @@ const BUTTON_COLOR = Object.freeze({
   },
   SOLID_WHITE: {
     tailwindBackgroundColor: 'bg-white',
-    tailwindHoverBackgroundColor: 'hover:bg-neutral-200',
+    tailwindHoverBackgroundColor: 'hover:bg-neutral-100',
     tailwindTextColor: 'text-black',
     tailwindFillColor: 'fill-black',
     tailwindBorderColor: 'border-black',
@@ -74,6 +86,14 @@ const BUTTON_COLOR = Object.freeze({
     tailwindFillColor: 'fill-white',
     tailwindBorderColor: 'border-rose-500',
     tailwindHoverBorderColor: 'hover:border-rose-500',
+  },
+  OUTLINE_RED: {
+    tailwindBackgroundColor: 'bg-white',
+    tailwindHoverBackgroundColor: 'hover:bg-white',
+    tailwindTextColor: 'text-rose-500',
+    tailwindFillColor: 'fill-rose-500',
+    tailwindBorderColor: 'border-rose-500',
+    tailwindHoverBorderColor: 'hover:border-rose-700',
   },
   SOLID_BLUE: {
     tailwindBackgroundColor: 'bg-sky-500',

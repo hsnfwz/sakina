@@ -1,5 +1,5 @@
 import { useEffect, useContext, useState, useRef } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link } from 'react-router';
 import { getNotificationsByUserId } from '../common/database/notifications.js';
 import { AuthContext } from '../common/context/AuthContextProvider.jsx';
 import { DataContext } from '../common/context/DataContextProvider.jsx';
@@ -13,26 +13,26 @@ import Button from '../components/Button.jsx';
 import Header from '../components/Header.jsx';
 
 function Notifications() {
-  const navigate = useNavigate();
-  const { authUser, isLoadingAuthUser } = useContext(AuthContext);
+  const { authUser } = useContext(AuthContext);
   const { notifications, setNotifications } = useContext(DataContext);
-
   const [isLoading, setIsLoading] = useState(false);
   const [elementRef, intersectingElement] = useElementIntersection();
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
-    if (!isLoadingAuthUser && !authUser) {
-      navigate('/');
+    if (authUser) {
+      setShow(true);
+    } else {
+      setShow(false);
     }
-  }, [isLoadingAuthUser, authUser]);
+  }, [authUser]);
 
   useEffect(() => {
     // setNotificationsCount(0);
-
-    if (!isLoadingAuthUser && authUser && !notifications.hasInitialized) {
+    if (authUser && !notifications.hasInitialized) {
       _getNotifications();
     }
-  }, [authUser, isLoadingAuthUser]);
+  }, [authUser]);
 
   useEffect(() => {
     if (intersectingElement && notifications.hasMore) {
@@ -84,7 +84,7 @@ function Notifications() {
   //   setIsLoading(false);
   // }
 
-  if (!isLoadingAuthUser && authUser) {
+  if (show) {
     return (
       <div className="flex w-full flex-col gap-4">
         {/* {notifications.hasInitialized && newNotificationsCount > 0 && (
@@ -98,7 +98,7 @@ function Notifications() {
         )} */}
         <Header>Notifications</Header>
         {notifications.data.length > 0 && (
-          <div className="flex flex-col divide-y-2 divide-neutral-200">
+          <div className="flex flex-col divide-y-2 divide-neutral-100">
             {notifications.data.map((notification, index) => (
               <div
                 key={notification.id}

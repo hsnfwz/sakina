@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router';
 import { getDiscussionsByUserId } from '../common/database/discussions.js';
 import { DataContext } from '../common/context/DataContextProvider.jsx';
 import Loading from '../components/Loading.jsx';
@@ -17,12 +16,12 @@ function UserDiscussions() {
   useEffect(() => {
     if (activeUser) {
       if (!userDiscussions.hasInitialized) {
-        getVideos();
+        getDiscussions();
       }
     }
   }, [activeUser]);
 
-  async function getVideos() {
+  async function getDiscussions() {
     setIsLoading(true);
 
     const { data, hasMore } = await getDiscussionsByUserId(

@@ -1,14 +1,13 @@
 import { useContext, useState, useEffect } from 'react';
 import { ModalContext } from '../common/context/ModalContextProvider';
 import { AuthContext } from '../common/context/AuthContextProvider';
-import { CHARACTER_LIMIT } from '../common/enums';
+import { CHARACTER_LIMIT, BUTTON_COLOR } from '../common/enums';
 import { addDiscussion } from '../common/database/discussions';
+import { increment } from '../common/database/rpc';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import Textarea from '../components/Textarea';
-import Toggle from '../components/Toggle';
 import TextInput from '../components/TextInput';
-import { increment } from '../common/database/rpc';
 
 function CommentModal() {
   const { authUser } = useContext(AuthContext);
@@ -42,23 +41,26 @@ function CommentModal() {
     await increment(
       'discussions',
       modal.data.parentDiscussionId,
-      'comments_count',
+      'discussions_count',
       1
     );
 
-    setTitle('');
-    setDescription('');
-    setIsAnonymous(false);
     setIsLoading(false);
-
+    handleClose();
     setModal({
       type: null,
       data: null,
     });
   }
 
+  function handleClose() {
+    setTitle('');
+    setDescription('');
+    setIsAnonymous(false);
+  }
+
   return (
-    <Modal show={show} isDisabled={isLoading}>
+    <Modal show={show} isDisabled={isLoading} handleClose={handleClose}>
       <TextInput
         handleInput={(event) => setTitle(event.target.value)}
         placeholder="Title"
@@ -73,12 +75,33 @@ function CommentModal() {
         label="Description"
         limit={CHARACTER_LIMIT.DESCRIPTION}
       />
-      <Toggle
-        handleChange={() => setIsAnonymous(!isAnonymous)}
-        isChecked={isAnonymous}
-      >
-        Anonymous
-      </Toggle>
+      <div className="flex flex-col gap-2">
+        <label>Anonymous</label>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            className={`${isAnonymous ? 'bg-white text-black' : 'bg-sky-500 text-white'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 hover:bg-sky-700 focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+            onMouseDown={(event) => event.preventDefault()}
+            color={
+              isAnonymous ? BUTTON_COLOR.OUTLINE_BLUE : BUTTON_COLOR.SOLID_BLUE
+            }
+            onClick={() => setIsAnonymous(false)}
+          >
+            No
+          </button>
+          <button
+            type="button"
+            className={`${isAnonymous ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 hover:bg-sky-700 focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+            onMouseDown={(event) => event.preventDefault()}
+            color={
+              isAnonymous ? BUTTON_COLOR.SOLID_BLUE : BUTTON_COLOR.OUTLINE_BLUE
+            }
+            onClick={() => setIsAnonymous(true)}
+          >
+            Yes
+          </button>
+        </div>
+      </div>
       <div className="flex gap-2 self-end">
         <Button
           handleClick={() => {

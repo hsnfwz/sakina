@@ -1,13 +1,13 @@
 import { useContext, useEffect, useRef, useState } from 'react';
-import { useNavigate, Outlet } from 'react-router';
+import { Outlet } from 'react-router';
 import { AuthContext } from '../common/context/AuthContextProvider.jsx';
 import Header from '../components/Header.jsx';
 import Anchor from '../components/Anchor.jsx';
 
 function Settings() {
-  const navigate = useNavigate();
   const { authSession } = useContext(AuthContext);
-  const { authUser, isLoadingAuthUser } = useContext(AuthContext);
+  const { authUser } = useContext(AuthContext);
+  const [show, setShow] = useState(false);
 
   const [videos, setVideos] = useState({
     data: [],
@@ -28,12 +28,14 @@ function Settings() {
   });
 
   useEffect(() => {
-    if (!isLoadingAuthUser && !authUser) {
-      navigate('/');
+    if (authSession && authUser) {
+      setShow(true);
+    } else {
+      setShow(false);
     }
-  }, [isLoadingAuthUser, authUser]);
+  }, [authUser, authSession]);
 
-  if (!isLoadingAuthUser && authSession && authUser) {
+  if (show) {
     return (
       <div className="flex w-full flex-col gap-4">
         <Header>Settings</Header>

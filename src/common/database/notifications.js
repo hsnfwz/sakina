@@ -5,7 +5,7 @@ async function getNotificationsByUserId(
   userId,
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.NEWEST
 ) {
   try {
     const { data, error } = await supabase
@@ -53,7 +53,7 @@ async function getAcceptedPostsNotificationsByProfileId(
   profileId,
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.NEWEST
 ) {
   try {
     const { data, error } = await supabase
@@ -79,7 +79,7 @@ async function getPendingPostsNotificationsByProfileId(
   profileId,
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.NEWEST
 ) {
   try {
     const { data, error } = await supabase
@@ -105,7 +105,7 @@ async function getRejectedPostsNotificationsByProfileId(
   profileId,
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.NEWEST
 ) {
   try {
     const { data, error } = await supabase
@@ -131,7 +131,7 @@ async function getFollowerNotificationsByProfileId(
   profileId,
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.NEWEST
 ) {
   try {
     const { data, error } = await supabase

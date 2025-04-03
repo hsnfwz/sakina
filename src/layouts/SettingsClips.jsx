@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router';
-import { getClipsByUserId, updateClipById } from '../common/database/videos';
+import { getVideosByUserId, updateVideoById } from '../common/database/videos';
 import { AuthContext } from '../common/context/AuthContextProvider.jsx';
 import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 import Loading from '../components/Loading.jsx';
@@ -25,8 +25,9 @@ function SettingsClips() {
   async function getClips() {
     setIsLoading(true);
 
-    const { data, hasMore } = await getClipsByUserId(
+    const { data, hasMore } = await getVideosByUserId(
       authUser.id,
+      'VERTICAL',
       clips.data.length
     );
 
@@ -59,7 +60,7 @@ function SettingsClips() {
                   description: clip.description,
                   is_anonymous: clip.is_anonymous,
                   handleEdit: async (payload) =>
-                    await updateClipById(clip.id, payload),
+                    await updateVideoById(clip.id, payload),
                 },
               })
             }
@@ -69,7 +70,7 @@ function SettingsClips() {
                 data: {
                   title: clip.title,
                   handleHide: async () =>
-                    await updateClipById(clip.id, { is_hidden: true }),
+                    await updateVideoById(clip.id, { is_hidden: true }),
                 },
               });
             }}

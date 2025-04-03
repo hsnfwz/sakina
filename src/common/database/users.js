@@ -1,7 +1,7 @@
 import { supabase } from '../supabase';
 import { ORDER_BY } from '../enums';
 
-async function getUsers(startIndex = 0, limit = 6, orderBy = ORDER_BY.NEW) {
+async function getUsers(startIndex = 0, limit = 6, orderBy = ORDER_BY.NEWEST) {
   try {
     const { data, error } = await supabase
       .from('users')
@@ -29,7 +29,7 @@ async function getUsersBySearchTerm(
   searchTerm,
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.NEWEST
 ) {
   try {
     const query = searchTerm.toLowerCase().trim();
@@ -89,7 +89,7 @@ async function getFollowersByProfileId(
   profileId,
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.NEWEST
 ) {
   try {
     const { data, error } = await supabase
@@ -114,7 +114,7 @@ async function getFollowingByProfileId(
   profileId,
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.NEWEST
 ) {
   try {
     const { data, error } = await supabase

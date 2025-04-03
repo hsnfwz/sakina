@@ -63,8 +63,15 @@ function AvatarModal() {
     setAuthUser(data[0]);
   }
 
+  function handleClose() {
+    setUppyAvatarFile(null);
+    setUppyAvatarFileUploadProgress(0);
+    if (avatarUploadFileButtonRef)
+      avatarUploadFileButtonRef.current.value = null;
+  }
+
   return (
-    <Modal show={show} isDisabled={isUploading}>
+    <Modal show={show} isDisabled={isUploading} handleClose={handleClose}>
       <div className="flex flex-col gap-4">
         <UploadFileButton
           id="uppyAvatar"
@@ -89,7 +96,7 @@ function AvatarModal() {
         <Button
           isDisabled={isUploading}
           handleClick={() => {
-            uppyAvatar.cancelAll();
+            handleClose();
             setModal({
               type: null,
               data: null,
@@ -108,8 +115,7 @@ function AvatarModal() {
               await updateAvatar(file);
             }
             setIsUploading(false);
-            setUppyAvatarFile(null);
-            setUppyAvatarFileUploadProgress(0);
+            handleClose();
             setModal({
               type: null,
               data: null,

@@ -30,6 +30,7 @@ function SettingsVideos() {
 
     const { data, hasMore } = await getVideosByUserId(
       authUser.id,
+      'HORIZONTAL',
       videos.data.length
     );
 

@@ -106,16 +106,18 @@ import Anchor from '../components/Anchor.jsx';
 // }
 
 function Home() {
-  const { authUser, isLoadingAuthUser } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const { authUser } = useContext(AuthContext);
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
-    if (!isLoadingAuthUser && !authUser) {
-      navigate('/');
+    if (authUser) {
+      setShow(true);
+    } else {
+      setShow(false);
     }
-  }, [isLoadingAuthUser, authUser]);
+  }, [authUser]);
 
-  if (!isLoadingAuthUser && authUser) {
+  if (show) {
     return (
       <div className="flex w-full flex-col gap-4">
         <Header>Home</Header>

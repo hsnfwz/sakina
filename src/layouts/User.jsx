@@ -5,7 +5,7 @@ import { BUTTON_COLOR } from '../common/enums.js';
 import {
   addFollower,
   removeFollower,
-  getFollowerBySenderProfileIdAndReceiverProfileId,
+  getFollowerBySenderUserIdAndReceiverUserId,
 } from '../common/database/followers.js';
 import { addNotification } from '../common/database/notifications.js';
 import { DataContext } from '../common/context/DataContextProvider.jsx';
@@ -51,10 +51,10 @@ function User() {
   }, [location]);
 
   useEffect(() => {
-    if (activeUser) {
-      // getFollower();
+    if (authUser && activeUser) {
+      getFollower();
     }
-  }, [activeUser]);
+  }, [authUser, activeUser]);
 
   async function getUser() {
     setIsLoadingUser(true);
@@ -65,34 +65,26 @@ function User() {
 
   async function getFollower() {
     setIsLoadingFollower(true);
-
-    const { data } = await getFollowerBySenderProfileIdAndReceiverProfileId(
+    const { data } = await getFollowerBySenderUserIdAndReceiverUserId(
       authUser.id,
       activeUser.id
     );
-
     setFollower(data[0]);
-
     setIsLoadingFollower(false);
   }
 
   async function handleFollow() {
     setIsLoadingFollow(true);
-
     const { data } = await addFollower(authUser.id, activeUser.id);
     setFollower(data[0]);
-
     await addNotification(authUser.id, activeUser.id, 'FOLLOW');
-
     setIsLoadingFollow(false);
   }
 
   async function handleUnfollow() {
     setIsLoadingFollow(true);
-
     await removeFollower(follower.id);
     setFollower(null);
-
     setIsLoadingFollow(false);
   }
 
@@ -129,13 +121,13 @@ function User() {
                 onLoad={() => setIsLoadingImage(false)}
               />
             )}
+            {!activeUser.avatar_file_name && (
+              <div className="aspect-square max-h-[128px] w-full max-w-[128px] rounded-full bg-neutral-100"></div>
+            )}
             {activeUser.avatar_file_name && (
               <div
-                className={`aspect-square animate-pulse rounded-full bg-neutral-200 ${isLoadingImage ? 'block' : 'hidden'}`}
+                className={`aspect-square max-h-[128px] w-full max-w-[128px] animate-pulse rounded-full bg-neutral-100 ${isLoadingImage ? 'block' : 'hidden'}`}
               ></div>
-            )}
-            {!activeUser.avatar_file_name && (
-              <div className="aspect-square w-full max-w-[128px] rounded-full bg-neutral-200"></div>
             )}
           </div>
           <h1>
@@ -143,9 +135,9 @@ function User() {
             {activeUser.name && <span> - {activeUser.name}</span>}
           </h1>
           {activeUser.bio && <p>{activeUser.bio}</p>}
-          {/* {authUser && authUser.id !== activeUser.id && !follower && (
+          {authUser && authUser.id !== activeUser.id && !follower && (
             <Button
-              color={BUTTON_COLOR.BLUE}
+              color={BUTTON_COLOR.OUTLINE_BLUE}
               handleClick={handleFollow}
               isDisabled={isLoadingFollow}
             >
@@ -154,13 +146,13 @@ function User() {
           )}
           {authUser && authUser.id !== activeUser.id && follower && (
             <Button
-              color={BUTTON_COLOR.BLUE}
+              color={BUTTON_COLOR.SOLID_BLUE}
               handleClick={handleUnfollow}
               isDisabled={isLoadingFollow}
             >
               Unfollow
             </Button>
-          )} */}
+          )}
         </div>
 
         <nav className="flex w-full">
@@ -182,6 +174,14 @@ function User() {
           >
             Discussions
           </Anchor>
+          {authUser && authUser.id === activeUser.id && (
+            <Anchor
+              active={location.pathname.includes('activity')}
+              to="activity"
+            >
+              Activity
+            </Anchor>
+          )}
         </nav>
         <Outlet />
       </div>

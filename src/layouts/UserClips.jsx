@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
-import { getClipsByUserId } from '../common/database/videos';
+import { getVideosByUserId } from '../common/database/videos';
 import { DataContext } from '../common/context/DataContextProvider.jsx';
 import Loading from '../components/Loading.jsx';
 import Loaded from '../components/Loaded.jsx';
-import ClipCard from '../components/ClipCard.jsx';
-import ClipCardGrid from '../components/ClipCardGrid.jsx';
+import VideoCard from '../components/VideoCard.jsx';
+import VideoCardGrid from '../components/VideoCardGrid.jsx';
 
 function UserClips() {
   const { activeUser } = useContext(DataContext);
@@ -24,8 +24,9 @@ function UserClips() {
   async function getVideos() {
     setIsLoading(true);
 
-    const { data, hasMore } = await getClipsByUserId(
+    const { data, hasMore } = await getVideosByUserId(
       activeUser.id,
+      'VERTICAL',
       userClips.data.length
     );
 
@@ -45,11 +46,11 @@ function UserClips() {
 
   return (
     <div className="flex w-full flex-col gap-4">
-      <ClipCardGrid>
+      <VideoCardGrid>
         {userClips.data.map((clip, index) => (
-          <ClipCard key={index} clip={clip} />
+          <VideoCard key={index} video={clip} orientation="VERTICAL" />
         ))}
-      </ClipCardGrid>
+      </VideoCardGrid>
       {!userClips.hasMore && <Loaded />}
       {isLoading && <Loading />}
     </div>

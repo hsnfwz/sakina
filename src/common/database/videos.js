@@ -1,86 +1,19 @@
 import { supabase } from '../supabase';
 import { ORDER_BY } from '../enums';
+import { getTodayAndLastWeekDateISO } from '../helpers';
 
-async function getClips(startIndex = 0, limit = 6, orderBy = ORDER_BY.NEW) {
-  try {
-    const { data, error } = await supabase
-      .from('videos')
-      .select('*, user:user_id(*)')
-      .eq('orientation', 'VERTICAL')
-      .eq('is_hidden', false)
-      .order(orderBy.columnName, { ascending: orderBy.isAscending })
-      .range(startIndex, startIndex + limit - 1);
-
-    if (error) throw error;
-
-    return {
-      data,
-      hasMore: data.length === limit,
-    };
-  } catch (error) {
-    console.log(error);
-
-    return {
-      data: [],
-      hasMore: false,
-    };
-  }
-}
-
-async function getClipsBySearchTerm(
-  searchTerm,
+async function getVideos(
+  orientation = 'HORIZONTAL',
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
-) {
-  try {
-    const query = searchTerm.toLowerCase().trim();
-
-    if (query.length === 0) {
-      return {
-        data: [],
-        hasMore: false,
-      };
-    }
-
-    const { data, error } = await supabase
-      .from('videos')
-      .select('*, user:user_id(*)')
-      .eq('orientation', 'VERTICAL')
-      .eq('is_hidden', false)
-      .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
-      .order(orderBy.columnName, { ascending: orderBy.isAscending })
-      .range(startIndex, startIndex + limit - 1);
-
-    if (error) throw error;
-
-    return {
-      data,
-      hasMore: data.length === limit,
-    };
-  } catch (error) {
-    console.log(error);
-
-    return {
-      data: [],
-      hasMore: false,
-    };
-  }
-}
-
-async function getClipsByUserId(
-  userId,
-  startIndex = 0,
-  limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.NEWEST
 ) {
   try {
     const { data, error } = await supabase
       .from('videos')
       .select('*, user:user_id(*)')
-      .eq('orientation', 'VERTICAL')
+      .eq('orientation', orientation)
       .eq('is_hidden', false)
-      .eq('user_id', userId)
       .order(orderBy.columnName, { ascending: orderBy.isAscending })
       .range(startIndex, startIndex + limit - 1);
 
@@ -100,89 +33,22 @@ async function getClipsByUserId(
   }
 }
 
-async function getClipById(id) {
-  try {
-    const { data, error } = await supabase
-      .from('videos')
-      .select('*, user:user_id(*)')
-      .eq('is_hidden', false)
-      .eq('id', id);
-
-    if (error) throw error;
-
-    return {
-      data,
-    };
-  } catch (error) {
-    console.log(error);
-
-    return {
-      data: null,
-    };
-  }
-}
-
-async function getHiddenClipsByUserId(
-  userId,
+async function getWeeklyVideos(
+  orientation = 'HORIZONTAL',
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.LATEST
 ) {
   try {
+    const { today, lastWeek } = getTodayAndLastWeekDateISO();
+
     const { data, error } = await supabase
       .from('videos')
       .select('*, user:user_id(*)')
-      .eq('orientation', 'VERTICAL')
-      .eq('is_hidden', true)
-      .eq('user_id', userId)
-      .order(orderBy.columnName, { ascending: orderBy.isAscending })
-      .range(startIndex, startIndex + limit - 1);
-
-    if (error) throw error;
-
-    return {
-      data,
-      hasMore: data.length === limit,
-    };
-  } catch (error) {
-    console.log(error);
-
-    return {
-      data: [],
-      hasMore: false,
-    };
-  }
-}
-
-async function updateClipById(id, payload) {
-  try {
-    const { data, error } = await supabase
-      .from('videos')
-      .update(payload)
-      .eq('id', id)
-      .select();
-
-    if (error) throw error;
-
-    return {
-      data,
-    };
-  } catch (error) {
-    console.log(error);
-
-    return {
-      data: null,
-    };
-  }
-}
-
-async function getVideos(startIndex = 0, limit = 6, orderBy = ORDER_BY.NEW) {
-  try {
-    const { data, error } = await supabase
-      .from('videos')
-      .select('*, user:user_id(*)')
-      .eq('orientation', 'HORIZONTAL')
+      .eq('orientation', orientation)
       .eq('is_hidden', false)
+      .gte('updated_at', lastWeek)
+      .lte('updated_at', today)
       .order(orderBy.columnName, { ascending: orderBy.isAscending })
       .range(startIndex, startIndex + limit - 1);
 
@@ -204,9 +70,10 @@ async function getVideos(startIndex = 0, limit = 6, orderBy = ORDER_BY.NEW) {
 
 async function getVideosBySearchTerm(
   searchTerm,
+  orientation = 'HORIZONTAL',
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.NEWEST
 ) {
   try {
     const query = searchTerm.toLowerCase().trim();
@@ -221,7 +88,7 @@ async function getVideosBySearchTerm(
     const { data, error } = await supabase
       .from('videos')
       .select('*, user:user_id(*)')
-      .eq('orientation', 'HORIZONTAL')
+      .eq('orientation', orientation)
       .eq('is_hidden', false)
       .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
       .order(orderBy.columnName, { ascending: orderBy.isAscending })
@@ -245,15 +112,16 @@ async function getVideosBySearchTerm(
 
 async function getVideosByUserId(
   userId,
+  orientation = 'HORIZONTAL',
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.NEWEST
 ) {
   try {
     const { data, error } = await supabase
       .from('videos')
       .select('*, user:user_id(*)')
-      .eq('orientation', 'HORIZONTAL')
+      .eq('orientation', orientation)
       .eq('is_hidden', false)
       .eq('user_id', userId)
       .order(orderBy.columnName, { ascending: orderBy.isAscending })
@@ -299,15 +167,16 @@ async function getVideoById(id) {
 
 async function getHiddenVideosByUserId(
   userId,
+  orientation = 'HORIZONTAL',
   startIndex = 0,
   limit = 6,
-  orderBy = ORDER_BY.NEW
+  orderBy = ORDER_BY.NEWEST
 ) {
   try {
     const { data, error } = await supabase
       .from('videos')
       .select('*, user:user_id(*)')
-      .eq('orientation', 'HORIZONTAL')
+      .eq('orientation', orientation)
       .eq('is_hidden', true)
       .eq('user_id', userId)
       .order(orderBy.columnName, { ascending: orderBy.isAscending })
@@ -353,15 +222,10 @@ async function updateVideoById(id, payload) {
 
 export {
   getVideos,
+  getWeeklyVideos,
   getVideosBySearchTerm,
   getVideosByUserId,
   getVideoById,
   getHiddenVideosByUserId,
   updateVideoById,
-  getClips,
-  getClipsBySearchTerm,
-  getClipsByUserId,
-  getClipById,
-  getHiddenClipsByUserId,
-  updateClipById,
 };

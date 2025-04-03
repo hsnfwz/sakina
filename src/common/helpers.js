@@ -158,6 +158,23 @@ function handleFileAdded(file, bucketName) {
   }
 }
 
+function getTodayAndLastWeekDateISO() {
+  let today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let lastWeek = new Date();
+  lastWeek.setDate(today.getDate() - 7);
+  lastWeek.setHours(0, 0, 0, 0);
+
+  today = today.toISOString();
+  lastWeek = lastWeek.toISOString();
+
+  return {
+    today,
+    lastWeek,
+  };
+}
+
 export {
   expectedUsernameFormat,
   expectedPasswordFormat,
@@ -170,4 +187,5 @@ export {
   formatCount,
   getHighlightText,
   handleFileAdded,
+  getTodayAndLastWeekDateISO,
 };

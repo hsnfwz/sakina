@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router';
 import { getVideosByUserId } from '../common/database/videos.js';
 import { DataContext } from '../common/context/DataContextProvider.jsx';
 import Loading from '../components/Loading.jsx';
@@ -27,6 +26,7 @@ function UserVideos() {
 
     const { data, hasMore } = await getVideosByUserId(
       activeUser.id,
+      'HORIZONTAL',
       userVideos.data.length
     );
 
@@ -48,7 +48,7 @@ function UserVideos() {
     <div className="flex w-full flex-col gap-4">
       <VideoCardGrid>
         {userVideos.data.map((video, index) => (
-          <VideoCard key={index} video={video} />
+          <VideoCard key={index} video={video} orientation="HORIZONTAL" />
         ))}
       </VideoCardGrid>
       {!userVideos.hasMore && <Loaded />}

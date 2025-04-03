@@ -21,7 +21,9 @@ function HorizontalScrollGrid({ children, to }) {
         onScroll={() => {
           clearTimeout(timerRef.current);
           timerRef.current = setTimeout(() => {
-            setScrollLeft(parentRef.current.scrollLeft);
+            if (parentRef.current) {
+              setScrollLeft(parentRef.current.scrollLeft);
+            }
           }, 100);
         }}
       >
@@ -30,7 +32,7 @@ function HorizontalScrollGrid({ children, to }) {
           ref={elementRef}
           to={to}
           onMouseDown={(event) => event.preventDefault()}
-          className={`flex items-center justify-center self-center rounded-full border-2 border-sky-500 bg-sky-500 fill-white p-2 text-center hover:bg-sky-700 focus:z-50 focus:rounded-full focus:ring-2 focus:ring-black focus:outline-0`}
+          className={`flex items-center justify-center self-center rounded-full border-2 border-sky-500 bg-sky-500 fill-white p-2 text-center transition-all hover:bg-sky-700 focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
         >
           <SVGOutlineRegularArrowRight />
         </Link>
