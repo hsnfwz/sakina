@@ -28,9 +28,7 @@ import UserClips from './layouts/UserClips.jsx';
 import UserDiscussions from './layouts/UserDiscussions.jsx';
 import Notifications from './layouts/Notifications.jsx';
 import SettingsAccount from './layouts/SettingsAccount.jsx';
-import SettingsVideos from './layouts/SettingsVideos.jsx';
-import SettingsClips from './layouts/SettingsClips.jsx';
-import SettingsDiscussions from './layouts/SettingsDiscussions.jsx';
+import SettingsContent from './layouts/SettingsContent.jsx';
 import UserActivity from './layouts/UserActivity.jsx';
 
 const router = createBrowserRouter([
@@ -126,9 +124,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, Component: SettingsAccount },
           { path: 'account', Component: SettingsAccount },
-          { path: 'videos', Component: SettingsVideos },
-          { path: 'clips', Component: SettingsClips },
-          { path: 'discussions', Component: SettingsDiscussions },
+          { path: 'content', Component: SettingsContent },
         ],
       },
       {
@@ -149,8 +145,13 @@ createRoot(root).render(
 );
 
 /* 
-  - supabase avatar and thumbnail file size - research ideal file size and set the max
   - unhide content
+
+  notifications
+    - notification card
+    - is_read
+
+  - supabase avatar and thumbnail file size - research ideal file size and set the max
 
   - fetch more when intersecting last element - check for all content pages
   - dont let other users see another user's anonymous posts
@@ -172,11 +173,6 @@ createRoot(root).render(
   - enable/disable looping
   - autplay queue of videos (ex: playlists)
   - visually display audio using Web Audio API
-
-  notifications
-    - notification card
-    - notifications for activity by people you follow - enable/disable preference
-    - is_read
 
   sign-up/sign-in
   - make inputs green when they are correctly inputted to indicate progress to the user

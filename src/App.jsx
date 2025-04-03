@@ -176,6 +176,7 @@ import EditModal from './modals/EditModal.jsx';
 import AvatarModal from './modals/AvatarModal.jsx';
 import HideModal from './modals/HideModal.jsx';
 import CommentModal from './modals/CommentModal.jsx';
+import UnhideModal from './modals/UnhideModal.jsx';
 
 function App() {
   const location = useLocation();
@@ -194,6 +195,7 @@ function App() {
                 <EditModal />
                 <HideModal />
                 <CommentModal />
+                <UnhideModal />
               </>
             )}
             <Outlet />

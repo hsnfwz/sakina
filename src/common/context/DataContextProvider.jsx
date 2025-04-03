@@ -101,7 +101,6 @@ function DataContextProvider({ children }) {
 
   const [nestedComments, setNestedComments] = useState({});
 
-
   const [newestUsers, setNewestUsers] = useState({
     data: [],
     hasMore: true,
@@ -113,7 +112,6 @@ function DataContextProvider({ children }) {
     hasMore: true,
     hasInitialized: false,
   });
-
 
   const [userVideos, setUserVideos] = useState({
     data: [],

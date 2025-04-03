@@ -3,14 +3,14 @@ import { ModalContext } from '../common/context/ModalContextProvider';
 import Modal from '../components/Modal';
 import Button from '../components/Button';
 
-function HideModal() {
+function UnhideModal() {
   const { modal, setModal } = useContext(ModalContext);
   const [title, setTitle] = useState('');
   const [show, setShow] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (modal.type === 'HIDE_MODAL') {
+    if (modal.type === 'UNHIDE_MODAL') {
       setTitle(modal.data.title);
       setShow(true);
     } else {
@@ -20,7 +20,7 @@ function HideModal() {
 
   async function handleSubmit() {
     setIsLoading(true);
-    await modal.data.handleHide();
+    await modal.data.handleUnhide();
     setIsLoading(false);
     handleClose();
     setModal({ type: null, data: null });
@@ -33,8 +33,8 @@ function HideModal() {
   return (
     <Modal show={show} isDisabled={isLoading} handleClose={handleClose}>
       <p>
-        Do you want to hide <span className="font-bold">"{title}"</span>? Other
-        users will no longer be able to view it.
+        Do you want to show <span className="font-bold">"{title}"</span>? Other
+        users will be able to view it.
       </p>
       <div className="flex gap-2 self-end">
         <Button isDisabled={isLoading} handleClick={handleSubmit}>
@@ -54,4 +54,4 @@ function HideModal() {
   );
 }
 
-export default HideModal;
+export default UnhideModal;

@@ -262,8 +262,6 @@ async function getCommentsByParentDiscussionId(
   }
 }
 
-
-
 async function getPendingPostsCount() {
   try {
     const { count, error } = await supabase
@@ -280,7 +278,6 @@ async function getPendingPostsCount() {
     console.log(error);
   }
 }
-
 
 async function getAcceptedPostsByReceiverProfileIds(
   receiverProfileIds,
@@ -320,7 +317,6 @@ export {
   addDiscussion,
   updateDiscussionById,
   getCommentsByParentDiscussionId,
-
   getPendingPostsCount,
   getAcceptedPostsByReceiverProfileIds,
 };

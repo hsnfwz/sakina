@@ -114,32 +114,12 @@ function Explore() {
           ),
 
           getWeeklyDiscussions(undefined, undefined, ORDER_BY.LATEST),
-          getWeeklyDiscussions(
-            undefined,
-            undefined,
-            ORDER_BY.MOST_LIKED
-          ),
-          getWeeklyDiscussions(
-            undefined,
-            undefined,
-            ORDER_BY.MOST_VIEWED
-          ),
-          getWeeklyDiscussions(
-            undefined,
-            undefined,
-            ORDER_BY.MOST_DISCUSSED
-          ),
+          getWeeklyDiscussions(undefined, undefined, ORDER_BY.MOST_LIKED),
+          getWeeklyDiscussions(undefined, undefined, ORDER_BY.MOST_VIEWED),
+          getWeeklyDiscussions(undefined, undefined, ORDER_BY.MOST_DISCUSSED),
 
-          getUsers(
-            undefined,
-            undefined,
-            ORDER_BY.NEWEST
-          ),
-          getUsers(
-            undefined,
-            undefined,
-            ORDER_BY.MOST_FOLLOWED
-          ),
+          getUsers(undefined, undefined, ORDER_BY.NEWEST),
+          getUsers(undefined, undefined, ORDER_BY.MOST_FOLLOWED),
         ]);
 
         setLatestVideos({
@@ -193,8 +173,14 @@ function Explore() {
           hasInitialized: true,
         });
 
-        setNewestUsers({ data: newestUsersResponse.data, hasInitialized: true });
-        setMostFollowedUsers({ data: mostFollowedUsersResponse.data, hasInitialized: true });
+        setNewestUsers({
+          data: newestUsersResponse.data,
+          hasInitialized: true,
+        });
+        setMostFollowedUsers({
+          data: mostFollowedUsersResponse.data,
+          hasInitialized: true,
+        });
 
         setIsLoading(false);
       }
@@ -220,7 +206,7 @@ function Explore() {
             </HorizontalScrollGrid>
           )}
 
-<Subheader>Most Followed Users</Subheader>
+          <Subheader>Most Followed Users</Subheader>
           {mostFollowedUsers.data.length > 0 && (
             <HorizontalScrollGrid to="/users">
               {mostFollowedUsers.data.map((user, index) => (
@@ -330,7 +316,7 @@ function Explore() {
             </HorizontalScrollGrid>
           )}
 
-<Subheader>Most Liked Discussions This Week</Subheader>
+          <Subheader>Most Liked Discussions This Week</Subheader>
           {mostLikedDiscussions.data.length > 0 && (
             <HorizontalScrollGrid to="/discussions">
               {mostLikedDiscussions.data.map((discussion, index) => (
@@ -341,7 +327,7 @@ function Explore() {
             </HorizontalScrollGrid>
           )}
 
-<Subheader>Most Viewed Discussions This Week</Subheader>
+          <Subheader>Most Viewed Discussions This Week</Subheader>
           {mostViewedDiscussions.data.length > 0 && (
             <HorizontalScrollGrid to="/discussions">
               {mostViewedDiscussions.data.map((discussion, index) => (
@@ -352,7 +338,7 @@ function Explore() {
             </HorizontalScrollGrid>
           )}
 
-<Subheader>Most Commented Discussions This Week</Subheader>
+          <Subheader>Most Commented Discussions This Week</Subheader>
           {mostDiscussedDiscussions.data.length > 0 && (
             <HorizontalScrollGrid to="/discussions">
               {mostDiscussedDiscussions.data.map((discussion, index) => (
