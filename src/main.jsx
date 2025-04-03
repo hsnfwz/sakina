@@ -24,7 +24,6 @@ import SignIn from './layouts/SignIn.jsx';
 import ForgotPassword from './layouts/ForgotPassword.jsx';
 import ResetPassword from './layouts/ResetPassword.jsx';
 import UserVideos from './layouts/UserVideos.jsx';
-import UserClips from './layouts/UserClips.jsx';
 import UserDiscussions from './layouts/UserDiscussions.jsx';
 import Notifications from './layouts/Notifications.jsx';
 import SettingsAccount from './layouts/SettingsAccount.jsx';
@@ -111,7 +110,7 @@ const router = createBrowserRouter([
             children: [
               { index: true, Component: UserVideos },
               { path: 'videos', Component: UserVideos },
-              { path: 'clips', Component: UserClips },
+              { path: 'clips', Component: UserVideos },
               { path: 'discussions', Component: UserDiscussions },
               { path: 'activity', Component: UserActivity },
             ],
@@ -145,7 +144,7 @@ createRoot(root).render(
 );
 
 /* 
-  - unhide content
+  - implement the same filter system from settings in explore page and activity page
 
   notifications
     - notification card

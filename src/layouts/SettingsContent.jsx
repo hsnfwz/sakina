@@ -398,7 +398,9 @@ function SettingsVideos() {
                     data: {
                       title: discussion.title,
                       handleHide: async () =>
-                        await updateDiscussionById(discussion.id, { is_hidden: true }),
+                        await updateDiscussionById(discussion.id, {
+                          is_hidden: true,
+                        }),
                     },
                   });
                 }}
@@ -434,7 +436,9 @@ function SettingsVideos() {
                     data: {
                       title: discussion.title,
                       handleUnhide: async () =>
-                        await updateDiscussionById(discussion.id, { is_hidden: false }),
+                        await updateDiscussionById(discussion.id, {
+                          is_hidden: false,
+                        }),
                     },
                   });
                 }}
