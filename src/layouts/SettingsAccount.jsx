@@ -242,7 +242,10 @@ function SettingsAccount() {
           label="Username"
           value={username}
           limit={CHARACTER_LIMIT.USERNAME}
-          isError={authMessage === 'USERNAME_EXISTS' || authMessage === 'USERNAME_FORMAT'}
+          isError={
+            authMessage === 'USERNAME_EXISTS' ||
+            authMessage === 'USERNAME_FORMAT'
+          }
         />
         {authMessage === 'USERNAME_EXISTS' && (
           <p className="text-rose-500">Username already exists.</p>
@@ -280,7 +283,12 @@ function SettingsAccount() {
               placeholder="Email"
               label="Email"
               value={email}
-              isError={authMessage === 'EMAIL_EXISTS' || authMessage === 'VALIDATION_FAILED' || authMessage === 'OVER_EMAIL_SEND_RATE_LIMIT' || authMessage === 'EMAIL_ADDRESS_INVALID'}
+              isError={
+                authMessage === 'EMAIL_EXISTS' ||
+                authMessage === 'VALIDATION_FAILED' ||
+                authMessage === 'OVER_EMAIL_SEND_RATE_LIMIT' ||
+                authMessage === 'EMAIL_ADDRESS_INVALID'
+              }
             />
 
             <div className="self-end">
@@ -361,21 +369,21 @@ function SettingsAccount() {
         </p>
       )}
 
-{authMessage === 'EMAIL_ADDRESS_INVALID' && (
-              <p className="text-rose-500">
-                Your email is not accepted. Please try a different email.
-              </p>
-            )}
+      {authMessage === 'EMAIL_ADDRESS_INVALID' && (
+        <p className="text-rose-500">
+          Your email is not accepted. Please try a different email.
+        </p>
+      )}
 
       {authMessage === 'EMAIL_EXISTS' && (
         <p>Email already exists. Please try a different email.</p>
       )}
 
-{authMessage === 'OVER_EMAIL_SEND_RATE_LIMIT' && (
+      {authMessage === 'OVER_EMAIL_SEND_RATE_LIMIT' && (
         <p>Email send limit reached. Please try again later.</p>
       )}
 
-{authMessage === 'RESET' && (
+      {authMessage === 'RESET' && (
         <p>
           An email has been sent to <strong>{email}</strong> with a link. Please
           click on the link to reset your password.

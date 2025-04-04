@@ -39,8 +39,7 @@ function HorizontalScrollGrid({ children, to }) {
       </div>
       <div className="flex gap-2 self-end">
         <Button
-              isRound={true}
-
+          isRound={true}
           color={BUTTON_COLOR.SOLID_GREEN}
           isDisabled={scrollLeft === 0}
           handleClick={() => {
@@ -51,8 +50,7 @@ function HorizontalScrollGrid({ children, to }) {
           <SVGOutlineArrowLeft />
         </Button>
         <Button
-              isRound={true}
-
+          isRound={true}
           color={BUTTON_COLOR.SOLID_GREEN}
           isDisabled={intersectingElement}
           handleClick={() => {

@@ -8,7 +8,9 @@ function TextInput({
   isError,
 }) {
   return (
-    <div className={`flex w-full flex-col gap-2 ${isError ? 'text-rose-500' : 'text-black'}`}>
+    <div
+      className={`flex w-full flex-col gap-2 ${isError ? 'text-rose-500' : 'text-black'}`}
+    >
       {label && (
         <label
           htmlFor={placeholder}

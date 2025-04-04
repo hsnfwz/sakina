@@ -79,7 +79,12 @@ function SignIn() {
             Log In
           </Button>
 
-          <Link to="/forgot-password" className="underline text-sky-500 self-start">Forgot Password</Link>
+          <Link
+            to="/forgot-password"
+            className="self-start text-sky-500 underline"
+          >
+            Forgot Password
+          </Link>
         </>
       )}
 

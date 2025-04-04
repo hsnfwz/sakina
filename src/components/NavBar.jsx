@@ -21,10 +21,9 @@ function NavBar() {
   const [isLoadingImage, setIsLoadingImage] = useState(true);
 
   return (
-    <nav className="w-full rounded-lg flex gap-2 justify-center items-center">
+    <nav className="flex w-full items-center justify-center gap-2 rounded-lg">
       <Button
-              isRound={true}
-
+        isRound={true}
         handleClick={() => setModal({ type: 'SEARCH_MODAL' })}
         color={BUTTON_COLOR.SOLID_GREEN}
       >
@@ -98,8 +97,7 @@ function NavBar() {
 
       {authUser && (
         <Button
-        isRound={true}
-
+          isRound={true}
           handleClick={() => setModal({ type: 'CREATE_MODAL' })}
           color={BUTTON_COLOR.SOLID_GREEN}
         >

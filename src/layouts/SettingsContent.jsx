@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useOutletContext, useLocation, Link } from 'react-router';
+import { useElementIntersection } from '../common/hooks';
 import {
   getVideosByUserId,
   getHiddenVideosByUserId,
@@ -18,6 +19,7 @@ import ContentTableGrid from '../components/ContentTableGrid.jsx';
 import ContentTableCard from '../components/ContentTableCard.jsx';
 
 function SettingsVideos() {
+  const [elementRef, intersectingElement] = useElementIntersection();
   const { authUser } = useContext(AuthContext);
   const {
     videos,
@@ -36,7 +38,6 @@ function SettingsVideos() {
   const { setModal } = useContext(ModalContext);
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
-
   const [contentType, setContentType] = useState('');
   const [contentView, setContentView] = useState('');
 
@@ -60,7 +61,10 @@ function SettingsVideos() {
         }
       }
 
-      if ((location.search === '' || location.search.includes('videos')) && contentType !== 'videos') {
+      if (
+        (location.search === '' || location.search.includes('videos')) &&
+        contentType !== 'videos'
+      ) {
         setContentType('videos');
       }
 
@@ -68,11 +72,17 @@ function SettingsVideos() {
         setContentType('clips');
       }
 
-      if (location.search.includes('discussions') && contentType !== 'discussions') {
+      if (
+        location.search.includes('discussions') &&
+        contentType !== 'discussions'
+      ) {
         setContentType('discussions');
       }
 
-      if ((location.search === '' || location.search.includes('shown')) && contentView !== 'shown') {
+      if (
+        (location.search === '' || location.search.includes('shown')) &&
+        contentView !== 'shown'
+      ) {
         setContentView('shown');
       }
 
@@ -81,6 +91,28 @@ function SettingsVideos() {
       }
     }
   }, [authUser, location]);
+
+  useEffect(() => {
+    if (authUser) {
+      if (location.search === '' || location.search.includes('videos')) {
+        if (intersectingElement && videos.hasMore) {
+          getVideos();
+        }
+      }
+
+      if (location.search.includes('clips')) {
+        if (intersectingElement && clips.hasMore) {
+          getClips();
+        }
+      }
+
+      if (location.search.includes('discussions')) {
+        if (intersectingElement && discussions.hasMore) {
+          getDiscussions();
+        }
+      }
+    }
+  }, [intersectingElement]);
 
   async function getVideos() {
     setIsLoading(true);
@@ -231,6 +263,9 @@ function SettingsVideos() {
           <ContentTableGrid>
             {videos.data.map((video, index) => (
               <ContentTableCard
+              elementRef={
+                index === videos.data.length - 1 ? elementRef : null
+              }
                 key={index}
                 content={video}
                 handleEdit={() =>
@@ -267,6 +302,9 @@ function SettingsVideos() {
           <ContentTableGrid>
             {hiddenVideos.data.map((video, index) => (
               <ContentTableCard
+              elementRef={
+                index === hiddenVideos.data.length - 1 ? elementRef : null
+              }
                 key={index}
                 content={video}
                 handleEdit={() =>
@@ -302,6 +340,9 @@ function SettingsVideos() {
           <ContentTableGrid>
             {clips.data.map((clip, index) => (
               <ContentTableCard
+              elementRef={
+                index === clips.data.length - 1 ? elementRef : null
+              }
                 key={index}
                 content={clip}
                 handleEdit={() =>
@@ -338,6 +379,9 @@ function SettingsVideos() {
           <ContentTableGrid>
             {hiddenClips.data.map((clip, index) => (
               <ContentTableCard
+              elementRef={
+                index === hiddenClips.data.length - 1 ? elementRef : null
+              }
                 key={index}
                 content={clip}
                 handleEdit={() =>
@@ -373,6 +417,9 @@ function SettingsVideos() {
           <ContentTableGrid>
             {discussions.data.map((discussion, index) => (
               <ContentTableCard
+              elementRef={
+                index === discussions.data.length - 1 ? elementRef : null
+              }
                 key={index}
                 content={discussion}
                 handleEdit={() =>
@@ -411,6 +458,9 @@ function SettingsVideos() {
           <ContentTableGrid>
             {hiddenDiscussions.data.map((discussion, index) => (
               <ContentTableCard
+              elementRef={
+                index === hiddenDiscussions.data.length - 1 ? elementRef : null
+              }
                 key={index}
                 content={discussion}
                 handleEdit={() =>

@@ -57,10 +57,11 @@ function Modal({ children, isDisabled, show, handleClose }) {
       <div className="m-auto flex w-full max-w-(--breakpoint-md) flex-col gap-4 rounded-lg bg-white p-4">
         <div className="flex justify-end">
           <Button
-              isRound={true}
-              color={BUTTON_COLOR.SOLID_WHITE}
-          
-          isDisabled={isDisabled} handleClick={closeModal}>
+            isRound={true}
+            color={BUTTON_COLOR.SOLID_WHITE}
+            isDisabled={isDisabled}
+            handleClick={closeModal}
+          >
             <SVGOutlineX />
           </Button>
         </div>

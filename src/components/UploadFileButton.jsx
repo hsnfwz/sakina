@@ -85,7 +85,12 @@ function UploadFileButton({
               </p>
             ))}
           </div>
-          <Button color={BUTTON_COLOR.SOLID_RED} handleClick={() => setFileErrors([])}>Clear</Button>
+          <Button
+            color={BUTTON_COLOR.SOLID_RED}
+            handleClick={() => setFileErrors([])}
+          >
+            Clear
+          </Button>
         </div>
       )}
     </div>

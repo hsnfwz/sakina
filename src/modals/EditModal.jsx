@@ -65,7 +65,7 @@ function EditModal() {
         <div className="flex gap-2">
           <button
             type="button"
-            className={`${isAnonymous ? 'bg-white text-black' : 'bg-sky-500 text-white'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 hover:bg-sky-700 focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+            className={`${isAnonymous ? 'bg-white text-black' : 'bg-sky-500 text-white'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-2 py-1 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
             onMouseDown={(event) => event.preventDefault()}
             color={
               isAnonymous ? BUTTON_COLOR.OUTLINE_BLUE : BUTTON_COLOR.SOLID_BLUE
@@ -76,7 +76,7 @@ function EditModal() {
           </button>
           <button
             type="button"
-            className={`${isAnonymous ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 hover:bg-sky-700 focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+            className={`${isAnonymous ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-2 py-1 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
             onMouseDown={(event) => event.preventDefault()}
             color={
               isAnonymous ? BUTTON_COLOR.SOLID_BLUE : BUTTON_COLOR.OUTLINE_BLUE

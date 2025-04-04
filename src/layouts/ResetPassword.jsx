@@ -51,14 +51,14 @@ function ResetPassword() {
       {authMessage !== 'PASSWORD_RESET' && (
         <>
           <div className="flex flex-col gap-2">
-              <TextInput
-                handleInput={checkPassword}
-                placeholder="New Password"
-                label="New Password"
-                value={password}
-                limit={CHARACTER_LIMIT.PASSWORD}
-                isError={authMessage === 'PASSWORD_FORMAT'}
-              />
+            <TextInput
+              handleInput={checkPassword}
+              placeholder="New Password"
+              label="New Password"
+              value={password}
+              limit={CHARACTER_LIMIT.PASSWORD}
+              isError={authMessage === 'PASSWORD_FORMAT'}
+            />
             {authMessage === 'PASSWORD_FORMAT' && (
               <p className="text-rose-500">
                 Must be at least 8 characters long and have at least 1 uppercase
@@ -68,14 +68,14 @@ function ResetPassword() {
           </div>
 
           <div className="flex flex-col gap-2">
-              <TextInput
-                handleInput={checkReenterPassword}
-                placeholder="Repeat New Password"
-                label="Repeat New Password"
-                value={reenterPassword}
-                limit={CHARACTER_LIMIT.PASSWORD}
-                isError={authMessage === 'REENTER_PASSWORD_NOT_EQUAL'}
-              />
+            <TextInput
+              handleInput={checkReenterPassword}
+              placeholder="Repeat New Password"
+              label="Repeat New Password"
+              value={reenterPassword}
+              limit={CHARACTER_LIMIT.PASSWORD}
+              isError={authMessage === 'REENTER_PASSWORD_NOT_EQUAL'}
+            />
             {authMessage === 'REENTER_PASSWORD_NOT_EQUAL' && (
               <p className="text-rose-500">Must match password.</p>
             )}

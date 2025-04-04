@@ -56,7 +56,10 @@ function Notifications() {
         }
       }
 
-      if (location.search === '' || location.search === '?view=unread' && contentView !== 'unread') {
+      if (
+        location.search === '' ||
+        (location.search === '?view=unread' && contentView !== 'unread')
+      ) {
         setContentView('unread');
       }
 
@@ -192,8 +195,7 @@ function Notifications() {
                       }
                     />
                     <Button
-            isRound={true}
-
+                      isRound={true}
                       color={BUTTON_COLOR.OUTLINE_RED}
                       isDisabled={isLoadingUpdate}
                       handleClick={async () => {
@@ -229,8 +231,7 @@ function Notifications() {
                       }
                     />
                     <Button
-            isRound={true}
-
+                      isRound={true}
                       color={BUTTON_COLOR.SOLID_RED}
                       isDisabled={isLoadingUpdate}
                       handleClick={async () => {

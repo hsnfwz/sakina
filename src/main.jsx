@@ -144,29 +144,7 @@ createRoot(root).render(
 );
 
 /* 
-  - make sure switching between profiles doesn't show the content switching visually
-
-  - convert all api functions to hooks that comes with the data and loading state
-  - implement the same filter system from settings in explore page and activity page
-
-  - supabase avatar and thumbnail file size - research ideal file size and set the max
-
-  - fetch more when intersecting last element - check for all content pages
   - dont let other users see another user's anonymous posts
-  - create/avatar modal upload progress indicator
-  - tab index - make sure we cannot access stuff behind modals - focus trap
-
-  - individual activity pages
-  - individual filtered explore pages
-
-  - loaders for all states
-
-  - likes for comments - every time we fetch comments/nested comments, get each their respective like record
-  - let a user set a view as "hidden" to mark it as history cleared - if they view the content again, "hidden" is set to false
-
-  - refresh data after each add/edit/delete and make sure link state is refreshed too
-
-  - live home and notifications data
 
   video
   - add skip 5 seconds forward and back for video using arrow keys
@@ -174,6 +152,18 @@ createRoot(root).render(
   - autplay queue of videos (ex: playlists)
   - visually display audio using Web Audio API
 
+  - make sure switching between profiles doesn't show the content switching visually
+  - convert all api functions to hooks that comes with the data and loading state
+  - implement the same filter system from settings in explore page and activity page
+  - supabase avatar and thumbnail file size - research ideal file size and set the max
+  - create/avatar modal upload progress indicator
+  - tab index - make sure we cannot access stuff behind modals - focus trap
+  - individual activity pages
+  - individual filtered explore pages
+  - loaders for all states
+  - likes for comments - every time we fetch comments/nested comments, get each their respective like record
+  - refresh data after each add/edit/delete and make sure link state is refreshed too
+  - live home and notifications data
   - show preview of post before submission
   - @ mentions
   - modals opening animation

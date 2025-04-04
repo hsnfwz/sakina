@@ -189,8 +189,7 @@ function Discussion() {
           </Button>
           {authUser && authUser.id !== activeDiscussion.user_id && (
             <Button
-            isRound={true}
-
+              isRound={true}
               color={
                 discussionLike
                   ? BUTTON_COLOR.SOLID_RED

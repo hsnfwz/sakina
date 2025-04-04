@@ -192,8 +192,7 @@ function MediaPlayer({ media, width, height }) {
             <div className="flex gap-2 self-start">
               {elapsedDuration === media.duration && (
                 <Button
-              isRound={true}
-
+                  isRound={true}
                   color={BUTTON_COLOR.OUTLINE_WHITE}
                   elementRef={resetButtonRef}
                   handleClick={() => handlePlayPause(true)}
@@ -204,8 +203,7 @@ function MediaPlayer({ media, width, height }) {
               {elapsedDuration !== media.duration && (
                 <>
                   <Button
-              isRound={true}
-
+                    isRound={true}
                     color={BUTTON_COLOR.OUTLINE_WHITE}
                     elementRef={playPauseButtonRef}
                     handleClick={() =>
@@ -219,8 +217,7 @@ function MediaPlayer({ media, width, height }) {
                     )}
                   </Button>
                   <Button
-              isRound={true}
-
+                    isRound={true}
                     color={BUTTON_COLOR.OUTLINE_WHITE}
                     elementRef={muteUnmuteButtonRef}
                     handleClick={() => {
@@ -244,8 +241,7 @@ function MediaPlayer({ media, width, height }) {
             </p>
             <div className="self-end">
               <Button
-              isRound={true}
-
+                isRound={true}
                 color={BUTTON_COLOR.OUTLINE_WHITE}
                 elementRef={expandCollapseButtonRef}
                 handleClick={() => {

@@ -147,7 +147,10 @@ function SignUp() {
               placeholder="Username"
               value={username}
               limit={CHARACTER_LIMIT.USERNAME}
-              isError={authMessage === 'USERNAME_EXISTS' || authMessage === 'USERNAME_FORMAT'}
+              isError={
+                authMessage === 'USERNAME_EXISTS' ||
+                authMessage === 'USERNAME_FORMAT'
+              }
             />
             {authMessage === 'USERNAME_EXISTS' && (
               <p className="text-rose-500">Username already exists.</p>
@@ -166,7 +169,12 @@ function SignUp() {
               handleInput={(e) => setEmail(e.target.value)}
               placeholder="Email"
               value={email}
-              isError={authMessage === 'VALIDATION_FAILED' || authMessage === 'EMAIL_ADDRESS_INVALID' || authMessage === 'EMAIL_EXISTS' || authMessage === 'OVER_EMAIL_SEND_RATE_LIMIT'}
+              isError={
+                authMessage === 'VALIDATION_FAILED' ||
+                authMessage === 'EMAIL_ADDRESS_INVALID' ||
+                authMessage === 'EMAIL_EXISTS' ||
+                authMessage === 'OVER_EMAIL_SEND_RATE_LIMIT'
+              }
             />
             {authMessage === 'VALIDATION_FAILED' && (
               <p className="text-rose-500">
@@ -198,7 +206,10 @@ function SignUp() {
               placeholder="Password"
               value={password}
               limit={CHARACTER_LIMIT.PASSWORD}
-              isError={authMessage === 'WEAK_PASSWORD' || authMessage === 'PASSWORD_FORMAT'}
+              isError={
+                authMessage === 'WEAK_PASSWORD' ||
+                authMessage === 'PASSWORD_FORMAT'
+              }
             />
             {authMessage === 'WEAK_PASSWORD' && (
               <p className="text-rose-500">

@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { getDiscussionsByUserId } from '../common/database/discussions.js';
 import { DataContext } from '../common/context/DataContextProvider.jsx';
+import { useElementIntersection } from '../common/hooks';
 import Loading from '../components/Loading.jsx';
 import Loaded from '../components/Loaded.jsx';
 import DiscussionCard from '../components/DiscussionCard.jsx';
@@ -8,10 +9,9 @@ import DiscussionCardGrid from '../components/DiscussionCardGrid.jsx';
 
 function UserDiscussions() {
   const { activeUser } = useContext(DataContext);
-
-  const [isLoading, setIsLoading] = useState(false);
-
+  const [elementRef, intersectingElement] = useElementIntersection();
   const { userDiscussions, setUserDiscussions } = useContext(DataContext);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (activeUser) {
@@ -20,6 +20,12 @@ function UserDiscussions() {
       }
     }
   }, [activeUser]);
+
+  useEffect(() => {
+    if (intersectingElement && userDiscussions.hasMore) {
+      getDiscussions();
+    }
+  }, [intersectingElement]);
 
   async function getDiscussions() {
     setIsLoading(true);
@@ -47,7 +53,9 @@ function UserDiscussions() {
     <div className="flex w-full flex-col gap-4">
       <DiscussionCardGrid>
         {userDiscussions.data.map((discussion, index) => (
-          <DiscussionCard key={index} discussion={discussion} />
+          <DiscussionCard key={index} discussion={discussion} elementRef={
+            index === userDiscussions.data.length - 1 ? elementRef : null
+          } />
         ))}
       </DiscussionCardGrid>
       {!userDiscussions.hasMore && <Loaded />}

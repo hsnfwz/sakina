@@ -73,14 +73,14 @@ function SearchModal() {
             setView('USERS');
           }}
           type="button"
-          className={`${view === 'USERS' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+          className={`${view === 'USERS' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-2 py-1 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
         >
           Users
         </button>
         <button
           onMouseDown={(event) => event.preventDefault()}
           type="button"
-          className={`${view === 'VIDEOS' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+          className={`${view === 'VIDEOS' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-2 py-1 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
           onClick={() => {
             setView('VIDEOS');
           }}
@@ -89,7 +89,7 @@ function SearchModal() {
         </button>
         <button
           type="button"
-          className={`${view === 'CLIPS' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+          className={`${view === 'CLIPS' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-2 py-1 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
           onMouseDown={(event) => event.preventDefault()}
           onClick={() => {
             setView('CLIPS');
@@ -99,7 +99,7 @@ function SearchModal() {
         </button>
         <button
           type="button"
-          className={`${view === 'DISCUSSIONS' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-4 py-2 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+          className={`${view === 'DISCUSSIONS' ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-2 py-1 transition-all hover:bg-sky-700 hover:text-white focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
           onMouseDown={(event) => event.preventDefault()}
           onClick={() => {
             setView('DISCUSSIONS');
