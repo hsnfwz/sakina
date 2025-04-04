@@ -32,13 +32,15 @@ function HorizontalScrollGrid({ children, to }) {
           ref={elementRef}
           to={to}
           onMouseDown={(event) => event.preventDefault()}
-          className={`flex items-center justify-center self-center rounded-full border-2 border-sky-500 bg-sky-500 fill-white p-2 text-center transition-all hover:bg-sky-700 focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+          className={`flex items-center justify-center self-center rounded-full border-2 border-sky-500 bg-sky-500 fill-white p-1 text-center transition-all hover:bg-sky-700 focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
         >
           <SVGOutlineRegularArrowRight />
         </Link>
       </div>
       <div className="flex gap-2 self-end">
         <Button
+              isRound={true}
+
           color={BUTTON_COLOR.SOLID_GREEN}
           isDisabled={scrollLeft === 0}
           handleClick={() => {
@@ -49,6 +51,8 @@ function HorizontalScrollGrid({ children, to }) {
           <SVGOutlineArrowLeft />
         </Button>
         <Button
+              isRound={true}
+
           color={BUTTON_COLOR.SOLID_GREEN}
           isDisabled={intersectingElement}
           handleClick={() => {

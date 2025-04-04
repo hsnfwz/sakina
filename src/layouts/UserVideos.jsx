@@ -16,7 +16,10 @@ function UserVideos() {
 
   useEffect(() => {
     if (activeUser) {
-      if (location.pathname === `/users/${activeUser.username}` || location.pathname.includes('videos')) {
+      if (
+        location.pathname === `/users/${activeUser.username}` ||
+        location.pathname.includes('videos')
+      ) {
         if (!userVideos.hasInitialized) {
           getVideos();
         }
@@ -31,7 +34,10 @@ function UserVideos() {
   }, [activeUser]);
 
   useEffect(() => {
-    if (location.pathname === `/users/${activeUser.username}` || location.pathname.includes('videos')) {
+    if (
+      location.pathname === `/users/${activeUser.username}` ||
+      location.pathname.includes('videos')
+    ) {
       if (intersectingElement && userVideos.hasMore) {
         getVideos();
       }
@@ -92,7 +98,8 @@ function UserVideos() {
 
   return (
     <div className="flex w-full flex-col gap-4">
-      {(location.pathname === `/users/${activeUser.username}` || location.pathname.includes('videos')) && (
+      {(location.pathname === `/users/${activeUser.username}` ||
+        location.pathname.includes('videos')) && (
         <>
           <VideoCardGrid>
             {userVideos.data.map((video, index) => (

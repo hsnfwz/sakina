@@ -5,9 +5,10 @@ function TextInput({
   value,
   isDisabled,
   limit,
+  isError,
 }) {
   return (
-    <div className="flex w-full flex-col gap-2">
+    <div className={`flex w-full flex-col gap-2 ${isError ? 'text-rose-500' : 'text-black'}`}>
       {label && (
         <label
           htmlFor={placeholder}
@@ -16,7 +17,7 @@ function TextInput({
           <span>{label}</span>
           {limit && (
             <span
-              className={`self-end ${value.length > limit.max ? 'text-rose-500' : 'text-black'}`}
+              className={`self-end ${value.length > limit.max || isError ? 'text-rose-500' : 'text-black'}`}
             >
               {value.length}
               {limit.max && ` / ${limit.max}`}
@@ -28,7 +29,7 @@ function TextInput({
         id={placeholder}
         type="text"
         placeholder={placeholder}
-        className="flex w-full rounded-lg border-2 border-transparent bg-neutral-100 px-4 py-2 placeholder-neutral-400 transition-all hover:border-neutral-200 focus:z-50 focus:border-black focus:bg-white focus:ring-0 focus:outline-0 disabled:pointer-events-none disabled:opacity-50"
+        className={`flex w-full rounded-lg border-2 ${isError ? 'border-rose-500' : 'border-transparent'} bg-neutral-100 px-2 py-1 placeholder-neutral-400 transition-all hover:border-neutral-200 focus:z-50 focus:border-black focus:bg-white focus:ring-0 focus:outline-0 disabled:pointer-events-none disabled:opacity-50`}
         onInput={handleInput}
         value={value}
         autoComplete="off"

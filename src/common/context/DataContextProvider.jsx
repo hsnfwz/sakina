@@ -185,6 +185,12 @@ function DataContextProvider({ children }) {
     hasInitialized: false,
   });
 
+  const [readNotifications, setReadNotifications] = useState({
+    data: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
   const [activeUser, setActiveUser] = useState(null);
   const [activeDiscussion, setActiveDiscussion] = useState(null);
 
@@ -256,8 +262,12 @@ function DataContextProvider({ children }) {
         setUserFollowers,
         userFollowing,
         setUserFollowing,
+
         notifications,
         setNotifications,
+        readNotifications,
+        setReadNotifications,
+
         activeUser,
         setActiveUser,
         activeDiscussion,

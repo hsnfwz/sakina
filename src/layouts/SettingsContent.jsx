@@ -37,31 +37,11 @@ function SettingsVideos() {
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
 
-  const [contentType, setContentType] = useState('videos');
-  const [contentView, setContentView] = useState('shown');
+  const [contentType, setContentType] = useState('');
+  const [contentView, setContentView] = useState('');
 
   useEffect(() => {
     if (authUser) {
-      if (location.search === '' || location.search.includes('videos')) {
-        setContentType('videos');
-      }
-
-      if (location.search.includes('clips')) {
-        setContentType('clips');
-      }
-
-      if (location.search.includes('discussions')) {
-        setContentType('discussions');
-      }
-
-      if (location.search === '' || location.search.includes('shown')) {
-        setContentView('shown');
-      }
-
-      if (location.search.includes('hidden')) {
-        setContentView('hidden');
-      }
-
       if (location.search === '' || location.search.includes('videos')) {
         if (!videos.hasInitialized) {
           getVideos();
@@ -78,6 +58,26 @@ function SettingsVideos() {
         if (!discussions.hasInitialized) {
           getDiscussions();
         }
+      }
+
+      if ((location.search === '' || location.search.includes('videos')) && contentType !== 'videos') {
+        setContentType('videos');
+      }
+
+      if (location.search.includes('clips') && contentType !== 'clips') {
+        setContentType('clips');
+      }
+
+      if (location.search.includes('discussions') && contentType !== 'discussions') {
+        setContentType('discussions');
+      }
+
+      if ((location.search === '' || location.search.includes('shown')) && contentView !== 'shown') {
+        setContentView('shown');
+      }
+
+      if (location.search.includes('hidden') && contentView !== 'hidden') {
+        setContentView('hidden');
       }
     }
   }, [authUser, location]);
@@ -190,24 +190,21 @@ function SettingsVideos() {
       <div className="flex gap-2">
         <Link
           onMouseDown={(event) => event.preventDefault()}
-          onClick={() => setContentType('videos')}
-          className={`block w-full rounded-lg p-2 text-center ${contentType === 'videos' ? 'bg-sky-500 text-white hover:bg-sky-500' : 'bg-neutral-100 text-black hover:bg-neutral-200'} flex items-center justify-center border-2 border-transparent text-center transition-all focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+          className={`block w-full rounded-lg px-2 py-1 text-center ${contentType === 'videos' ? 'bg-sky-500 text-white hover:bg-sky-500' : 'bg-neutral-100 text-black hover:bg-neutral-200'} flex items-center justify-center border-2 border-transparent text-center transition-all focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
           to={`?type=videos&view=${contentView}`}
         >
           Videos
         </Link>
         <Link
           onMouseDown={(event) => event.preventDefault()}
-          onClick={() => setContentType('clips')}
-          className={`block w-full rounded-lg p-2 text-center ${contentType === 'clips' ? 'bg-sky-500 text-white hover:bg-sky-500' : 'bg-neutral-100 text-black hover:bg-neutral-200'} flex items-center justify-center border-2 border-transparent text-center transition-all focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+          className={`block w-full rounded-lg px-2 py-1 text-center ${contentType === 'clips' ? 'bg-sky-500 text-white hover:bg-sky-500' : 'bg-neutral-100 text-black hover:bg-neutral-200'} flex items-center justify-center border-2 border-transparent text-center transition-all focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
           to={`?type=clips&view=${contentView}`}
         >
           Clips
         </Link>
         <Link
           onMouseDown={(event) => event.preventDefault()}
-          onClick={() => setContentType('discussions')}
-          className={`block w-full rounded-lg p-2 text-center ${contentType === 'discussions' ? 'bg-sky-500 text-white hover:bg-sky-500' : 'bg-neutral-100 text-black hover:bg-neutral-200'} flex items-center justify-center border-2 border-transparent text-center transition-all focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+          className={`block w-full rounded-lg px-2 py-1 text-center ${contentType === 'discussions' ? 'bg-sky-500 text-white hover:bg-sky-500' : 'bg-neutral-100 text-black hover:bg-neutral-200'} flex items-center justify-center border-2 border-transparent text-center transition-all focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
           to={`?type=discussions&view=${contentView}`}
         >
           Discussions
@@ -216,16 +213,14 @@ function SettingsVideos() {
       <div className="flex gap-2">
         <Link
           onMouseDown={(event) => event.preventDefault()}
-          onClick={() => setContentView('shown')}
-          className={`block w-full rounded-lg p-2 text-center ${contentView === 'shown' ? 'bg-sky-500 text-white hover:bg-sky-500' : 'bg-neutral-100 text-black hover:bg-neutral-200'} flex items-center justify-center border-2 border-transparent text-center transition-all focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+          className={`block w-full rounded-lg px-2 py-1 text-center ${contentView === 'shown' ? 'bg-sky-500 text-white hover:bg-sky-500' : 'bg-neutral-100 text-black hover:bg-neutral-200'} flex items-center justify-center border-2 border-transparent text-center transition-all focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
           to={`?type=${contentType}&view=shown`}
         >
           Shown
         </Link>
         <Link
           onMouseDown={(event) => event.preventDefault()}
-          onClick={() => setContentView('hidden')}
-          className={`block w-full rounded-lg p-2 text-center ${contentView === 'hidden' ? 'bg-sky-500 text-white hover:bg-sky-500' : 'bg-neutral-100 text-black hover:bg-neutral-200'} flex items-center justify-center border-2 border-transparent text-center transition-all focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+          className={`block w-full rounded-lg px-2 py-1 text-center ${contentView === 'hidden' ? 'bg-sky-500 text-white hover:bg-sky-500' : 'bg-neutral-100 text-black hover:bg-neutral-200'} flex items-center justify-center border-2 border-transparent text-center transition-all focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
           to={`?type=${contentType}&view=hidden`}
         >
           Hidden

@@ -56,7 +56,7 @@ function formatFileSize(fileSize) {
   return _fileSize;
 }
 
-function getDate(date, showTime) {
+function formatDate(date, showTime) {
   const _date = new Date(date);
   const dateTime = new Intl.DateTimeFormat('default', {
     hour: showTime ? 'numeric' : undefined,
@@ -181,7 +181,7 @@ export {
   formatFileName,
   formatFileSize,
   formatFileSizeAbbreviation,
-  getDate,
+  formatDate,
   getIslamicDate,
   formatDuration,
   formatCount,

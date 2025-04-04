@@ -12,16 +12,25 @@ function ContentTableCard({ content, handleEdit, handleHide, handleUnhide }) {
         {content.description && <p>{content.description}</p>}
       </div>
       <div className="flex gap-2">
-        <Button color={BUTTON_COLOR.SOLID_BLUE} handleClick={handleEdit}>
+        <Button
+              isRound={true}
+        
+        color={BUTTON_COLOR.SOLID_BLUE} handleClick={handleEdit}>
           <SVGOutlinePencil />
         </Button>
         {handleHide && (
-          <Button color={BUTTON_COLOR.SOLID_RED} handleClick={handleHide}>
+          <Button
+              isRound={true}
+          
+          color={BUTTON_COLOR.OUTLINE_RED} handleClick={handleHide}>
             <SVGOutlineArchive />
           </Button>
         )}
         {handleUnhide && (
-          <Button color={BUTTON_COLOR.SOLID_RED} handleClick={handleUnhide}>
+          <Button
+              isRound={true}
+          
+          color={BUTTON_COLOR.SOLID_RED} handleClick={handleUnhide}>
             <SVGOutlineUnarchive />
           </Button>
         )}

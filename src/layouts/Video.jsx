@@ -117,6 +117,8 @@ function Video() {
             </Button> */}
           {authUser && authUser.id !== video.user_id && (
             <Button
+            isRound={true}
+
               color={
                 videoLike ? BUTTON_COLOR.SOLID_RED : BUTTON_COLOR.OUTLINE_RED
               }

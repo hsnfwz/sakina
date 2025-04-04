@@ -61,6 +61,7 @@ function Comment({ comment, elementRef }) {
         {authUser && (
           <div className="flex flex-col gap-2 rounded-lg bg-white p-2">
             <Button
+              isRound={true}
               isDisabled={isLoadingNestedComments}
               color={BUTTON_COLOR.SOLID_GREEN}
               handleClick={() => {
@@ -73,18 +74,18 @@ function Comment({ comment, elementRef }) {
               }}
             >
               <SVGOutlineChat />
-              {/* <span className="px-2">{comment.discussions_count}</span> */}
             </Button>
             <Button
+              isRound={true}
               color={BUTTON_COLOR.SOLID_RED}
               handleClick={() => {}}
               isDisabled={isLoadingNestedComments}
             >
               <SVGOutlineHeart />
-              {/* <span className="px-2">{comment.likes_count}</span> */}
             </Button>
             {comment.discussions_count > 0 && (
               <Button
+                isRound={true}
                 isDisabled={isLoadingNestedComments}
                 color={
                   isExpanded

@@ -144,11 +144,10 @@ createRoot(root).render(
 );
 
 /* 
-  - implement the same filter system from settings in explore page and activity page
+  - make sure switching between profiles doesn't show the content switching visually
 
-  notifications
-    - notification card
-    - is_read
+  - convert all api functions to hooks that comes with the data and loading state
+  - implement the same filter system from settings in explore page and activity page
 
   - supabase avatar and thumbnail file size - research ideal file size and set the max
 
@@ -167,15 +166,13 @@ createRoot(root).render(
 
   - refresh data after each add/edit/delete and make sure link state is refreshed too
 
+  - live home and notifications data
+
   video
   - add skip 5 seconds forward and back for video using arrow keys
   - enable/disable looping
   - autplay queue of videos (ex: playlists)
   - visually display audio using Web Audio API
-
-  sign-up/sign-in
-  - make inputs green when they are correctly inputted to indicate progress to the user
-  - make inputs red when they are incorrectly inputted to indicate error to the user
 
   - show preview of post before submission
   - @ mentions

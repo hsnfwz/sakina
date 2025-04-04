@@ -139,14 +139,15 @@ function SignUp() {
   return (
     <div className="m-auto flex w-full max-w-(--breakpoint-md) flex-col gap-4">
       {authMessage !== 'CONFIRM_EMAIL' && (
-        <div className="flex flex-col gap-8">
-          <div className="flex flex-col gap-4">
+        <>
+          <div className="flex flex-col gap-2">
             <TextInput
               label="Username"
               handleInput={checkUsername}
               placeholder="Username"
               value={username}
               limit={CHARACTER_LIMIT.USERNAME}
+              isError={authMessage === 'USERNAME_EXISTS' || authMessage === 'USERNAME_FORMAT'}
             />
             {authMessage === 'USERNAME_EXISTS' && (
               <p className="text-rose-500">Username already exists.</p>
@@ -159,12 +160,13 @@ function SignUp() {
             )}
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             <TextInput
               label="Email"
               handleInput={(e) => setEmail(e.target.value)}
               placeholder="Email"
               value={email}
+              isError={authMessage === 'VALIDATION_FAILED' || authMessage === 'EMAIL_ADDRESS_INVALID' || authMessage === 'EMAIL_EXISTS' || authMessage === 'OVER_EMAIL_SEND_RATE_LIMIT'}
             />
             {authMessage === 'VALIDATION_FAILED' && (
               <p className="text-rose-500">
@@ -189,13 +191,14 @@ function SignUp() {
             )}
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             <TextInput
               label="Password"
               handleInput={checkPassword}
               placeholder="Password"
               value={password}
               limit={CHARACTER_LIMIT.PASSWORD}
+              isError={authMessage === 'WEAK_PASSWORD' || authMessage === 'PASSWORD_FORMAT'}
             />
             {authMessage === 'WEAK_PASSWORD' && (
               <p className="text-rose-500">
@@ -210,13 +213,14 @@ function SignUp() {
             )}
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             <TextInput
-              label="Re-enter Password"
+              label="Repeat Password"
               handleInput={checkReenterPassword}
-              placeholder="Re-enter Password"
+              placeholder="Repeat Password"
               value={reenterPassword}
               limit={CHARACTER_LIMIT.PASSWORD}
+              isError={authMessage === 'REENTER_PASSWORD_NOT_EQUAL'}
             />
             {authMessage === 'REENTER_PASSWORD_NOT_EQUAL' && (
               <p className="text-rose-500">Must match password.</p>
@@ -224,6 +228,7 @@ function SignUp() {
           </div>
 
           <Button
+            color={BUTTON_COLOR.SOLID_BLUE}
             isDisabled={
               isLoading ||
               username.length > CHARACTER_LIMIT.USERNAME.max ||
@@ -236,11 +241,10 @@ function SignUp() {
               reenterPassword !== password
             }
             handleClick={async () => await signUp()}
-            color={BUTTON_COLOR.BLUE}
           >
             Sign Up
           </Button>
-        </div>
+        </>
       )}
 
       {authMessage === 'CONFIRM_EMAIL' && (

@@ -174,6 +174,7 @@ function Discussion() {
         {activeDiscussion.description && <p>{activeDiscussion.description}</p>}
         <div className="flex gap-2">
           <Button
+            isRound={true}
             color={BUTTON_COLOR.SOLID_GREEN}
             handleClick={() => {
               setModal({
@@ -188,6 +189,8 @@ function Discussion() {
           </Button>
           {authUser && authUser.id !== activeDiscussion.user_id && (
             <Button
+            isRound={true}
+
               color={
                 discussionLike
                   ? BUTTON_COLOR.SOLID_RED

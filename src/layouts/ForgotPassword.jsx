@@ -10,7 +10,7 @@ function ForgotPassword() {
   const [email, setEmail] = useState('');
 
   return (
-    <div className="m-auto flex w-full max-w-(--breakpoint-md) flex-col gap-8">
+    <div className="m-auto flex w-full max-w-(--breakpoint-md) flex-col gap-4">
       {authMessage !== 'RESET' && (
         <>
           <TextInput
@@ -20,7 +20,7 @@ function ForgotPassword() {
             value={email}
           />
           <Button
-            color={BUTTON_COLOR.RED}
+            color={BUTTON_COLOR.SOLID_BLUE}
             isDisabled={isLoading || email.length === 0}
             handleClick={async () => {
               setIsLoading(true);

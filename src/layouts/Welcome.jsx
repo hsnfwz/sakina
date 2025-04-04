@@ -62,7 +62,7 @@ function Welcome() {
         </div>
       )}
       <footer className="flex w-full flex-col gap-2 p-2">
-        <Anchor to="/">Sakina</Anchor>
+        <Link to="/" className="self-start">Sakina</Link>
         <p>Copyright 2025 Sakina</p>
       </footer>
     </div>

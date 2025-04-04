@@ -72,7 +72,7 @@ function AvatarModal() {
 
   return (
     <Modal show={show} isDisabled={isUploading} handleClose={handleClose}>
-      <div className="flex flex-col gap-4">
+      {/* <div className="flex flex-col gap-4"> */}
         <UploadFileButton
           id="uppyAvatar"
           uppy={uppyAvatar}
@@ -83,15 +83,15 @@ function AvatarModal() {
           bucketName={UPLOAD_TYPE.AVATAR.bucketName}
           uploadFileButtonRef={avatarUploadFileButtonRef}
         />
-        {uppyAvatarFile && (
+        {/* {uppyAvatarFile && (
           <div className="flex w-full justify-between gap-2 rounded-lg border-2 border-dotted p-2">
             <p className="w-full">{uppyAvatarFile.data.name}</p>
             {uppyAvatarFileUploadProgress > 0 && (
               <p className="font-bold">{uppyAvatarFileUploadProgress}%</p>
             )}
           </div>
-        )}
-      </div>
+        )} */}
+      {/* </div> */}
       <div className="flex gap-2 self-end">
         <Button
           isDisabled={isUploading}

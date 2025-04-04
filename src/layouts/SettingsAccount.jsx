@@ -48,6 +48,8 @@ function SettingsAccount() {
         setAuthMessage('EMAIL_EXISTS');
       } else if (error.code === 'validation_failed') {
         setAuthMessage('VALIDATION_FAILED');
+      } else if (error.code === 'email_address_invalid') {
+        setAuthMessage('EMAIL_ADDRESS_INVALID');
       } else if (error.code === 'over_email_send_rate_limit') {
         setAuthMessage('OVER_EMAIL_SEND_RATE_LIMIT');
       }
@@ -190,10 +192,11 @@ function SettingsAccount() {
           placeholder="Name"
           value={name}
           limit={CHARACTER_LIMIT.NAME}
+          isError={name.length > CHARACTER_LIMIT.NAME.max}
         />
         <div className="self-end">
           <Button
-            color={BUTTON_COLOR.BLUE}
+            color={BUTTON_COLOR.SOLID_BLUE}
             isDisabled={
               isLoading ||
               authUser.name === name ||
@@ -214,10 +217,11 @@ function SettingsAccount() {
           label="Bio"
           value={bio}
           limit={CHARACTER_LIMIT.BIO}
+          isError={bio.length > CHARACTER_LIMIT.BIO.max}
         />
         <div className="self-end">
           <Button
-            color={BUTTON_COLOR.BLUE}
+            color={BUTTON_COLOR.SOLID_BLUE}
             isDisabled={
               isLoading ||
               authUser.bio === bio ||
@@ -238,12 +242,10 @@ function SettingsAccount() {
           label="Username"
           value={username}
           limit={CHARACTER_LIMIT.USERNAME}
+          isError={authMessage === 'USERNAME_EXISTS' || authMessage === 'USERNAME_FORMAT'}
         />
         {authMessage === 'USERNAME_EXISTS' && (
           <p className="text-rose-500">Username already exists.</p>
-        )}
-        {authMessage === 'USERNAME_AVAILABLE' && (
-          <p className="text-emerald-500">Username available!</p>
         )}
         {authMessage === 'USERNAME_FORMAT' && (
           <p className="text-rose-500">
@@ -253,7 +255,7 @@ function SettingsAccount() {
         )}
         <div className="self-end">
           <Button
-            color={BUTTON_COLOR.BLUE}
+            color={BUTTON_COLOR.SOLID_BLUE}
             isDisabled={
               isLoading ||
               authUser.username === username ||
@@ -278,6 +280,7 @@ function SettingsAccount() {
               placeholder="Email"
               label="Email"
               value={email}
+              isError={authMessage === 'EMAIL_EXISTS' || authMessage === 'VALIDATION_FAILED' || authMessage === 'OVER_EMAIL_SEND_RATE_LIMIT' || authMessage === 'EMAIL_ADDRESS_INVALID'}
             />
 
             <div className="self-end">
@@ -285,7 +288,7 @@ function SettingsAccount() {
                 isDisabled={isLoading || authSession.user.email === email}
                 isLoading={isLoading}
                 handleClick={async () => await updateUserEmail()}
-                color={BUTTON_COLOR.BLUE}
+                color={BUTTON_COLOR.SOLID_BLUE}
               >
                 Update Email
               </Button>
@@ -294,7 +297,7 @@ function SettingsAccount() {
         )}
 
       <Button
-        color={BUTTON_COLOR.BLUE}
+        color={BUTTON_COLOR.SOLID_BLUE}
         isDisabled={isLoading}
         isLoading={isLoading}
         handleClick={async () => {
@@ -310,7 +313,7 @@ function SettingsAccount() {
       </Button>
 
       <Button
-        color={BUTTON_COLOR.RED}
+        color={BUTTON_COLOR.SOLID_RED}
         handleClick={async () => {
           await supabase.auth.signOut({ scope: 'local' });
           setAuthSession(null);
@@ -329,7 +332,7 @@ function SettingsAccount() {
             on the link from both emails to confirm your email change.
           </p>
           <Button
-            color={BUTTON_COLOR.BLUE}
+            color={BUTTON_COLOR.SOLID_BLUE}
             isDisabled={isLoading}
             isLoading={isLoading}
             handleClick={async () => {
@@ -351,13 +354,6 @@ function SettingsAccount() {
         </>
       )}
 
-      {authMessage === 'RESET' && (
-        <p>
-          An email has been sent to <strong>{email}</strong> with a link. Please
-          click on the link to reset your password.
-        </p>
-      )}
-
       {authMessage === 'VALIDATION_FAILED' && (
         <p>
           Your email is not in the expected format. Please try a different
@@ -365,8 +361,25 @@ function SettingsAccount() {
         </p>
       )}
 
+{authMessage === 'EMAIL_ADDRESS_INVALID' && (
+              <p className="text-rose-500">
+                Your email is not accepted. Please try a different email.
+              </p>
+            )}
+
       {authMessage === 'EMAIL_EXISTS' && (
         <p>Email already exists. Please try a different email.</p>
+      )}
+
+{authMessage === 'OVER_EMAIL_SEND_RATE_LIMIT' && (
+        <p>Email send limit reached. Please try again later.</p>
+      )}
+
+{authMessage === 'RESET' && (
+        <p>
+          An email has been sent to <strong>{email}</strong> with a link. Please
+          click on the link to reset your password.
+        </p>
       )}
 
       {authMessage === 'RESENT_EMAIL_CHANGE_CONFIRMATION' && (
@@ -376,10 +389,6 @@ function SettingsAccount() {
           <strong>{authSession.user.email}</strong> with a link. Please click on
           the link from both emails to confirm your email change.
         </p>
-      )}
-
-      {authMessage === 'OVER_EMAIL_SEND_RATE_LIMIT' && (
-        <p>Email send limit reached. Please try again later.</p>
       )}
     </div>
   );

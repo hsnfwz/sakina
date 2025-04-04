@@ -2,18 +2,14 @@ import { useState } from 'react';
 import { supabase } from '../common/supabase.js';
 import TextInput from '../components/TextInput.jsx';
 import Button from '../components/Button.jsx';
-import { BUTTON_COLOR } from '../common/enums.js';
+import { BUTTON_COLOR, CHARACTER_LIMIT } from '../common/enums.js';
 import { expectedPasswordFormat } from '../common/helpers.js';
 import Anchor from '../components/Anchor.jsx';
 
 function ResetPassword() {
-  const passwordCharacterMin = 8;
-
   const [password, setPassword] = useState('');
   const [reenterPassword, setReenterPassword] = useState('');
-
   const [authMessage, setAuthMessage] = useState('');
-
   const [isLoading, setIsLoading] = useState(false);
 
   async function checkPassword(event) {
@@ -51,23 +47,18 @@ function ResetPassword() {
   }
 
   return (
-    <div className="m-auto flex w-full max-w-(--breakpoint-md) flex-col gap-8">
+    <div className="m-auto flex w-full max-w-(--breakpoint-md) flex-col gap-4">
       {authMessage !== 'PASSWORD_RESET' && (
         <>
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
               <TextInput
                 handleInput={checkPassword}
                 placeholder="New Password"
                 label="New Password"
                 value={password}
+                limit={CHARACTER_LIMIT.PASSWORD}
+                isError={authMessage === 'PASSWORD_FORMAT'}
               />
-              <p
-                className={`self-end ${password.length < passwordCharacterMin ? 'text-rose-500' : 'text-black'}`}
-              >
-                {password.length}
-              </p>
-            </div>
             {authMessage === 'PASSWORD_FORMAT' && (
               <p className="text-rose-500">
                 Must be at least 8 characters long and have at least 1 uppercase
@@ -76,27 +67,22 @@ function ResetPassword() {
             )}
           </div>
 
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
               <TextInput
                 handleInput={checkReenterPassword}
-                placeholder="Re-enter New Password"
-                label="Re-enter New Password"
+                placeholder="Repeat New Password"
+                label="Repeat New Password"
                 value={reenterPassword}
+                limit={CHARACTER_LIMIT.PASSWORD}
+                isError={authMessage === 'REENTER_PASSWORD_NOT_EQUAL'}
               />
-              <p
-                className={`self-end ${reenterPassword.length < passwordCharacterMin ? 'text-rose-500' : 'text-black'}`}
-              >
-                {reenterPassword.length}
-              </p>
-            </div>
             {authMessage === 'REENTER_PASSWORD_NOT_EQUAL' && (
               <p className="text-rose-500">Must match password.</p>
             )}
           </div>
 
           <Button
-            color={BUTTON_COLOR.RED}
+            color={BUTTON_COLOR.SOLID_BLUE}
             isDisabled={
               isLoading ||
               password.length === 0 ||

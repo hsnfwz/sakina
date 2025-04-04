@@ -5,7 +5,6 @@ import { supabase } from '../common/supabase.js';
 import Button from '../components/Button.jsx';
 import TextInput from '../components/TextInput.jsx';
 import { BUTTON_COLOR } from '../common/enums.js';
-import Anchor from '../components/Anchor.jsx';
 
 function SignIn() {
   const { authUser, isLoadingAuthUser, setAuthSession } =
@@ -50,7 +49,7 @@ function SignIn() {
   }
 
   return (
-    <div className="m-auto flex w-full max-w-(--breakpoint-md) flex-col gap-8">
+    <div className="m-auto flex w-full max-w-(--breakpoint-md) flex-col gap-4">
       {authMessage !== 'RESENT_CONFIRMATION' && (
         <>
           <TextInput
@@ -75,12 +74,12 @@ function SignIn() {
               authMessage
             }
             handleClick={async () => await signIn()}
-            color={BUTTON_COLOR.BLUE}
+            color={BUTTON_COLOR.SOLID_BLUE}
           >
             Log In
           </Button>
 
-          <Anchor to="/forgot-password">Forgot Password</Anchor>
+          <Link to="/forgot-password" className="underline text-sky-500 self-start">Forgot Password</Link>
         </>
       )}
 

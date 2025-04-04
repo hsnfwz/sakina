@@ -77,7 +77,11 @@ function User() {
     setIsLoadingFollow(true);
     const { data } = await addFollower(authUser.id, activeUser.id);
     setFollower(data[0]);
-    await addNotification(authUser.id, activeUser.id, 'FOLLOW');
+    await addNotification({
+      sender_user_id: authUser.id,
+      receiver_user_id: activeUser.id,
+      message: 'followed you',
+    });
     setIsLoadingFollow(false);
   }
 

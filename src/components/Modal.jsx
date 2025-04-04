@@ -2,6 +2,7 @@ import { useContext, useEffect } from 'react';
 import { ModalContext } from '../common/context/ModalContextProvider';
 import Button from './Button';
 import SVGOutlineX from './svgs/outline/SVGOutlineX';
+import { BUTTON_COLOR } from '../common/enums';
 
 function Modal({ children, isDisabled, show, handleClose }) {
   const { setModal } = useContext(ModalContext);
@@ -55,7 +56,11 @@ function Modal({ children, isDisabled, show, handleClose }) {
     >
       <div className="m-auto flex w-full max-w-(--breakpoint-md) flex-col gap-4 rounded-lg bg-white p-4">
         <div className="flex justify-end">
-          <Button isDisabled={isDisabled} handleClick={closeModal}>
+          <Button
+              isRound={true}
+              color={BUTTON_COLOR.SOLID_WHITE}
+          
+          isDisabled={isDisabled} handleClick={closeModal}>
             <SVGOutlineX />
           </Button>
         </div>
