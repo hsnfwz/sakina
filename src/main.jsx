@@ -145,6 +145,8 @@ createRoot(root).render(
 
 /* 
   - dont let other users see another user's anonymous posts
+  - tab index - make sure we cannot access stuff behind modals - focus trap
+  - home page
 
   video
   - add skip 5 seconds forward and back for video using arrow keys
@@ -154,41 +156,31 @@ createRoot(root).render(
 
   - make sure switching between profiles doesn't show the content switching visually
   - convert all api functions to hooks that comes with the data and loading state
-  - implement the same filter system from settings in explore page and activity page
+        - loaders for all states
   - supabase avatar and thumbnail file size - research ideal file size and set the max
+        - show preview of post before submission
   - create/avatar modal upload progress indicator
-  - tab index - make sure we cannot access stuff behind modals - focus trap
-  - individual activity pages
-  - individual filtered explore pages
-  - loaders for all states
+  - implement the same filter system from settings in explore page and activity page
+        - individual filtered activity pages
+        - individual filtered explore pages
   - likes for comments - every time we fetch comments/nested comments, get each their respective like record
   - refresh data after each add/edit/delete and make sure link state is refreshed too
-  - live home and notifications data
-  - show preview of post before submission
   - @ mentions
-  - modals opening animation
-  - transitions between pages
   - restore scroll position
 
   FUTURE:
-  - messaging and sharing
+  - look into vimeo for video hosting - upload videos from sakina to vimeo and retreive the ID to store in the DB
+  - look into new supabase UI for file uploads
+  - realtime notifications, messaging, and sharing
   - ability to save for later - requires playlists
-  - allow a single parent user account to manage multiple child user accounts (under the same email address)
-  - allow an account to have collaborators with permissions
   - livestreaming
   - allow user to select a video frame to set as their thumbnail
-  - allow users to block/mute/remove user discussing unwanted topics on their videos
-  - pinned content
-  - scheduled content
-  - expired content
+  - block/mute users
   - analytics page
-  - rewards/revenue and promotion/spotlight system
-  - stories (24 hours) + archived stories -> good for organizations when we implement them
+  - rewards/revenue and promotion/spotlight/gamification system
+  - stories (24 hours) + archived stories -> good for organizations
 
   FINAL
-  - look into new supabase UI for file uploads
-  - look into new supabase database broadcast for realtime changes
-  - look into supabase broadcast for messaging between clients
   - dev and prod datatables
   - rate limiting to avoid spamming the database
   - email change page flow
