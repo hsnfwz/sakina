@@ -1,91 +1,127 @@
-import { useContext, useState } from 'react';
-import { ModalContext, UserContext } from '../common/contexts';
-import { supabase } from '../common/supabase';
+import { useContext, useState, useEffect } from 'react';
+import { ModalContext } from '../common/context/ModalContextProvider';
+import { AuthContext } from '../common/context/AuthContextProvider';
+import { CHARACTER_LIMIT, BUTTON_COLOR } from '../common/enums';
+import { addDiscussion } from '../common/database/discussions';
+import { increment } from '../common/database/rpc';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import Textarea from '../components/Textarea';
-import Toggle from '../components/Toggle';
-
-const descriptionCharacterLimit = 2000;
+import TextInput from '../components/TextInput';
 
 function CommentModal() {
-  const { user } = useContext(UserContext);
-  const { showModal, setShowModal } = useContext(ModalContext);
+  const { authUser } = useContext(AuthContext);
+  const { modal, setModal } = useContext(ModalContext);
 
-  const [isAddingComment, setIsAddingComment] = useState(false);
-
+  const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [isAnonymous, setIsAnonymous] = useState(true);
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (modal.type === 'COMMENT_MODAL' && modal.data) {
+      setShow(true);
+    } else {
+      setShow(false);
+    }
+  }, [modal]);
 
   async function addComment() {
-    setIsAddingComment(true);
-    const { data, error } = await supabase
-      .from('comments')
-      .insert({
-        user_id: user.id,
-        post_id: showModal.data.postId,
-        parent_comment_id: showModal.data.parentCommentId,
-        description,
-        is_anonymous: isAnonymous,
-      })
-      .select('*');
+    setIsLoading(true);
 
-    if (error) {
-      console.log(error);
-    } else {
-      await supabase.rpc('increment', {
-        table_name: 'comments',
-        row_id: showModal.data.parentCommentId
-          ? showModal.data.parentCommentId
-          : showModal.data.postId,
-        row_column: 'comments_count',
-        increment_amount: 1,
-      });
-    }
-    setIsAddingComment(false);
-    setDescription('');
-    setIsAnonymous(true);
-    setShowModal({
+    await addDiscussion({
+      user_id: authUser.id,
+      parent_discussion_id: modal.data.parentDiscussionId,
+      title,
+      description,
+      is_anonymous: isAnonymous,
+    });
+
+    await increment(
+      'discussions',
+      modal.data.parentDiscussionId,
+      'discussions_count',
+      1
+    );
+
+    setIsLoading(false);
+    handleClose();
+    setModal({
       type: null,
       data: null,
     });
   }
 
+  function handleClose() {
+    setTitle('');
+    setDescription('');
+    setIsAnonymous(false);
+  }
+
   return (
-    <Modal>
-      <h1 className="text-2xl font-bold">New Comment</h1>
-      <div className="flex flex-col gap-2">
-        <p>Post: {showModal.data.postId}</p>
-        {showModal.data.parentCommentId && (
-          <p>Comment: {showModal.data.parentCommentId}</p>
-        )}
-      </div>
-      <Toggle
-        handleChange={() => setIsAnonymous(!isAnonymous)}
-        label="Anonymous"
-        isChecked={isAnonymous}
+    <Modal show={show} isDisabled={isLoading} handleClose={handleClose}>
+      <TextInput
+        handleInput={(event) => setTitle(event.target.value)}
+        placeholder="Title"
+        value={title}
+        label="Title"
+        limit={CHARACTER_LIMIT.TITLE}
       />
-      <p
-        className={`self-end ${description.length > descriptionCharacterLimit ? 'text-rose-500' : 'text-white'}`}
-      >
-        {description.length} / {descriptionCharacterLimit}
-      </p>
       <Textarea
         handleInput={(event) => setDescription(event.target.value)}
-        placeholder="Comment"
+        placeholder="Description"
         value={description}
+        label="Description"
+        limit={CHARACTER_LIMIT.DESCRIPTION}
       />
+      <div className="flex flex-col gap-2">
+        <label>Anonymous</label>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            className={`${isAnonymous ? 'bg-white text-black' : 'bg-sky-500 text-white'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-2 py-1 hover:bg-sky-700 focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+            onMouseDown={(event) => event.preventDefault()}
+            color={
+              isAnonymous ? BUTTON_COLOR.OUTLINE_BLUE : BUTTON_COLOR.SOLID_BLUE
+            }
+            onClick={() => setIsAnonymous(false)}
+          >
+            No
+          </button>
+          <button
+            type="button"
+            className={`${isAnonymous ? 'bg-sky-500 text-white' : 'bg-white text-black'} text-whote cursor-pointer rounded-full border-2 border-sky-500 px-2 py-1 hover:bg-sky-700 focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+            onMouseDown={(event) => event.preventDefault()}
+            color={
+              isAnonymous ? BUTTON_COLOR.SOLID_BLUE : BUTTON_COLOR.OUTLINE_BLUE
+            }
+            onClick={() => setIsAnonymous(true)}
+          >
+            Yes
+          </button>
+        </div>
+      </div>
       <div className="flex gap-2 self-end">
-        <Button handleClick={() => setDescription('')}>Clear</Button>
+        <Button
+          handleClick={() => {
+            setTitle('');
+            setDescription('');
+            setIsAnonymous(false);
+            setModal({ type: null, data: null });
+          }}
+        >
+          Close
+        </Button>
         <Button
           isDisabled={
-            isAddingComment ||
-            description === '' ||
-            description.length > descriptionCharacterLimit
+            isLoading ||
+            title.length === 0 ||
+            title.length > CHARACTER_LIMIT.TITLE.max ||
+            description.length > CHARACTER_LIMIT.DESCRIPTION.max
           }
-          isLoading={isAddingComment}
+          isLoading={isLoading}
           handleClick={async () => await addComment()}
-          isOutline={true}
         >
           Submit
         </Button>

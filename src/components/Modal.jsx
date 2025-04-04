@@ -1,24 +1,27 @@
 import { useContext, useEffect } from 'react';
-import { ModalContext } from '../common/contexts';
-import IconButton from './IconButton';
+import { ModalContext } from '../common/context/ModalContextProvider';
+import Button from './Button';
 import SVGOutlineX from './svgs/outline/SVGOutlineX';
+import { BUTTON_COLOR } from '../common/enums';
 
-function Modal({ children }) {
-  const { showModal, setShowModal } = useContext(ModalContext);
+function Modal({ children, isDisabled, show, handleClose }) {
+  const { setModal } = useContext(ModalContext);
 
   useEffect(() => {
-    disableBodyScroll();
+    if (show) {
+      disableBodyScroll();
 
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        closeModal();
-      }
-    });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeModal();
+        }
+      });
 
-    return () => {
-      enableBodyScroll();
-    };
-  }, []);
+      return () => {
+        enableBodyScroll();
+      };
+    }
+  }, [show]);
 
   function enableBodyScroll() {
     const body = document.querySelector('body');
@@ -32,31 +35,39 @@ function Modal({ children }) {
     body.classList.remove('overflow-auto');
   }
 
-  function clearShowModal() {
-    setShowModal({
-      type: null,
-      data: null,
-    });
+  function handleModalClickOutside(event) {
+    if (event.target === event.currentTarget) {
+      closeModal();
+    }
   }
 
   function closeModal() {
-    enableBodyScroll();
-    clearShowModal();
+    if (!isDisabled) {
+      handleClose();
+      setModal({ type: null, data: null });
+      enableBodyScroll();
+    }
   }
 
   return (
-    <div className="fixed left-0 top-0 z-50 flex h-full w-full flex-col gap-8 overflow-y-scroll bg-black p-4 text-white">
-      <div className="flex justify-end">
-        <IconButton
-          handleClick={() => {
-            closeModal();
-          }}
-        >
-          <SVGOutlineX />
-        </IconButton>
-      </div>
-      <div className="mx-auto flex h-full w-full max-w-screen-md flex-col gap-8">
-        {children}
+    <div
+      className={`fixed top-0 left-0 z-50 h-screen w-full overflow-y-auto bg-black/75 p-4 backdrop-blur-lg ${show ? 'block' : 'hidden'}`}
+      onClick={handleModalClickOutside}
+    >
+      <div className="m-auto flex w-full max-w-(--breakpoint-md) flex-col gap-4 rounded-lg bg-white p-4">
+        <div className="flex justify-end">
+          <Button
+            isRound={true}
+            color={BUTTON_COLOR.SOLID_WHITE}
+            isDisabled={isDisabled}
+            handleClick={closeModal}
+          >
+            <SVGOutlineX />
+          </Button>
+        </div>
+        <div className="mx-auto flex h-full w-full max-w-(--breakpoint-md) flex-col gap-4">
+          {children}
+        </div>
       </div>
     </div>
   );

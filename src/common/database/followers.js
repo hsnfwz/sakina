@@ -1,4 +1,65 @@
 import { supabase } from '../supabase';
+import { ORDER_BY } from '../enums';
+
+async function getFollowersBySenderUserId(
+  senderUserId,
+  startIndex = 0,
+  limit = 6,
+  orderBy = ORDER_BY.NEWEST
+) {
+  try {
+    const { data, error } = await supabase
+      .from('followers')
+      .select('*, sender:sender_user_id(*), receiver:receiver_user_id(*)')
+      .eq('sender_user_id', senderUserId)
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      data: null,
+      hasMore: false,
+    };
+  }
+}
+
+async function getFollowersByReceiverUserId(
+  receiverUserId,
+  startIndex = 0,
+  limit = 6,
+  orderBy = ORDER_BY.NEWEST
+) {
+  try {
+    const { data, error } = await supabase
+      .from('followers')
+      .select('*, sender:sender_user_id(*), receiver:receiver_user_id(*)')
+      .eq('receiver_user_id', receiverUserId)
+      .order(orderBy.columnName, { ascending: orderBy.isAscending })
+      .range(startIndex, startIndex + limit - 1);
+
+    if (error) throw error;
+
+    return {
+      data,
+      hasMore: data.length === limit,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      data: null,
+      hasMore: false,
+    };
+  }
+}
 
 async function addFollower(senderProfileId, receiverProfileId) {
   try {
@@ -30,33 +91,16 @@ async function removeFollower(id) {
   }
 }
 
-async function getFollowersBySenderProfileId(senderProfileId) {
-  try {
-    const { data, error } = await supabase
-      .from('followers')
-      .select('*, sender:sender_user_id(*), receiver:receiver_user_id(*)')
-      .eq('sender_user_id', senderProfileId);
-
-    if (error) throw error;
-
-    return {
-      data,
-    };
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function getFollowerBySenderProfileIdAndReceiverProfileId(
-  senderProfileId,
-  receiverProfileId
+async function getFollowerBySenderUserIdAndReceiverUserId(
+  senderUserId,
+  receiverUserId
 ) {
   try {
     const { data, error } = await supabase
       .from('followers')
       .select('*, sender:sender_user_id(*), receiver:receiver_user_id(*)')
-      .eq('sender_user_id', senderProfileId)
-      .eq('receiver_user_id', receiverProfileId);
+      .eq('sender_user_id', senderUserId)
+      .eq('receiver_user_id', receiverUserId);
 
     if (error) throw error;
 
@@ -65,12 +109,17 @@ async function getFollowerBySenderProfileIdAndReceiverProfileId(
     };
   } catch (error) {
     console.log(error);
+
+    return {
+      data: null,
+    };
   }
 }
 
 export {
-  getFollowersBySenderProfileId,
+  getFollowersBySenderUserId,
+  getFollowersByReceiverUserId,
   addFollower,
-  getFollowerBySenderProfileIdAndReceiverProfileId,
+  getFollowerBySenderUserIdAndReceiverUserId,
   removeFollower,
 };

@@ -1,17 +1,32 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
 
 :root {
-  --color-rose-500: oklch(0.645 0.246 16.439);
-  --color-neutral-700: oklch(0.371 0 0);
-  --color-neutral-200: oklch(0.922 0 0);
+  --color-white-transparent: rgba(255, 255, 255, 0.5);
 }
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: black;
-  color: white;
+  color: black;
+  background-color: white;
 }
 
 svg {
@@ -23,59 +38,8 @@ video::-webkit-media-controls {
   display: none !important;
 }
 
-/* Custom Toggle */
-/* The switch - the box around the slider */
-.app_toggle-label {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
-/* Hide default HTML checkbox */
-input[type='checkbox'] {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-/* The slider */
-.app_toggle-span {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-  border-radius: 34px;
-}
-.app_toggle-span:before {
-  position: absolute;
-  content: '';
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-  border-radius: 50%;
-}
-input[type='checkbox']:checked + .app_toggle-span {
-  background-color: #2196f3;
-}
-input[type='checkbox']:focus + .app_toggle-span {
-  box-shadow: 0 0 1px #2196f3;
-}
-input[type='checkbox']:checked + .app_toggle-span:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
-}
-
-/* Custom Slider */
-input[type='range'] {
+/* Custom Slider (START) */
+/* input[type='range'] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
@@ -92,7 +56,7 @@ input[type='range']::-webkit-slider-thumb {
   appearance: none;
   width: 16px;
   height: 16px;
-  background: var(--color-rose-500);
+  background: white;
   border: none;
   border-radius: 100%;
   transition: 0.2s all;
@@ -100,28 +64,38 @@ input[type='range']::-webkit-slider-thumb {
 input[type='range']::-moz-range-thumb {
   width: 16px;
   height: 16px;
-  background: var(--color-rose-500);
+  background: white;
   border: none;
   border-radius: 100%;
   transition: 0.2s all;
 }
 input[type='range']::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 0 4px var(--color-rose-500);
+  box-shadow: 0 0 0 4px white;
 }
 input[type='range']:active::-webkit-slider-thumb {
-  box-shadow: 0 0 0 8px var(--color-rose-500);
+  box-shadow: 0 0 0 8px white;
 }
 input[type='range']:focus::-webkit-slider-thumb {
-  box-shadow: 0 0 0 8px var(--color-rose-500);
+  box-shadow: 0 0 0 8px white;
 }
 input[type='range']::-moz-range-thumb:hover {
-  box-shadow: 0 0 0 4px var(--color-rose-500);
+  box-shadow: 0 0 0 4px white;
 }
 input[type='range']:active::-moz-range-thumb {
-  box-shadow: 0 0 0 8px var(--color-rose-500);
+  box-shadow: 0 0 0 8px white;
 }
 input[type='range']:focus::-moz-range-thumb {
-  box-shadow: 0 0 0 8px var(--color-rose-500);
+  box-shadow: 0 0 0 8px white;
+} */
+/* Custom Slider (END) */
+
+.app_hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+}
+
+.app_hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 .app_animate-fill-slot {

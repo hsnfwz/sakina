@@ -56,7 +56,7 @@ function formatFileSize(fileSize) {
   return _fileSize;
 }
 
-function getDate(date, showTime) {
+function formatDate(date, showTime) {
   const _date = new Date(date);
   const dateTime = new Intl.DateTimeFormat('default', {
     hour: showTime ? 'numeric' : undefined,
@@ -120,10 +120,59 @@ function getHighlightText(mainText, subText) {
 
   const highlightText = lowercaseText.replaceAll(
     lowerCaseSearchTerm,
-    `<span className="bg-sky-500 text-white rounded-lg p-1">${lowerCaseSearchTerm}</span>`
+    `<span className="bg-sky-500 text-black rounded-lg p-1">${lowerCaseSearchTerm}</span>`
   );
 
   return highlightText;
+}
+
+function handleFileAdded(file, bucketName) {
+  file.name =
+    formatFileName(file.name) + '_' + Date.now() + '.' + file.extension;
+
+  file.meta = {
+    ...file.meta,
+    bucketName,
+    objectName: file.name,
+    contentType: file.type,
+  };
+
+  if (
+    file.type === 'image/jpeg' ||
+    file.type === 'image/png' ||
+    file.type === 'image/gif'
+  ) {
+    const image = document.createElement('img');
+    image.addEventListener('load', (event) => {});
+    image.src = URL.createObjectURL(file.data);
+  } else if (
+    file.meta.type === 'video/mp4' ||
+    file.meta.type === 'video/mov' ||
+    file.meta.type === 'video/avi'
+  ) {
+    const video = document.createElement('video');
+    video.addEventListener('loadedmetadata', (event) => {
+      file.meta.duration = video.duration;
+    });
+    video.src = URL.createObjectURL(file.data);
+  }
+}
+
+function getTodayAndLastWeekDateISO() {
+  let today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let lastWeek = new Date();
+  lastWeek.setDate(today.getDate() - 7);
+  lastWeek.setHours(0, 0, 0, 0);
+
+  today = today.toISOString();
+  lastWeek = lastWeek.toISOString();
+
+  return {
+    today,
+    lastWeek,
+  };
 }
 
 export {
@@ -132,9 +181,11 @@ export {
   formatFileName,
   formatFileSize,
   formatFileSizeAbbreviation,
-  getDate,
+  formatDate,
   getIslamicDate,
   formatDuration,
   formatCount,
   getHighlightText,
+  handleFileAdded,
+  getTodayAndLastWeekDateISO,
 };

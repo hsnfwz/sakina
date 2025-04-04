@@ -1,128 +1,136 @@
-import { useContext, useEffect } from 'react';
-import { ModalContext, UserContext } from '../common/contexts';
-import Button from './Button';
-import { getDate } from '../common/helpers';
+import { useContext, useEffect, useState } from 'react';
+import { ModalContext } from '../common/context/ModalContextProvider';
+import { AuthContext } from '../common/context/AuthContextProvider';
+import { DataContext } from '../common/context/DataContextProvider';
+import { BUTTON_COLOR } from '../common/enums';
+import { getCommentsByParentDiscussionId } from '../common/database/discussions';
 import SVGOulineArrowDown from './svgs/outline/SVGOutlineArrowDown';
 import SVGOutlineArrowUp from './svgs/outline/SVGOutlineArrowUp';
 import SVGOutlineCornerDownRightArrow from './svgs/outline/SVGOutlineCornerDownRightArrow';
-import { BUTTON_COLOR } from '../common/enums';
-import { Link } from 'react-router';
+import Button from './Button';
+import DiscussionCard from './DiscussionCard';
+import SVGOutlineChat from './svgs/outline/SVGOutlineChat';
+import SVGOutlineHeart from '../components/svgs/outline/SVGOutlineHeart';
+import SVGOutlineCircle from '../components/svgs/outline/SVGOutlineCircle';
+import Loading from './Loading';
 
-function Comment({
-  comment,
-  elementRef,
-  commentsTracker,
-  expandCollapseComments,
-  showMoreComments,
-  showLink,
-}) {
-  const { user } = useContext(UserContext);
-  const { setShowModal } = useContext(ModalContext);
+function Comment({ comment, elementRef }) {
+  const { authUser } = useContext(AuthContext);
+  const { setModal } = useContext(ModalContext);
+  const { nestedComments, setNestedComments } = useContext(DataContext);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isLoadingNestedComments, setIsLoadingNestedComments] = useState(false);
+
+  async function getNestedComments(parentDiscussionId) {
+    setIsLoadingNestedComments(true);
+
+    let nestedComment;
+
+    if (nestedComments[parentDiscussionId]) {
+      nestedComment = { ...nestedComments[parentDiscussionId] };
+    } else {
+      nestedComment = {
+        data: [],
+        hasMore: true,
+        hasInitialized: false,
+      };
+    }
+
+    const { data, hasMore } = await getCommentsByParentDiscussionId(
+      parentDiscussionId,
+      nestedComment.data.length
+    );
+
+    if (data.length > 0) {
+      nestedComment.data = [...nestedComment.data, ...data];
+    }
+    nestedComment.hasMore = hasMore;
+    nestedComment.hasInitialized = true;
+
+    const _nestedComments = { ...nestedComments };
+    _nestedComments[parentDiscussionId] = nestedComment;
+    setNestedComments(_nestedComments);
+
+    setIsLoadingNestedComments(false);
+  }
 
   return (
-    <div className={`flex w-full flex-col gap-2`} ref={elementRef}>
-      <div className="flex w-full flex-col gap-4 whitespace-nowrap sm:whitespace-normal">
-        {showLink && (
-          <Link
-            to={`comment/${comment.id}`}
-            className="flex w-full flex-col gap-4 whitespace-nowrap rounded-lg border-2 border-neutral-700 p-2 hover:border-white focus:border-2 focus:border-white focus:outline-none focus:ring-0 sm:whitespace-normal"
-            state={{ comment }}
-          >
-            <div className="flex w-full gap-4">
-              <p className="text-xs">
-                {comment.is_anonymous ? 'Anonymous' : comment.user.username}
-              </p>
-              <p className="text-xs text-neutral-700">
-                {getDate(comment.created_at, true)}
-              </p>
-            </div>
-            <p>{comment.description}</p>
-          </Link>
-        )}
-        {!showLink && (
-          <div className="flex w-full flex-col gap-4 whitespace-nowrap sm:whitespace-normal">
-            <div className="flex w-full gap-4">
-              <p className="text-xs">
-                {comment.is_anonymous ? 'Anonymous' : comment.user.username}
-              </p>
-              <p className="text-xs text-neutral-700">
-                {getDate(comment.created_at, true)}
-              </p>
-            </div>
-            <p>{comment.description}</p>
-          </div>
-        )}
-        {user && (
-          <div className="self-start">
+    <div className="flex w-full flex-col gap-2 rounded-lg" ref={elementRef}>
+      <div className="flex gap-2">
+        <DiscussionCard discussion={comment} showDescription={true} />
+        {authUser && (
+          <div className="flex flex-col gap-2 rounded-lg bg-white p-2">
             <Button
-              buttonColor={BUTTON_COLOR.BLUE}
+              isRound={true}
+              isDisabled={isLoadingNestedComments}
+              color={BUTTON_COLOR.SOLID_GREEN}
               handleClick={() => {
-                setShowModal({
+                setModal({
                   type: 'COMMENT_MODAL',
                   data: {
-                    parentCommentId: comment.id,
-                    postId: comment.post.id,
+                    parentDiscussionId: comment.id,
                   },
                 });
               }}
             >
-              Reply
+              <SVGOutlineChat />
             </Button>
-          </div>
-        )}
-        {comment.comments_count > 0 && (
-          <div className="self-start">
             <Button
-              handleClick={async () => {
-                await expandCollapseComments(comment.id);
-              }}
+              isRound={true}
+              color={BUTTON_COLOR.SOLID_RED}
+              handleClick={() => {}}
+              isDisabled={isLoadingNestedComments}
             >
-              {!commentsTracker[comment.id] && (
-                <>
-                  <SVGOulineArrowDown />
-                </>
-              )}
-              {commentsTracker[comment.id] &&
-                commentsTracker[comment.id].isExpand && (
-                  <>
-                    <SVGOutlineArrowUp />
-                  </>
-                )}
-              {commentsTracker[comment.id] &&
-                !commentsTracker[comment.id].isExpand && (
-                  <>
-                    <SVGOulineArrowDown />
-                  </>
-                )}
-              <span>
-                {comment.comments_count}{' '}
-                {comment.comments_count > 1 ? 'replies' : 'reply'}
-              </span>
+              <SVGOutlineHeart />
             </Button>
+            {comment.discussions_count > 0 && (
+              <Button
+                isRound={true}
+                isDisabled={isLoadingNestedComments}
+                color={
+                  isExpanded
+                    ? BUTTON_COLOR.OUTLINE_BLUE
+                    : BUTTON_COLOR.SOLID_BLUE
+                }
+                handleClick={async () => {
+                  if (
+                    !nestedComments[comment.id] ||
+                    !nestedComments[comment.id].hasInitialized
+                  ) {
+                    await getNestedComments(comment.id);
+                  }
+                  setIsExpanded(!isExpanded);
+                }}
+              >
+                {!isExpanded && <SVGOulineArrowDown />}
+                {isExpanded && <SVGOutlineArrowUp />}
+              </Button>
+            )}
           </div>
         )}
       </div>
-      {commentsTracker[comment.id] && commentsTracker[comment.id].isExpand && (
-        <div className={`flex w-full flex-col gap-4 pl-4`}>
-          {commentsTracker[comment.id].comments.map((_comment, index) => (
-            <Comment
-              key={index}
-              comment={_comment}
-              commentsTracker={commentsTracker}
-              expandCollapseComments={expandCollapseComments}
-              showLink={_comment.id !== comment.id}
-            />
-          ))}
-          {commentsTracker[comment.id].hasMore && (
-            <div className="self-start">
-              <Button
-                handleClick={async () => await showMoreComments(comment.id)}
-              >
-                <SVGOutlineCornerDownRightArrow />
-                <span>Show More Replies</span>
-              </Button>
+
+      {isExpanded && (
+        <div className="flex w-full flex-col gap-2">
+          {nestedComments[comment.id].data.map((_nestedComment, index) => (
+            <div className="ml-4" key={_nestedComment.id}>
+              <Comment
+                comment={_nestedComment}
+                getNestedComments={getNestedComments}
+              />
             </div>
+          ))}
+          {nestedComments[comment.id].hasMore && (
+            <Button
+              isDisabled={isLoadingNestedComments}
+              color={BUTTON_COLOR.SOLID_GREEN}
+              handleClick={async () => await getNestedComments(comment.id)}
+            >
+              <SVGOutlineCornerDownRightArrow />
+              <span>Show More</span>
+            </Button>
           )}
+          {isLoadingNestedComments && <Loading />}
         </div>
       )}
     </div>
