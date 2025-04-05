@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { ModalContext } from '../common/context/ModalContextProvider';
 import Button from './Button';
 import SVGOutlineX from './svgs/outline/SVGOutlineX';
@@ -7,17 +7,45 @@ import { BUTTON_COLOR } from '../common/enums';
 function Modal({ children, isDisabled, show, handleClose }) {
   const { setModal } = useContext(ModalContext);
 
+  const modalRef = useRef();
+
   useEffect(() => {
     if (show) {
       disableBodyScroll();
 
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-          closeModal();
+      const focusableElements = modalRef.current.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      const handleTabKeyPress = (event) => {
+        if (event.key === "Tab") {
+          if (event.shiftKey && document.activeElement === firstElement) {
+            event.preventDefault();
+            lastElement.focus();
+          } else if (
+            !event.shiftKey &&
+            document.activeElement === lastElement
+          ) {
+            event.preventDefault();
+            firstElement.focus();
+          }
         }
-      });
+      };
+
+      const handleEscapeKeyPress = (event) => {
+        if (event.key === "Escape") {
+          closeModal(false);
+        }
+      };
+
+      modalRef.current.addEventListener("keydown", handleTabKeyPress);
+      document.addEventListener("keydown", handleEscapeKeyPress);
 
       return () => {
+        modalRef.current.removeEventListener("keydown", handleTabKeyPress);
+        document.removeEventListener("keydown", handleEscapeKeyPress);
         enableBodyScroll();
       };
     }
@@ -51,6 +79,7 @@ function Modal({ children, isDisabled, show, handleClose }) {
 
   return (
     <div
+      ref={modalRef}
       className={`fixed top-0 left-0 z-50 h-screen w-full overflow-y-auto bg-black/75 p-4 backdrop-blur-lg ${show ? 'block' : 'hidden'}`}
       onClick={handleModalClickOutside}
     >
@@ -69,6 +98,7 @@ function Modal({ children, isDisabled, show, handleClose }) {
           {children}
         </div>
       </div>
+      <div tabIndex={0}></div>
     </div>
   );
 }

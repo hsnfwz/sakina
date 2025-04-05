@@ -145,7 +145,6 @@ createRoot(root).render(
 
 /* 
   - dont let other users see another user's anonymous posts
-  - tab index - make sure we cannot access stuff behind modals - focus trap
   - home page
 
   video
