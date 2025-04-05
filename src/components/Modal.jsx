@@ -20,7 +20,7 @@ function Modal({ children, isDisabled, show, handleClose }) {
       const lastElement = focusableElements[focusableElements.length - 1];
 
       const handleTabKeyPress = (event) => {
-        if (event.key === "Tab") {
+        if (event.key === 'Tab') {
           if (event.shiftKey && document.activeElement === firstElement) {
             event.preventDefault();
             lastElement.focus();
@@ -35,17 +35,17 @@ function Modal({ children, isDisabled, show, handleClose }) {
       };
 
       const handleEscapeKeyPress = (event) => {
-        if (event.key === "Escape") {
+        if (event.key === 'Escape') {
           closeModal(false);
         }
       };
 
-      modalRef.current.addEventListener("keydown", handleTabKeyPress);
-      document.addEventListener("keydown", handleEscapeKeyPress);
+      modalRef.current.addEventListener('keydown', handleTabKeyPress);
+      document.addEventListener('keydown', handleEscapeKeyPress);
 
       return () => {
-        modalRef.current.removeEventListener("keydown", handleTabKeyPress);
-        document.removeEventListener("keydown", handleEscapeKeyPress);
+        modalRef.current.removeEventListener('keydown', handleTabKeyPress);
+        document.removeEventListener('keydown', handleEscapeKeyPress);
         enableBodyScroll();
       };
     }

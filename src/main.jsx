@@ -144,7 +144,6 @@ createRoot(root).render(
 );
 
 /* 
-  - dont let other users see another user's anonymous posts
   - home page
 
   video

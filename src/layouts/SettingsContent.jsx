@@ -263,9 +263,9 @@ function SettingsVideos() {
           <ContentTableGrid>
             {videos.data.map((video, index) => (
               <ContentTableCard
-              elementRef={
-                index === videos.data.length - 1 ? elementRef : null
-              }
+                elementRef={
+                  index === videos.data.length - 1 ? elementRef : null
+                }
                 key={index}
                 content={video}
                 handleEdit={() =>
@@ -302,9 +302,9 @@ function SettingsVideos() {
           <ContentTableGrid>
             {hiddenVideos.data.map((video, index) => (
               <ContentTableCard
-              elementRef={
-                index === hiddenVideos.data.length - 1 ? elementRef : null
-              }
+                elementRef={
+                  index === hiddenVideos.data.length - 1 ? elementRef : null
+                }
                 key={index}
                 content={video}
                 handleEdit={() =>
@@ -340,9 +340,7 @@ function SettingsVideos() {
           <ContentTableGrid>
             {clips.data.map((clip, index) => (
               <ContentTableCard
-              elementRef={
-                index === clips.data.length - 1 ? elementRef : null
-              }
+                elementRef={index === clips.data.length - 1 ? elementRef : null}
                 key={index}
                 content={clip}
                 handleEdit={() =>
@@ -379,9 +377,9 @@ function SettingsVideos() {
           <ContentTableGrid>
             {hiddenClips.data.map((clip, index) => (
               <ContentTableCard
-              elementRef={
-                index === hiddenClips.data.length - 1 ? elementRef : null
-              }
+                elementRef={
+                  index === hiddenClips.data.length - 1 ? elementRef : null
+                }
                 key={index}
                 content={clip}
                 handleEdit={() =>
@@ -417,9 +415,9 @@ function SettingsVideos() {
           <ContentTableGrid>
             {discussions.data.map((discussion, index) => (
               <ContentTableCard
-              elementRef={
-                index === discussions.data.length - 1 ? elementRef : null
-              }
+                elementRef={
+                  index === discussions.data.length - 1 ? elementRef : null
+                }
                 key={index}
                 content={discussion}
                 handleEdit={() =>
@@ -458,9 +456,11 @@ function SettingsVideos() {
           <ContentTableGrid>
             {hiddenDiscussions.data.map((discussion, index) => (
               <ContentTableCard
-              elementRef={
-                index === hiddenDiscussions.data.length - 1 ? elementRef : null
-              }
+                elementRef={
+                  index === hiddenDiscussions.data.length - 1
+                    ? elementRef
+                    : null
+                }
                 key={index}
                 content={discussion}
                 handleEdit={() =>

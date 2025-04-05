@@ -1,6 +1,7 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, Fragment } from 'react';
 import { getVideosByUserId } from '../common/database/videos.js';
 import { DataContext } from '../common/context/DataContextProvider.jsx';
+import { AuthContext } from '../common/context/AuthContextProvider.jsx';
 import { useElementIntersection } from '../common/hooks';
 import Loading from '../components/Loading.jsx';
 import Loaded from '../components/Loaded.jsx';
@@ -8,6 +9,7 @@ import VideoCard from '../components/VideoCard.jsx';
 import VideoCardGrid from '../components/VideoCardGrid.jsx';
 
 function UserVideos() {
+  const { authUser } = useContext(AuthContext);
   const { activeUser } = useContext(DataContext);
   const [elementRef, intersectingElement] = useElementIntersection();
   const { userVideos, setUserVideos, userClips, setUserClips } =
@@ -103,14 +105,21 @@ function UserVideos() {
         <>
           <VideoCardGrid>
             {userVideos.data.map((video, index) => (
-              <VideoCard
-                key={index}
-                video={video}
-                orientation="HORIZONTAL"
-                elementRef={
-                  index === userVideos.data.length - 1 ? elementRef : null
-                }
-              />
+              <Fragment key={index}>
+                {(!video.is_anonymous ||
+                  (video.is_anonymous &&
+                    authUser &&
+                    activeUser &&
+                    authUser.id === activeUser.id)) && (
+                  <VideoCard
+                    video={video}
+                    orientation="HORIZONTAL"
+                    elementRef={
+                      index === userVideos.data.length - 1 ? elementRef : null
+                    }
+                  />
+                )}
+              </Fragment>
             ))}
           </VideoCardGrid>
           {!userVideos.hasMore && <Loaded />}
@@ -121,14 +130,21 @@ function UserVideos() {
         <>
           <VideoCardGrid>
             {userClips.data.map((video, index) => (
-              <VideoCard
-                key={index}
-                video={video}
-                orientation="VERTICAL"
-                elementRef={
-                  index === userClips.data.length - 1 ? elementRef : null
-                }
-              />
+              <Fragment key={index}>
+                {(!video.is_anonymous ||
+                  (video.is_anonymous &&
+                    authUser &&
+                    activeUser &&
+                    authUser.id === activeUser.id)) && (
+                  <VideoCard
+                    video={video}
+                    orientation="VERTICAL"
+                    elementRef={
+                      index === userClips.data.length - 1 ? elementRef : null
+                    }
+                  />
+                )}
+              </Fragment>
             ))}
           </VideoCardGrid>
           {!userClips.hasMore && <Loaded />}

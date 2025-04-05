@@ -4,9 +4,18 @@ import SVGOutlineArchive from './svgs/outline/SVGOutlineArchive';
 import SVGOutlinePencil from './svgs/outline/SVGOutlinePencil';
 import SVGOutlineUnarchive from './svgs/outline/SVGOutlineUnarchive';
 
-function ContentTableCard({ content, handleEdit, handleHide, handleUnhide, elementRef }) {
+function ContentTableCard({
+  content,
+  handleEdit,
+  handleHide,
+  handleUnhide,
+  elementRef,
+}) {
   return (
-    <div className="flex items-center justify-between gap-2 py-2" ref={elementRef}>
+    <div
+      className="flex items-center justify-between gap-2 py-2"
+      ref={elementRef}
+    >
       <div className="flex flex-col gap-2">
         <h1>{content.title}</h1>
         {content.description && <p>{content.description}</p>}

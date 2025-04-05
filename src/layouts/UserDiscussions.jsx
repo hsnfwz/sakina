@@ -1,6 +1,7 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, Fragment } from 'react';
 import { getDiscussionsByUserId } from '../common/database/discussions.js';
 import { DataContext } from '../common/context/DataContextProvider.jsx';
+import { AuthContext } from '../common/context/AuthContextProvider.jsx';
 import { useElementIntersection } from '../common/hooks';
 import Loading from '../components/Loading.jsx';
 import Loaded from '../components/Loaded.jsx';
@@ -8,6 +9,7 @@ import DiscussionCard from '../components/DiscussionCard.jsx';
 import DiscussionCardGrid from '../components/DiscussionCardGrid.jsx';
 
 function UserDiscussions() {
+  const { authUser } = useContext(AuthContext);
   const { activeUser } = useContext(DataContext);
   const [elementRef, intersectingElement] = useElementIntersection();
   const { userDiscussions, setUserDiscussions } = useContext(DataContext);
@@ -53,9 +55,21 @@ function UserDiscussions() {
     <div className="flex w-full flex-col gap-4">
       <DiscussionCardGrid>
         {userDiscussions.data.map((discussion, index) => (
-          <DiscussionCard key={index} discussion={discussion} elementRef={
-            index === userDiscussions.data.length - 1 ? elementRef : null
-          } />
+          <Fragment key={index}>
+            {(!discussion.is_anonymous ||
+              (discussion.is_anonymous &&
+                authUser &&
+                activeUser &&
+                authUser.id === activeUser.id)) && (
+              <DiscussionCard
+                key={index}
+                discussion={discussion}
+                elementRef={
+                  index === userDiscussions.data.length - 1 ? elementRef : null
+                }
+              />
+            )}
+          </Fragment>
         ))}
       </DiscussionCardGrid>
       {!userDiscussions.hasMore && <Loaded />}
