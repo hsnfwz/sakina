@@ -38,9 +38,8 @@ function UnhideModal() {
         users will be able to view it.
       </p>
       <div className="flex gap-2 self-end">
-      <Button
-                color={BUTTON_COLOR.OUTLINE_BLACK}
-
+        <Button
+          color={BUTTON_COLOR.OUTLINE_BLACK}
           isDisabled={isLoading}
           handleClick={() => {
             handleClose();
@@ -50,11 +49,12 @@ function UnhideModal() {
           No
         </Button>
         <Button
-                color={BUTTON_COLOR.SOLID_BLUE}
-        isDisabled={isLoading} handleClick={handleSubmit}>
+          color={BUTTON_COLOR.SOLID_BLUE}
+          isDisabled={isLoading}
+          handleClick={handleSubmit}
+        >
           Yes
         </Button>
-
       </div>
     </Modal>
   );

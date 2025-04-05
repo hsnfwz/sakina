@@ -1,34 +1,34 @@
 import { useElementIntersection } from '../common/hooks';
-import { useVideos } from '../common/hooks/videos';
+import { useClips } from '../common/hooks/videos';
 import Loaded from '../components/Loaded';
 import Loading from '../components/Loading';
 import Header from '../components/Header';
 import VideoCard from '../components/VideoCard';
 import VideoCardGrid from '../components/VideoCardGrid';
 
-function Videos() {
+function Clips() {
   const [elementRef, intersectingElement] = useElementIntersection();
-  const [videos, fetchingVideos] = useVideos(intersectingElement);
+  const [clips, fetchingClips] = useClips(intersectingElement);
 
   return (
     <div className="flex w-full flex-col gap-4">
-      <Header>Videos</Header>
+      <Header>Clips</Header>
       <VideoCardGrid>
-        {videos.data.map((video, index) => (
+        {clips.data.map((clip, index) => (
           <div key={index} className="w-full">
             <VideoCard
-              orientation="HORIZONTAL"
-              video={video}
-              elementRef={index === videos.data.length - 1 ? elementRef : null}
+              orientation="VERTICAL"
+              video={clip}
+              elementRef={index === clips.data.length - 1 ? elementRef : null}
             />
           </div>
         ))}
       </VideoCardGrid>
-      {!videos.hasMore && <Loaded />}
+      {!clips.hasMore && <Loaded />}
 
-      {fetchingVideos && <Loading />}
+      {fetchingClips && <Loading />}
     </div>
   );
 }
 
-export default Videos;
+export default Clips;

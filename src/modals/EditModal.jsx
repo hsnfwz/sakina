@@ -99,9 +99,16 @@ function EditModal() {
           Close
         </Button>
         <Button
-            color={BUTTON_COLOR.SOLID_BLUE}
-        
-        isDisabled={isLoading || (modal.data && (modal.data.title === title && modal.data.description === description && modal.data.is_anonymous === isAnonymous))} handleClick={handleSubmit}>
+          color={BUTTON_COLOR.SOLID_BLUE}
+          isDisabled={
+            isLoading ||
+            (modal.data &&
+              modal.data.title === title &&
+              modal.data.description === description &&
+              modal.data.is_anonymous === isAnonymous)
+          }
+          handleClick={handleSubmit}
+        >
           Submit
         </Button>
       </div>

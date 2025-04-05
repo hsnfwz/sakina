@@ -8,14 +8,14 @@ const UPLOAD_TYPE = Object.freeze({
   VIDEO_THUMBNAIL: {
     type: 'VIDEO_THUMBNAIL',
     bucketName: 'video-thumbnails',
-    mimeTypes: ['image/jpeg', 'image/png', 'image/gif'],
-    sizeLimit: 50000000, // 50 MB
+    mimeTypes: ['image/jpeg', 'image/png'],
+    sizeLimit: 2097152, // exactly 2mb
   },
   AVATAR: {
     type: 'AVATAR',
     bucketName: 'avatars',
-    mimeTypes: ['image/jpeg', 'image/png', 'image/gif'],
-    sizeLimit: 50000000, // 50 MB
+    mimeTypes: ['image/jpeg', 'image/png'],
+    sizeLimit: 4194304, // exactly 4mb
   },
 });
 

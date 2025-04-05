@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState, Fragment } from 'react';
-import { getDiscussionsByUserId } from '../common/database/discussions.js';
+import { useContext, Fragment } from 'react';
 import { DataContext } from '../common/context/DataContextProvider.jsx';
 import { AuthContext } from '../common/context/AuthContextProvider.jsx';
 import { useElementIntersection } from '../common/hooks';
+import { useUserDiscussions } from '../common/hooks/discussions.js';
 import Loading from '../components/Loading.jsx';
 import Loaded from '../components/Loaded.jsx';
 import DiscussionCard from '../components/DiscussionCard.jsx';
@@ -12,44 +12,7 @@ function UserDiscussions() {
   const { authUser } = useContext(AuthContext);
   const { activeUser } = useContext(DataContext);
   const [elementRef, intersectingElement] = useElementIntersection();
-  const { userDiscussions, setUserDiscussions } = useContext(DataContext);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (activeUser) {
-      if (!userDiscussions.hasInitialized) {
-        getDiscussions();
-      }
-    }
-  }, [activeUser]);
-
-  useEffect(() => {
-    if (intersectingElement && userDiscussions.hasMore) {
-      getDiscussions();
-    }
-  }, [intersectingElement]);
-
-  async function getDiscussions() {
-    setIsLoading(true);
-
-    const { data, hasMore } = await getDiscussionsByUserId(
-      activeUser.id,
-      userDiscussions.data.length
-    );
-
-    const _userDiscussions = { ...userDiscussions };
-
-    if (data.length > 0) {
-      _userDiscussions.data = [...userDiscussions.data, ...data];
-    }
-
-    _userDiscussions.hasMore = hasMore;
-    _userDiscussions.hasInitialized = true;
-
-    setUserDiscussions(_userDiscussions);
-
-    setIsLoading(false);
-  }
+  const [userDiscussions, fetchingUserDiscussions] = useUserDiscussions(intersectingElement);
 
   return (
     <div className="flex w-full flex-col gap-4">
@@ -73,7 +36,7 @@ function UserDiscussions() {
         ))}
       </DiscussionCardGrid>
       {!userDiscussions.hasMore && <Loaded />}
-      {isLoading && <Loading />}
+      {fetchingUserDiscussions && <Loading />}
     </div>
   );
 }

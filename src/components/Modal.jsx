@@ -4,12 +4,7 @@ import { BUTTON_COLOR } from '../common/enums';
 import Button from './Button';
 import SVGOutlineX from './svgs/outline/SVGOutlineX';
 
-function Modal({
-  children,
-  isDisabled,
-  show,
-  handleClose,
-}) {
+function Modal({ children, isDisabled, show, handleClose }) {
   const { setModal } = useContext(ModalContext);
 
   const modalRef = useRef();
@@ -28,10 +23,16 @@ function Modal({
 
       const handleTabKeyPress = (event) => {
         if (event.key === 'Tab') {
-          if (lastElement.disabled && document.activeElement.nextElementSibling === lastElement) {
+          if (
+            lastElement.disabled &&
+            document.activeElement.nextElementSibling === lastElement
+          ) {
             event.preventDefault();
             firstElement.focus();
-          } else if (event.shiftKey && document.activeElement === firstElement) {
+          } else if (
+            event.shiftKey &&
+            document.activeElement === firstElement
+          ) {
             event.preventDefault();
             lastElement.focus();
           } else if (

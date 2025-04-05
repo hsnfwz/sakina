@@ -12,6 +12,7 @@ import HomeDiscussions from './layouts/HomeDiscussions.jsx';
 import HomeVideos from './layouts/HomeVideos.jsx';
 import Explore from './layouts/Explore.jsx';
 import Videos from './layouts/Videos.jsx';
+import Clips from './layouts/Clips.jsx';
 import Discussions from './layouts/Discussions.jsx';
 import Users from './layouts/Users.jsx';
 import Video from './layouts/Video.jsx';
@@ -24,6 +25,7 @@ import SignIn from './layouts/SignIn.jsx';
 import ForgotPassword from './layouts/ForgotPassword.jsx';
 import ResetPassword from './layouts/ResetPassword.jsx';
 import UserVideos from './layouts/UserVideos.jsx';
+import UserClips from './layouts/UserClips.jsx';
 import UserDiscussions from './layouts/UserDiscussions.jsx';
 import Notifications from './layouts/Notifications.jsx';
 import SettingsAccount from './layouts/SettingsAccount.jsx';
@@ -89,7 +91,7 @@ const router = createBrowserRouter([
       {
         path: '/clips',
         children: [
-          { index: true, Component: Videos },
+          { index: true, Component: Clips },
           { path: ':id', Component: Video },
         ],
       },
@@ -110,7 +112,7 @@ const router = createBrowserRouter([
             children: [
               { index: true, Component: UserVideos },
               { path: 'videos', Component: UserVideos },
-              { path: 'clips', Component: UserVideos },
+              { path: 'clips', Component: UserClips },
               { path: 'discussions', Component: UserDiscussions },
               { path: 'activity', Component: UserActivity },
             ],
@@ -144,7 +146,16 @@ createRoot(root).render(
 );
 
 /* 
+  - make sure buttons are disabled when loading their state (like/unlike, follow/unfollow, hide/unhide)
+  - make sure switching between profiles doesn't show the content switching visually
+
   - home page
+
+  - video discussions
+
+  - look into vimeo for video hosting - upload videos from sakina to vimeo and retreive the ID to store in the DB
+
+  - ability to save for later - requires playlists
 
   video
   - add skip 5 seconds forward and back for video using arrow keys
@@ -152,33 +163,21 @@ createRoot(root).render(
   - autplay queue of videos (ex: playlists)
   - visually display audio using Web Audio API
 
-  - make sure switching between profiles doesn't show the content switching visually
-  - convert all api functions to hooks that comes with the data and loading state
-        - loaders for all states
-  - supabase avatar and thumbnail file size - research ideal file size and set the max
+  - look into new supabase UI for file uploads
         - show preview of post before submission
-  - create/avatar modal upload progress indicator
+        - create/avatar modal upload progress indicator
+
   - implement the same filter system from settings in explore page and activity page
         - individual filtered activity pages
         - individual filtered explore pages
+
   - likes for comments - every time we fetch comments/nested comments, get each their respective like record
   - refresh data after each add/edit/delete and make sure link state is refreshed too
-  - @ mentions
   - restore scroll position
+  - @ mentions
 
-  FUTURE:
-  - look into vimeo for video hosting - upload videos from sakina to vimeo and retreive the ID to store in the DB
-  - look into new supabase UI for file uploads
-  - realtime notifications, messaging, and sharing
-  - ability to save for later - requires playlists
-  - livestreaming
-  - allow user to select a video frame to set as their thumbnail
-  - block/mute users
-  - analytics page
-  - rewards/revenue and promotion/spotlight/gamification system
-  - stories (24 hours) + archived stories -> good for organizations
 
-  FINAL
+  BEFORE RELEASE
   - dev and prod datatables
   - rate limiting to avoid spamming the database
   - email change page flow
@@ -189,4 +188,16 @@ createRoot(root).render(
   - stripe subscriptions configuration - https://stripe.com/en-ca/payments
   - SMTP server configuration - https://supabase.com/docs/guides/auth/auth-smtp
   - auth email templates configuration - https://supabase.com/docs/guides/auth/auth-email-templates
+  - subscriptions to supabase, email service, vimeo, and stripe
+
+
+  FUTURE FEATURES:
+  - realtime notifications, messaging, and sharing
+  - livestreaming
+  - select thumbnail from video frame
+  - block/mute users
+  - analytics page
+  - revenue system for content creators
+  - gamification system
+  - stories
 */

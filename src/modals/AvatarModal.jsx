@@ -94,8 +94,7 @@ function AvatarModal() {
       {/* </div> */}
       <div className="flex gap-2 self-end">
         <Button
-                color={BUTTON_COLOR.OUTLINE_BLACK}
-
+          color={BUTTON_COLOR.OUTLINE_BLACK}
           isDisabled={isUploading}
           handleClick={() => {
             handleClose();
@@ -108,8 +107,7 @@ function AvatarModal() {
           Close
         </Button>
         <Button
-                color={BUTTON_COLOR.SOLID_BLUE}
-
+          color={BUTTON_COLOR.SOLID_BLUE}
           isDisabled={!uppyAvatarFile || isUploading}
           handleClick={async () => {
             setIsUploading(true);

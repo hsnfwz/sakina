@@ -38,10 +38,8 @@ function HideModal() {
         users will no longer be able to view it.
       </p>
       <div className="flex gap-2 self-end">
-
         <Button
-            color={BUTTON_COLOR.OUTLINE_BLACK}
-
+          color={BUTTON_COLOR.OUTLINE_BLACK}
           isDisabled={isLoading}
           handleClick={() => {
             handleClose();
@@ -51,9 +49,10 @@ function HideModal() {
           No
         </Button>
         <Button
-            color={BUTTON_COLOR.SOLID_BLUE}
-        
-        isDisabled={isLoading} handleClick={handleSubmit}>
+          color={BUTTON_COLOR.SOLID_BLUE}
+          isDisabled={isLoading}
+          handleClick={handleSubmit}
+        >
           Yes
         </Button>
       </div>

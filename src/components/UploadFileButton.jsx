@@ -47,7 +47,6 @@ function UploadFileButton({
       <label>{text}</label>
       <input
         id={id}
-        multiple
         disabled={isDisabled}
         name={name}
         className="flex w-full items-center justify-center self-start rounded-lg border-2 border-emerald-500 bg-emerald-500 px-2 py-1 text-center text-white outline-2 outline-transparent transition-all peer-disabled:pointer-events-none peer-disabled:cursor-default peer-disabled:opacity-50 hover:cursor-pointer hover:bg-emerald-700 focus:z-50 focus:border-black focus:ring-0 focus:outline-0"
