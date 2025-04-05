@@ -57,11 +57,11 @@ const BUTTON_COLOR = Object.freeze({
   },
   OUTLINE_BLACK: {
     tailwindBackgroundColor: 'bg-transparent',
-    tailwindHoverBackgroundColor: 'hover:bg-transparent',
+    tailwindHoverBackgroundColor: 'hover:bg-neutral-100',
     tailwindTextColor: 'text-black',
     tailwindFillColor: 'fill-black',
-    tailwindBorderColor: 'border-black',
-    tailwindHoverBorderColor: 'hover:border-black',
+    tailwindBorderColor: 'border-transparent',
+    tailwindHoverBorderColor: 'hover:border-transparent',
   },
   SOLID_WHITE: {
     tailwindBackgroundColor: 'bg-white',

@@ -89,6 +89,7 @@ function EditModal() {
       </div>
       <div className="flex gap-2 self-end">
         <Button
+          color={BUTTON_COLOR.OUTLINE_BLACK}
           isDisabled={isLoading}
           handleClick={() => {
             handleClose();
@@ -97,7 +98,10 @@ function EditModal() {
         >
           Close
         </Button>
-        <Button isDisabled={isLoading} handleClick={handleSubmit}>
+        <Button
+            color={BUTTON_COLOR.SOLID_BLUE}
+        
+        isDisabled={isLoading || (modal.data && (modal.data.title === title && modal.data.description === description && modal.data.is_anonymous === isAnonymous))} handleClick={handleSubmit}>
           Submit
         </Button>
       </div>

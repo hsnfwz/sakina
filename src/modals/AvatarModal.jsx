@@ -1,7 +1,7 @@
 import { useState, useContext, useRef, useEffect } from 'react';
 import DefaultStore from '@uppy/store-default';
 import { useUppyWithSupabase } from '../common/hooks';
-import { UPLOAD_TYPE } from '../common/enums';
+import { UPLOAD_TYPE, BUTTON_COLOR } from '../common/enums';
 import { supabase } from '../common/supabase';
 import { handleFileAdded } from '../common/helpers';
 import { ModalContext } from '../common/context/ModalContextProvider';
@@ -94,6 +94,8 @@ function AvatarModal() {
       {/* </div> */}
       <div className="flex gap-2 self-end">
         <Button
+                color={BUTTON_COLOR.OUTLINE_BLACK}
+
           isDisabled={isUploading}
           handleClick={() => {
             handleClose();
@@ -106,6 +108,8 @@ function AvatarModal() {
           Close
         </Button>
         <Button
+                color={BUTTON_COLOR.SOLID_BLUE}
+
           isDisabled={!uppyAvatarFile || isUploading}
           handleClick={async () => {
             setIsUploading(true);

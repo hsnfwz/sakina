@@ -278,6 +278,7 @@ function CreateModal() {
 
       <div className="flex gap-2 self-end">
         <Button
+          color={BUTTON_COLOR.OUTLINE_BLACK}
           handleClick={() => {
             handleClose();
             setModal({ type: null, data: null });
@@ -287,6 +288,7 @@ function CreateModal() {
         </Button>
         {view !== 'DISCUSSION' && (
           <Button
+            color={BUTTON_COLOR.SOLID_BLUE}
             isDisabled={
               title.length === 0 ||
               title.length > CHARACTER_LIMIT.TITLE.max ||
@@ -327,6 +329,7 @@ function CreateModal() {
         )}
         {view === 'DISCUSSION' && (
           <Button
+            color={BUTTON_COLOR.SOLID_BLUE}
             isDisabled={
               title.length === 0 ||
               title.length > CHARACTER_LIMIT.TITLE.max ||

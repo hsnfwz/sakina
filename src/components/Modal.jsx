@@ -87,7 +87,7 @@ function Modal({ children, isDisabled, show, handleClose }) {
         <div className="flex justify-end">
           <Button
             isRound={true}
-            color={BUTTON_COLOR.SOLID_WHITE}
+            color={BUTTON_COLOR.OUTLINE_BLACK}
             isDisabled={isDisabled}
             handleClick={closeModal}
           >

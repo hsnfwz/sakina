@@ -146,6 +146,8 @@ createRoot(root).render(
 /* 
   - home page
 
+  - when the modal is first opened, make sure focus is immediately given to the first focus element, otherwise tabbing will still be behind the modal
+
   video
   - add skip 5 seconds forward and back for video using arrow keys
   - enable/disable looping

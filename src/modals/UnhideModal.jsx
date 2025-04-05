@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { ModalContext } from '../common/context/ModalContextProvider';
+import { BUTTON_COLOR } from '../common/enums';
 import Modal from '../components/Modal';
 import Button from '../components/Button';
 
@@ -37,10 +38,9 @@ function UnhideModal() {
         users will be able to view it.
       </p>
       <div className="flex gap-2 self-end">
-        <Button isDisabled={isLoading} handleClick={handleSubmit}>
-          Yes
-        </Button>
-        <Button
+      <Button
+                color={BUTTON_COLOR.OUTLINE_BLACK}
+
           isDisabled={isLoading}
           handleClick={() => {
             handleClose();
@@ -49,6 +49,12 @@ function UnhideModal() {
         >
           No
         </Button>
+        <Button
+                color={BUTTON_COLOR.SOLID_BLUE}
+        isDisabled={isLoading} handleClick={handleSubmit}>
+          Yes
+        </Button>
+
       </div>
     </Modal>
   );

@@ -104,6 +104,8 @@ function CommentModal() {
       </div>
       <div className="flex gap-2 self-end">
         <Button
+                color={BUTTON_COLOR.OUTLINE_BLACK}
+
           handleClick={() => {
             setTitle('');
             setDescription('');
@@ -114,6 +116,8 @@ function CommentModal() {
           Close
         </Button>
         <Button
+                color={BUTTON_COLOR.SOLID_BLUE}
+
           isDisabled={
             isLoading ||
             title.length === 0 ||

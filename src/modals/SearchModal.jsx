@@ -181,6 +181,7 @@ function SearchModal() {
 
           {hasMoreSearchResults && (
             <Button
+              color={BUTTON_COLOR.SOLID_BLUE}
               handleClick={async () => {
                 setIsLoadingSearchResults(true);
                 const { data, hasMore } = await search(
@@ -194,7 +195,6 @@ function SearchModal() {
                 setIsLoadingSearchResults(false);
               }}
               isDisabled={isLoadingSearchResults}
-              color={BUTTON_COLOR.BLUE}
             >
               Show More
             </Button>
@@ -205,6 +205,7 @@ function SearchModal() {
       {isLoadingSearchResults && <Loading />}
       <div className="flex gap-2 self-end">
         <Button
+          color={BUTTON_COLOR.OUTLINE_BLACK}
           handleClick={() => {
             handleClose();
             setModal({ type: null, data: null });
