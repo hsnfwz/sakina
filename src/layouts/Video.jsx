@@ -27,9 +27,7 @@ function Video() {
   const [video, setVideo] = useState(null);
   const [isLoadingVideo, setIsLoadingVideo] = useState(false);
   const [videoLike, setVideoLike] = useState(null);
-  const [videoView, setVideoView] = useState(null);
   const [isLoadingLike, setIsLoadingLike] = useState(false);
-  const [isLoadingView, setIsLoadingView] = useState(false);
 
   useEffect(() => {
     if (!location.state?.video) {
@@ -68,12 +66,10 @@ function Video() {
   }
 
   async function getVideoView() {
-    setIsLoadingView(true);
     const { data } = await getVideoViewByUserIdAndVideoId(
       authUser.id,
       video.id
     );
-    setVideoView(data[0]);
 
     if (data[0]) {
       await updateVideoView(data[0].id, {
@@ -87,8 +83,6 @@ function Video() {
     }
 
     await increment('videos', video.id, 'views_count', 1);
-
-    setIsLoadingView(false);
   }
 
   if (isLoadingVideo) {
@@ -121,7 +115,9 @@ function Video() {
               color={
                 videoLike ? BUTTON_COLOR.SOLID_RED : BUTTON_COLOR.OUTLINE_RED
               }
+              isDisabled={isLoadingLike}
               handleClick={async () => {
+                setIsLoadingLike(true);
                 if (videoLike) {
                   await removeVideoLike(videoLike.id);
                   setVideoLike(null);
@@ -132,6 +128,7 @@ function Video() {
                   });
                   setVideoLike(data[0]);
                 }
+                setIsLoadingLike(false);
               }}
             >
               <SVGOutlineHeart />

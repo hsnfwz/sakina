@@ -330,6 +330,7 @@ function CreateModal() {
           <Button
             color={BUTTON_COLOR.SOLID_BLUE}
             isDisabled={
+              isUploading ||
               title.length === 0 ||
               title.length > CHARACTER_LIMIT.TITLE.max ||
               description.length > CHARACTER_LIMIT.DESCRIPTION.max

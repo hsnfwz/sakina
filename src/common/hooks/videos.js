@@ -94,10 +94,10 @@ function useUserVideos(intersectingElement) {
 
   useEffect(() => {
     if (activeUser) {
-    if (!userVideos.hasInitialized) {
-      fetchUserVideos();
+      if (!userVideos.hasInitialized) {
+        fetchUserVideos();
+      }
     }
-  }
   }, [activeUser]);
 
   useEffect(() => {
@@ -109,7 +109,11 @@ function useUserVideos(intersectingElement) {
   async function fetchUserVideos() {
     setFetchingUserVideos(true);
 
-    const { data, hasMore } = await getVideosByUserId(activeUser.id, 'HORIZONTAL', userVideos.data.length);
+    const { data, hasMore } = await getVideosByUserId(
+      activeUser.id,
+      'HORIZONTAL',
+      userVideos.data.length
+    );
 
     const _userVideos = { ...userVideos };
 
@@ -134,10 +138,10 @@ function useUserClips(intersectingElement) {
 
   useEffect(() => {
     if (activeUser) {
-    if (!userClips.hasInitialized) {
-      fetchUserClips();
+      if (!userClips.hasInitialized) {
+        fetchUserClips();
+      }
     }
-  }
   }, [activeUser]);
 
   useEffect(() => {
@@ -149,7 +153,11 @@ function useUserClips(intersectingElement) {
   async function fetchUserClips() {
     setFetchingUserClips(true);
 
-    const { data, hasMore } = await getVideosByUserId(activeUser.id, 'VERTICAL', userClips.data.length);
+    const { data, hasMore } = await getVideosByUserId(
+      activeUser.id,
+      'VERTICAL',
+      userClips.data.length
+    );
 
     const _userClips = { ...userClips };
 

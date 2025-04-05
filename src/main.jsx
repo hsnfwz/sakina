@@ -146,16 +146,20 @@ createRoot(root).render(
 );
 
 /* 
-  - make sure buttons are disabled when loading their state (like/unlike, follow/unfollow, hide/unhide)
-  - make sure switching between profiles doesn't show the content switching visually
+  - make sure buttons are disabled when loading their state (hide/unhide)
+
+  - can we npm icons instead of creating SVG files? (ex: lucida)
+
+  activeUser && activeDiscussion
+  - don't show the content switching visually
+
+  - likes for comments - every time we fetch comments/nested comments, get each their respective like record
 
   - home page
-
   - video discussions
-
+  - bookmarks (save for later)
+  - playlists + search playlists + explore playlists + user playlists
   - look into vimeo for video hosting - upload videos from sakina to vimeo and retreive the ID to store in the DB
-
-  - ability to save for later - requires playlists
 
   video
   - add skip 5 seconds forward and back for video using arrow keys
@@ -171,7 +175,6 @@ createRoot(root).render(
         - individual filtered activity pages
         - individual filtered explore pages
 
-  - likes for comments - every time we fetch comments/nested comments, get each their respective like record
   - refresh data after each add/edit/delete and make sure link state is refreshed too
   - restore scroll position
   - @ mentions

@@ -122,7 +122,6 @@ function CommentModal() {
             title.length > CHARACTER_LIMIT.TITLE.max ||
             description.length > CHARACTER_LIMIT.DESCRIPTION.max
           }
-          isLoading={isLoading}
           handleClick={async () => await addComment()}
         >
           Submit

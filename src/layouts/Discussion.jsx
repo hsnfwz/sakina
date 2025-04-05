@@ -45,9 +45,7 @@ function Discussion() {
   const [isLoadingDiscussion, setIsLoadingDiscussion] = useState(false);
   const [isLoadingComments, setIsLoadingComments] = useState(false);
   const [discussionLike, setDiscussionLike] = useState(null);
-  const [discussionView, setDiscussionView] = useState(null);
   const [isLoadingLike, setIsLoadingLike] = useState(false);
-  const [isLoadingView, setIsLoadingView] = useState(false);
 
   useEffect(() => {
     if (!location.state?.discussion) {
@@ -140,12 +138,10 @@ function Discussion() {
   }
 
   async function getDiscussionView() {
-    setIsLoadingView(true);
     const { data } = await getDiscussionViewByUserIdAndDiscussionId(
       authUser.id,
       activeDiscussion.id
     );
-    setDiscussionView(data[0]);
 
     if (data[0]) {
       await updateDiscussionView(data[0].id, {
@@ -159,8 +155,6 @@ function Discussion() {
     }
 
     await increment('discussions', activeDiscussion.id, 'views_count', 1);
-
-    setIsLoadingView(false);
   }
 
   if (isLoadingDiscussion) {
@@ -195,7 +189,9 @@ function Discussion() {
                   ? BUTTON_COLOR.SOLID_RED
                   : BUTTON_COLOR.OUTLINE_RED
               }
+              isDisabled={isLoadingLike}
               handleClick={async () => {
+                setIsLoadingLike(true);
                 if (discussionLike) {
                   await removeDiscussionLike(discussionLike.id);
                   setDiscussionLike(null);
@@ -206,6 +202,7 @@ function Discussion() {
                   });
                   setDiscussionLike(data[0]);
                 }
+                setIsLoadingLike(false);
               }}
             >
               <SVGOutlineHeart />

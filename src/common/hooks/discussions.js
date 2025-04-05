@@ -1,5 +1,8 @@
 import { useEffect, useState, useContext } from 'react';
-import { getDiscussions, getDiscussionsByUserId } from '../database/discussions';
+import {
+  getDiscussions,
+  getDiscussionsByUserId,
+} from '../database/discussions';
 import { DataContext } from '../context/DataContextProvider';
 
 function useDiscussions(intersectingElement) {
@@ -46,15 +49,16 @@ function useDiscussions(intersectingElement) {
 }
 
 function useUserDiscussions(intersectingElement) {
-  const { userDiscussions, setUserDiscussions, activeUser } = useContext(DataContext);
+  const { userDiscussions, setUserDiscussions, activeUser } =
+    useContext(DataContext);
   const [fetchingUserDiscussions, setFetchingUserDiscussions] = useState(false);
 
   useEffect(() => {
     if (activeUser) {
-    if (!userDiscussions.hasInitialized) {
-      fetchUserDiscussions();
+      if (!userDiscussions.hasInitialized) {
+        fetchUserDiscussions();
+      }
     }
-  }
   }, [activeUser]);
 
   useEffect(() => {
@@ -66,7 +70,10 @@ function useUserDiscussions(intersectingElement) {
   async function fetchUserDiscussions() {
     setFetchingUserDiscussions(true);
 
-    const { data, hasMore } = await getDiscussionsByUserId(activeUser.id, userDiscussions.data.length);
+    const { data, hasMore } = await getDiscussionsByUserId(
+      activeUser.id,
+      userDiscussions.data.length
+    );
 
     const _userDiscussions = { ...userDiscussions };
 

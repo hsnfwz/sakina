@@ -8,7 +8,8 @@ import DiscussionCardGrid from '../components/DiscussionCardGrid.jsx';
 
 function Discussions() {
   const [elementRef, intersectingElement] = useElementIntersection();
-  const [discussions, fetchingDiscussions] = useDiscussions(intersectingElement);
+  const [discussions, fetchingDiscussions] =
+    useDiscussions(intersectingElement);
 
   return (
     <div className="flex w-full flex-col gap-4">

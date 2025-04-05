@@ -12,7 +12,8 @@ function UserDiscussions() {
   const { authUser } = useContext(AuthContext);
   const { activeUser } = useContext(DataContext);
   const [elementRef, intersectingElement] = useElementIntersection();
-  const [userDiscussions, fetchingUserDiscussions] = useUserDiscussions(intersectingElement);
+  const [userDiscussions, fetchingUserDiscussions] =
+    useUserDiscussions(intersectingElement);
 
   return (
     <div className="flex w-full flex-col gap-4">

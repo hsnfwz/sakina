@@ -202,7 +202,6 @@ function SettingsAccount() {
               authUser.name === name ||
               name.length > CHARACTER_LIMIT.NAME.max
             }
-            isLoading={isLoading}
             handleClick={async () => await updateUserDisplayName()}
           >
             Update Name
@@ -227,7 +226,6 @@ function SettingsAccount() {
               authUser.bio === bio ||
               bio.length > CHARACTER_LIMIT.BIO.max
             }
-            isLoading={isLoading}
             handleClick={async () => await updateUserBio()}
           >
             Update Bio
@@ -267,7 +265,6 @@ function SettingsAccount() {
               !expectedUsernameFormat(username) ||
               authMessage === 'USERNAME_EXISTS'
             }
-            isLoading={isLoading}
             handleClick={async () => await updateUserUsername()}
           >
             Update Username
@@ -294,7 +291,6 @@ function SettingsAccount() {
             <div className="self-end">
               <Button
                 isDisabled={isLoading || authSession.user.email === email}
-                isLoading={isLoading}
                 handleClick={async () => await updateUserEmail()}
                 color={BUTTON_COLOR.SOLID_BLUE}
               >
@@ -307,7 +303,6 @@ function SettingsAccount() {
       <Button
         color={BUTTON_COLOR.SOLID_BLUE}
         isDisabled={isLoading}
-        isLoading={isLoading}
         handleClick={async () => {
           setIsLoading(true);
           await supabase.auth.resetPasswordForEmail(email, {
@@ -321,9 +316,12 @@ function SettingsAccount() {
       </Button>
 
       <Button
+        isDisabled={isLoading}
         color={BUTTON_COLOR.SOLID_RED}
         handleClick={async () => {
+          setIsLoading(true);
           await supabase.auth.signOut({ scope: 'local' });
+          setIsLoading(false);
           setAuthSession(null);
           navigate('/');
         }}
@@ -342,7 +340,6 @@ function SettingsAccount() {
           <Button
             color={BUTTON_COLOR.SOLID_BLUE}
             isDisabled={isLoading}
-            isLoading={isLoading}
             handleClick={async () => {
               setIsLoading(true);
 
