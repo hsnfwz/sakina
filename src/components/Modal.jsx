@@ -1,10 +1,15 @@
 import { useContext, useEffect, useRef } from 'react';
 import { ModalContext } from '../common/context/ModalContextProvider';
+import { BUTTON_COLOR } from '../common/enums';
 import Button from './Button';
 import SVGOutlineX from './svgs/outline/SVGOutlineX';
-import { BUTTON_COLOR } from '../common/enums';
 
-function Modal({ children, isDisabled, show, handleClose }) {
+function Modal({
+  children,
+  isDisabled,
+  show,
+  handleClose,
+}) {
   const { setModal } = useContext(ModalContext);
 
   const modalRef = useRef();
@@ -19,9 +24,14 @@ function Modal({ children, isDisabled, show, handleClose }) {
       const firstElement = focusableElements[0];
       const lastElement = focusableElements[focusableElements.length - 1];
 
+      firstElement.focus();
+
       const handleTabKeyPress = (event) => {
         if (event.key === 'Tab') {
-          if (event.shiftKey && document.activeElement === firstElement) {
+          if (lastElement.disabled && document.activeElement.nextElementSibling === lastElement) {
+            event.preventDefault();
+            firstElement.focus();
+          } else if (event.shiftKey && document.activeElement === firstElement) {
             event.preventDefault();
             lastElement.focus();
           } else if (
@@ -98,7 +108,6 @@ function Modal({ children, isDisabled, show, handleClose }) {
           {children}
         </div>
       </div>
-      <div tabIndex={0}></div>
     </div>
   );
 }

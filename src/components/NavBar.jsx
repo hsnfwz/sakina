@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useRef } from 'react';
 import { useLocation } from 'react-router';
 import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 import { AuthContext } from '../common/context/AuthContextProvider';
@@ -20,11 +20,16 @@ function NavBar() {
 
   const [isLoadingImage, setIsLoadingImage] = useState(true);
 
+  const searchButtonRef = useRef();
+
   return (
     <nav className="flex w-full items-center justify-center gap-2 rounded-lg">
       <Button
+        elementRef={searchButtonRef}
         isRound={true}
-        handleClick={() => setModal({ type: 'SEARCH_MODAL' })}
+        handleClick={() => {
+          setModal({ type: 'SEARCH_MODAL' });
+        }}
         color={BUTTON_COLOR.SOLID_GREEN}
       >
         <SVGOutlineSearch />

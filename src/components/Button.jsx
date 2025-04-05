@@ -1,4 +1,5 @@
 function Button({
+  elementRef,
   children,
   handleClick,
   isDisabled,
@@ -8,6 +9,7 @@ function Button({
 }) {
   return (
     <button
+      ref={elementRef}
       type="button"
       disabled={isDisabled}
       onClick={handleClick}
