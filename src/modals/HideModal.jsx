@@ -34,7 +34,7 @@ function HideModal() {
   return (
     <Modal show={show} isDisabled={isLoading} handleClose={handleClose}>
       <p>
-        Do you want to hide <span className="font-bold">"{title}"</span>? Other
+        Do you want to archive <span className="font-bold">"{title}"</span>? Other
         users will no longer be able to view it.
       </p>
       <div className="flex gap-2 self-end">

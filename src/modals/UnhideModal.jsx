@@ -34,7 +34,7 @@ function UnhideModal() {
   return (
     <Modal show={show} isDisabled={isLoading} handleClose={handleClose}>
       <p>
-        Do you want to show <span className="font-bold">"{title}"</span>? Other
+        Do you want to unarchive <span className="font-bold">"{title}"</span>? Other
         users will be able to view it.
       </p>
       <div className="flex gap-2 self-end">

@@ -29,7 +29,7 @@ function ContentTableCard({
         {handleHide && (
           <Button
             isRound={true}
-            color={BUTTON_COLOR.OUTLINE_RED}
+            color={BUTTON_COLOR.SOLID_RED}
             handleClick={handleHide}
           >
             <ArchiveX />

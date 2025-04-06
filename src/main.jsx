@@ -29,8 +29,10 @@ import UserClips from './layouts/UserClips.jsx';
 import UserDiscussions from './layouts/UserDiscussions.jsx';
 import Notifications from './layouts/Notifications.jsx';
 import SettingsAccount from './layouts/SettingsAccount.jsx';
-import SettingsContent from './layouts/SettingsContent.jsx';
 import UserActivity from './layouts/UserActivity.jsx';
+import SettingsVideos from './layouts/SettingsVideos.jsx';
+import SettingsClips from './layouts/SettingsClips.jsx';
+import SettingsDiscussions from './layouts/SettingsDiscussions.jsx';
 
 const router = createBrowserRouter([
   {
@@ -125,7 +127,9 @@ const router = createBrowserRouter([
         children: [
           { index: true, Component: SettingsAccount },
           { path: 'account', Component: SettingsAccount },
-          { path: 'content', Component: SettingsContent },
+          { path: 'videos', Component: SettingsVideos },
+          { path: 'clips', Component: SettingsClips },
+          { path: 'discussions', Component: SettingsDiscussions },
         ],
       },
       {
@@ -146,11 +150,9 @@ createRoot(root).render(
 );
 
 /* 
-  - replace all icons with lucide icons
-  - make sure buttons are disabled when loading their state (hide/unhide)
-
-  activeUser && activeDiscussion
+  activeUser && activeDiscussion - replace this idea
   - don't show the content switching visually - use 'show' variable
+  - when visiting a user page, always fetch the newest user data unless it is you 
 
   - likes for comments - every time we fetch comments/nested comments, get each their respective like record
 
@@ -169,10 +171,6 @@ createRoot(root).render(
   - look into new supabase UI for file uploads
         - show preview of post before submission
         - create/avatar modal upload progress indicator
-
-  - implement the same filter system from settings in explore page and activity page
-        - individual filtered activity pages
-        - individual filtered explore pages
 
   - refresh data after each add/edit/delete and make sure link state is refreshed too
   - restore scroll position

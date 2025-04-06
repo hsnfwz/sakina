@@ -10,42 +10,6 @@ function Settings() {
   const [show, setShow] = useState(false);
   const location = useLocation();
 
-  const [videos, setVideos] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [hiddenVideos, setHiddenVideos] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [clips, setClips] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [hiddenClips, setHiddenClips] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [discussions, setDiscussions] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [hiddenDiscussions, setHiddenDiscussions] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
   useEffect(() => {
     if (authSession && authUser) {
       setShow(true);
@@ -68,27 +32,17 @@ function Settings() {
           >
             Account
           </Anchor>
-          <Anchor active={location.pathname.includes('content')} to="content">
-            Content
+          <Anchor active={location.pathname.includes('videos')} to="videos">
+            Videos
+          </Anchor>
+          <Anchor active={location.pathname.includes('clips')} to="clips">
+            Clips
+          </Anchor>
+          <Anchor active={location.pathname.includes('discussions')} to="discussions">
+            Discussions
           </Anchor>
         </nav>
-
-        <Outlet
-          context={{
-            videos,
-            setVideos,
-            clips,
-            setClips,
-            discussions,
-            setDiscussions,
-            hiddenVideos,
-            setHiddenVideos,
-            hiddenClips,
-            setHiddenClips,
-            hiddenDiscussions,
-            setHiddenDiscussions,
-          }}
-        />
+        <Outlet />
       </div>
     );
   }

@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
-import { getVideos, getVideosByUserId } from '../database/videos';
+import { getVideos, getVideosByUserId, getHiddenVideosByUserId } from '../database/videos';
 import { DataContext } from '../context/DataContextProvider';
+import { AuthContext } from '../context/AuthContextProvider';
 
 function useVideos(intersectingElement) {
   // const { videos, setVideos, clips, setClips } = useContext(DataContext);
@@ -89,16 +90,17 @@ function useClips(intersectingElement) {
 }
 
 function useUserVideos(intersectingElement) {
-  const { userVideos, setUserVideos, activeUser } = useContext(DataContext);
+  const { authUser } = useContext(AuthContext);
+  const { userVideos, setUserVideos } = useContext(DataContext);
   const [fetchingUserVideos, setFetchingUserVideos] = useState(false);
 
   useEffect(() => {
-    if (activeUser) {
+    if (authUser) {
       if (!userVideos.hasInitialized) {
         fetchUserVideos();
       }
     }
-  }, [activeUser]);
+  }, [authUser]);
 
   useEffect(() => {
     if (intersectingElement && userVideos.hasMore) {
@@ -110,7 +112,7 @@ function useUserVideos(intersectingElement) {
     setFetchingUserVideos(true);
 
     const { data, hasMore } = await getVideosByUserId(
-      activeUser.id,
+      authUser.id,
       'HORIZONTAL',
       userVideos.data.length
     );
@@ -133,16 +135,17 @@ function useUserVideos(intersectingElement) {
 }
 
 function useUserClips(intersectingElement) {
-  const { userClips, setUserClips, activeUser } = useContext(DataContext);
+  const { authUser } = useContext(AuthContext);
+  const { userClips, setUserClips } = useContext(DataContext);
   const [fetchingUserClips, setFetchingUserClips] = useState(false);
 
   useEffect(() => {
-    if (activeUser) {
+    if (authUser) {
       if (!userClips.hasInitialized) {
         fetchUserClips();
       }
     }
-  }, [activeUser]);
+  }, [authUser]);
 
   useEffect(() => {
     if (intersectingElement && userClips.hasMore) {
@@ -154,7 +157,7 @@ function useUserClips(intersectingElement) {
     setFetchingUserClips(true);
 
     const { data, hasMore } = await getVideosByUserId(
-      activeUser.id,
+      authUser.id,
       'VERTICAL',
       userClips.data.length
     );
@@ -176,4 +179,94 @@ function useUserClips(intersectingElement) {
   return [userClips, fetchingUserClips];
 }
 
-export { useVideos, useClips, useUserVideos, useUserClips };
+function useUserHiddenVideos(intersectingElement) {
+  const { authUser } = useContext(AuthContext);
+  const { userHiddenVideos, setUserHiddenVideos } = useContext(DataContext);
+  const [fetchingUserHiddenVideos, setFetchingUserHiddenVideos] = useState(false);
+
+  useEffect(() => {
+    if (authUser) {
+      if (!userHiddenVideos.hasInitialized) {
+        fetchUserVideos();
+      }
+    }
+  }, [authUser]);
+
+  useEffect(() => {
+    if (intersectingElement && userHiddenVideos.hasMore) {
+      fetchUserVideos();
+    }
+  }, [intersectingElement]);
+
+  async function fetchUserVideos() {
+    setFetchingUserHiddenVideos(true);
+
+    const { data, hasMore } = await getHiddenVideosByUserId(
+      authUser.id,
+      'HORIZONTAL',
+      userHiddenVideos.data.length
+    );
+
+    const _userHiddenVideos = { ...userHiddenVideos };
+
+    if (data.length > 0) {
+      _userHiddenVideos.data = [...userHiddenVideos.data, ...data];
+    }
+
+    _userHiddenVideos.hasMore = hasMore;
+    _userHiddenVideos.hasInitialized = true;
+
+    setUserHiddenVideos(_userHiddenVideos);
+
+    setFetchingUserHiddenVideos(false);
+  }
+
+  return [userHiddenVideos, fetchingUserHiddenVideos];
+}
+
+function useUserHiddenClips(intersectingElement) {
+  const { authUser } = useContext(AuthContext);
+  const { userHiddenClips, setUserHiddenClips } = useContext(DataContext);
+  const [fetchingUserHiddenClips, setFetchingUserHiddenClips] = useState(false);
+
+  useEffect(() => {
+    if (authUser) {
+      if (!userHiddenClips.hasInitialized) {
+        fetchUserClips();
+      }
+    }
+  }, [authUser]);
+
+  useEffect(() => {
+    if (intersectingElement && userHiddenClips.hasMore) {
+      fetchUserClips();
+    }
+  }, [intersectingElement]);
+
+  async function fetchUserClips() {
+    setFetchingUserHiddenClips(true);
+
+    const { data, hasMore } = await getHiddenVideosByUserId(
+      authUser.id,
+      'VERTICAL',
+      userHiddenClips.data.length
+    );
+
+    const _userHiddenClips = { ...userHiddenClips };
+
+    if (data.length > 0) {
+      _userHiddenClips.data = [...userHiddenClips.data, ...data];
+    }
+
+    _userHiddenClips.hasMore = hasMore;
+    _userHiddenClips.hasInitialized = true;
+
+    setUserHiddenClips(_userHiddenClips);
+
+    setFetchingUserHiddenClips(false);
+  }
+
+  return [userHiddenClips, fetchingUserHiddenClips];
+}
+
+export { useVideos, useClips, useUserVideos, useUserClips, useUserHiddenVideos, useUserHiddenClips };

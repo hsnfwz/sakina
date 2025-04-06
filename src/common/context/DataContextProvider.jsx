@@ -131,6 +131,24 @@ function DataContextProvider({ children }) {
     hasInitialized: false,
   });
 
+  const [userHiddenVideos, setUserHiddenVideos] = useState({
+    data: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
+  const [userHiddenClips, setUserHiddenClips] = useState({
+    data: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
+  const [userHiddenDiscussions, setUserHiddenDiscussions] = useState({
+    data: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
   const [userVideoLikes, setUserVideoLikes] = useState({
     data: [],
     hasMore: true,
@@ -246,6 +264,14 @@ function DataContextProvider({ children }) {
         setUserClips,
         userDiscussions,
         setUserDiscussions,
+
+        userHiddenVideos,
+        setUserHiddenVideos,
+        userHiddenClips,
+        setUserHiddenClips,
+        userHiddenDiscussions,
+        setUserHiddenDiscussions,
+
         userVideoLikes,
         setUserVideoLikes,
         userClipLikes,

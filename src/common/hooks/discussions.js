@@ -2,8 +2,10 @@ import { useEffect, useState, useContext } from 'react';
 import {
   getDiscussions,
   getDiscussionsByUserId,
+  getHiddenDiscussionsByUserId,
 } from '../database/discussions';
 import { DataContext } from '../context/DataContextProvider';
+import { AuthContext } from '../context/AuthContextProvider';
 
 function useDiscussions(intersectingElement) {
   // const { videos, setDiscussions, clips, setClips } = useContext(DataContext);
@@ -49,17 +51,18 @@ function useDiscussions(intersectingElement) {
 }
 
 function useUserDiscussions(intersectingElement) {
-  const { userDiscussions, setUserDiscussions, activeUser } =
+  const { authUser } = useContext(AuthContext);
+  const { userDiscussions, setUserDiscussions } =
     useContext(DataContext);
   const [fetchingUserDiscussions, setFetchingUserDiscussions] = useState(false);
 
   useEffect(() => {
-    if (activeUser) {
+    if (authUser) {
       if (!userDiscussions.hasInitialized) {
         fetchUserDiscussions();
       }
     }
-  }, [activeUser]);
+  }, [authUser]);
 
   useEffect(() => {
     if (intersectingElement && userDiscussions.hasMore) {
@@ -71,7 +74,7 @@ function useUserDiscussions(intersectingElement) {
     setFetchingUserDiscussions(true);
 
     const { data, hasMore } = await getDiscussionsByUserId(
-      activeUser.id,
+      authUser.id,
       userDiscussions.data.length
     );
 
@@ -92,4 +95,49 @@ function useUserDiscussions(intersectingElement) {
   return [userDiscussions, fetchingUserDiscussions];
 }
 
-export { useDiscussions, useUserDiscussions };
+function useUserHiddenDiscussions(intersectingElement) {
+  const { authUser } = useContext(AuthContext);
+  const { userHiddenDiscussions, setUserHiddenDiscussions } =
+    useContext(DataContext);
+  const [fetchingUserHiddenDiscussions, setFetchingUserHiddenDiscussions] = useState(false);
+
+  useEffect(() => {
+    if (authUser) {
+      if (!userHiddenDiscussions.hasInitialized) {
+        fetchUserDiscussions();
+      }
+    }
+  }, [authUser]);
+
+  useEffect(() => {
+    if (intersectingElement && userHiddenDiscussions.hasMore) {
+      fetchUserDiscussions();
+    }
+  }, [intersectingElement]);
+
+  async function fetchUserDiscussions() {
+    setFetchingUserHiddenDiscussions(true);
+
+    const { data, hasMore } = await getHiddenDiscussionsByUserId(
+      authUser.id,
+      userHiddenDiscussions.data.length
+    );
+
+    const _userHiddenDiscussions = { ...userHiddenDiscussions };
+
+    if (data.length > 0) {
+      _userHiddenDiscussions.data = [...userHiddenDiscussions.data, ...data];
+    }
+
+    _userHiddenDiscussions.hasMore = hasMore;
+    _userHiddenDiscussions.hasInitialized = true;
+
+    setUserHiddenDiscussions(_userHiddenDiscussions);
+
+    setFetchingUserHiddenDiscussions(false);
+  }
+
+  return [userHiddenDiscussions, fetchingUserHiddenDiscussions];
+}
+
+export { useDiscussions, useUserDiscussions, useUserHiddenDiscussions };
