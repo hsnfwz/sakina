@@ -1,15 +1,9 @@
 import { useContext, useState, useRef } from 'react';
+import { Search, Home, Compass, Bell, Settings, Plus, CircleUserRound } from 'lucide-react';
 import { useLocation } from 'react-router';
 import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 import { AuthContext } from '../common/context/AuthContextProvider';
 import { BUTTON_COLOR } from '../common/enums';
-import SVGOutlineHome from './svgs/outline/SVGOutlineHome';
-import SVGOutlineCompass from './svgs/outline/SVGOutlineCompass';
-import SVGOutlineBell from './svgs/outline/SVGOutlineBell';
-import SVGOutlineUser from './svgs/outline/SVGOutlineUser';
-import SVGOutlineSettings from './svgs/outline/SVGOutlineSettings';
-import SVGOutlinePlus from './svgs/outline/SVGOutlinePlus';
-import SVGOutlineSearch from './svgs/outline/SVGOutlineSearch.jsx';
 import Button from './Button';
 import Anchor from './Anchor.jsx';
 
@@ -32,16 +26,16 @@ function NavBar() {
         }}
         color={BUTTON_COLOR.SOLID_GREEN}
       >
-        <SVGOutlineSearch />
+        <Search />
       </Button>
       <div className="flex w-full">
         {authUser && (
           <Anchor active={location.pathname.includes('/home')} to="/home">
-            <SVGOutlineHome />
+            <Home />
           </Anchor>
         )}
         <Anchor active={location.pathname.includes('/explore')} to="/explore">
-          <SVGOutlineCompass />
+          <Compass />
         </Anchor>
         {authUser && (
           <>
@@ -65,20 +59,20 @@ function NavBar() {
                   className={`aspect-square w-[24px] animate-pulse rounded-full bg-neutral-100 ${isLoadingImage ? 'block' : 'hidden'}`}
                 ></div>
               )}
-              {!authUser.avatar_file_name && <SVGOutlineUser />}
+              {!authUser.avatar_file_name && <CircleUserRound />}
             </Anchor>
 
             <Anchor
               active={location.pathname.includes('/notifications')}
               to="/notifications"
             >
-              <SVGOutlineBell />
+              <Bell />
             </Anchor>
             <Anchor
               active={location.pathname.includes('/settings')}
               to="/settings"
             >
-              <SVGOutlineSettings />
+              <Settings />
             </Anchor>
           </>
         )}
@@ -106,7 +100,7 @@ function NavBar() {
           handleClick={() => setModal({ type: 'CREATE_MODAL' })}
           color={BUTTON_COLOR.SOLID_GREEN}
         >
-          <SVGOutlinePlus />
+          <Plus />
         </Button>
       )}
     </nav>

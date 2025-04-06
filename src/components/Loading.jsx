@@ -1,9 +1,9 @@
-import SVGOutlineLoader from './svgs/outline/SVGOutlineLoader';
+import { LoaderPinwheel } from 'lucide-react';
 
 function Loading() {
   return (
     <div className="flex animate-spin self-start fill-sky-500">
-      <SVGOutlineLoader />
+      <LoaderPinwheel />
     </div>
   );
 }

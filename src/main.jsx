@@ -146,12 +146,11 @@ createRoot(root).render(
 );
 
 /* 
+  - replace all icons with lucide icons
   - make sure buttons are disabled when loading their state (hide/unhide)
 
-  - can we npm icons instead of creating SVG files? (ex: lucida)
-
   activeUser && activeDiscussion
-  - don't show the content switching visually
+  - don't show the content switching visually - use 'show' variable
 
   - likes for comments - every time we fetch comments/nested comments, get each their respective like record
 

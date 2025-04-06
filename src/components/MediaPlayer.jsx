@@ -1,13 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { RotateCcw, Maximize, Minimize, Play, Pause, VolumeX, Volume2 } from 'lucide-react';
 import { formatDuration } from '../common/helpers';
 import Button from '../components/Button';
-import SVGOutlineReset from '../components/svgs/outline/SVGOutlineReset';
-import SVGOutlineCollapseArrow from '../components/svgs/outline/SVGOutlineCollapseArrow';
-import SVGOutlineExpandArrow from '../components/svgs/outline/SVGOutlineExpandArrow';
-import SVGOutlineMute from '../components/svgs/outline/SVGOutlineMute';
-import SVGOutlineUnmute from '../components/svgs/outline/SVGOutlineUnmute';
-import SVGOutlinePlay from '../components/svgs/outline/SVGOutlinePlay';
-import SVGOutlinePause from '../components/svgs/outline/SVGOutlinePause';
 import Slider from '../components/Slider';
 import Loading from '../components/Loading';
 import { BUTTON_COLOR } from '../common/enums';
@@ -197,7 +191,7 @@ function MediaPlayer({ media, width, height }) {
                   elementRef={resetButtonRef}
                   handleClick={() => handlePlayPause(true)}
                 >
-                  <SVGOutlineReset />
+                  <RotateCcw />
                 </Button>
               )}
               {elapsedDuration !== media.duration && (
@@ -211,9 +205,9 @@ function MediaPlayer({ media, width, height }) {
                     }
                   >
                     {isActiveMediaPlaying ? (
-                      <SVGOutlinePause />
+                      <Pause />
                     ) : (
-                      <SVGOutlinePlay />
+                      <Play />
                     )}
                   </Button>
                   <Button
@@ -230,7 +224,7 @@ function MediaPlayer({ media, width, height }) {
                       setIsMuted(!isMuted);
                     }}
                   >
-                    {isMuted ? <SVGOutlineMute /> : <SVGOutlineUnmute />}
+                    {isMuted ? <VolumeX /> : <Volume2 />}
                   </Button>
                 </>
               )}
@@ -253,9 +247,9 @@ function MediaPlayer({ media, width, height }) {
                 }}
               >
                 {isFullscreen ? (
-                  <SVGOutlineCollapseArrow />
+                  <Minimize />
                 ) : (
-                  <SVGOutlineExpandArrow />
+                  <Maximize />
                 )}
               </Button>
             </div>

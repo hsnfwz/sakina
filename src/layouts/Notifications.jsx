@@ -1,4 +1,5 @@
 import { useEffect, useContext, useState } from 'react';
+import { Check, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
 import {
   getNotificationsByUserId,
@@ -14,8 +15,6 @@ import Loaded from '../components/Loaded.jsx';
 import Button from '../components/Button.jsx';
 import Header from '../components/Header.jsx';
 import NotificationCard from '../components/NotificationCard.jsx';
-import SVGOutlineMailUnread from '../components/svgs/outline/SVGOutlineMailUnread.jsx';
-import SVGOutlineMail from '../components/svgs/outline/SVGOutlineMail.jsx';
 
 function Notifications() {
   const { authUser } = useContext(AuthContext);
@@ -206,7 +205,7 @@ function Notifications() {
                         setIsLoadingUpdate(false);
                       }}
                     >
-                      <SVGOutlineMail />
+                      <Check />
                     </Button>
                   </div>
                 ))}
@@ -242,7 +241,7 @@ function Notifications() {
                         setIsLoadingUpdate(false);
                       }}
                     >
-                      <SVGOutlineMailUnread />
+                      <X />
                     </Button>
                   </div>
                 ))}

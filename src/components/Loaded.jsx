@@ -1,10 +1,10 @@
-import SVGOutlineDoubleCheck from './svgs/outline/SVGOutlineDoubleCheck';
+import { CheckCheck } from 'lucide-react';
 
 function Loaded() {
   return (
     <div className="flex p-1">
       <div className="self-start fill-neutral-700">
-        <SVGOutlineDoubleCheck />
+        <CheckCheck />
       </div>
     </div>
   );

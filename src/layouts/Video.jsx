@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
+import { MessageSquare, Heart } from 'lucide-react';
 import { useLocation, useParams } from 'react-router';
 import { getVideoById } from '../common/database/videos';
 import { AuthContext } from '../common/context/AuthContextProvider';
@@ -18,7 +19,6 @@ import Loading from '../components/Loading';
 import MediaPlayer from '../components/MediaPlayer';
 import Header from '../components/Header';
 import Button from '../components/Button';
-import SVGOutlineHeart from '../components/svgs/outline/SVGOutlineHeart';
 
 function Video() {
   const { id } = useParams();
@@ -107,7 +107,7 @@ function Video() {
                 });
               }}
             >
-              <SVGOutlineChat />
+              <MessageSquare />
             </Button> */}
           {authUser && authUser.id !== video.user_id && (
             <Button
@@ -131,7 +131,7 @@ function Video() {
                 setIsLoadingLike(false);
               }}
             >
-              <SVGOutlineHeart />
+              <Heart />
             </Button>
           )}
         </div>

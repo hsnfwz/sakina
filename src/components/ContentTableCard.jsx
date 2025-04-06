@@ -1,8 +1,6 @@
+import { Pen, ArchiveX, ArchiveRestore } from 'lucide-react';
 import { BUTTON_COLOR } from '../common/enums';
 import Button from './Button';
-import SVGOutlineArchive from './svgs/outline/SVGOutlineArchive';
-import SVGOutlinePencil from './svgs/outline/SVGOutlinePencil';
-import SVGOutlineUnarchive from './svgs/outline/SVGOutlineUnarchive';
 
 function ContentTableCard({
   content,
@@ -26,7 +24,7 @@ function ContentTableCard({
           color={BUTTON_COLOR.SOLID_BLUE}
           handleClick={handleEdit}
         >
-          <SVGOutlinePencil />
+          <Pen />
         </Button>
         {handleHide && (
           <Button
@@ -34,7 +32,7 @@ function ContentTableCard({
             color={BUTTON_COLOR.OUTLINE_RED}
             handleClick={handleHide}
           >
-            <SVGOutlineArchive />
+            <ArchiveX />
           </Button>
         )}
         {handleUnhide && (
@@ -43,7 +41,7 @@ function ContentTableCard({
             color={BUTTON_COLOR.SOLID_RED}
             handleClick={handleUnhide}
           >
-            <SVGOutlineUnarchive />
+            <ArchiveRestore />
           </Button>
         )}
       </div>

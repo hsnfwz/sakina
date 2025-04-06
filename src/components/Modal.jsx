@@ -1,8 +1,8 @@
 import { useContext, useEffect, useRef } from 'react';
+import { X } from 'lucide-react';
 import { ModalContext } from '../common/context/ModalContextProvider';
 import { BUTTON_COLOR } from '../common/enums';
 import Button from './Button';
-import SVGOutlineX from './svgs/outline/SVGOutlineX';
 
 function Modal({ children, isDisabled, show, handleClose }) {
   const { setModal } = useContext(ModalContext);
@@ -102,7 +102,7 @@ function Modal({ children, isDisabled, show, handleClose }) {
             isDisabled={isDisabled}
             handleClick={closeModal}
           >
-            <SVGOutlineX />
+            <X />
           </Button>
         </div>
         <div className="mx-auto flex h-full w-full max-w-(--breakpoint-md) flex-col gap-4">

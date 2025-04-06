@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
+import { ChevronRight, ChevronLeft, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router';
 import { BUTTON_COLOR } from '../common/enums';
 import { useElementIntersection } from '../common/hooks';
-import SVGOutlineRegularArrowRight from './svgs/outline/SVGOutlineRegularArrowRight';
-import SVGOutlineArrowRight from './svgs/outline/SVGOutlineArrowRight';
-import SVGOutlineArrowLeft from './svgs/outline/SVGOutlineArrowLeft';
 import Button from './Button';
 
 function HorizontalScrollGrid({ children, to }) {
@@ -32,9 +30,9 @@ function HorizontalScrollGrid({ children, to }) {
           ref={elementRef}
           to={to}
           onMouseDown={(event) => event.preventDefault()}
-          className={`flex items-center justify-center self-center rounded-full border-2 border-sky-500 bg-sky-500 fill-white p-1 text-center transition-all hover:bg-sky-700 focus:z-50 focus:border-black focus:ring-0 focus:outline-0`}
+          className={`flex items-center justify-center self-center rounded-full border-2 border-sky-500 bg-sky-500 fill-white p-1 text-center transition-all hover:bg-sky-700 focus:z-50 focus:border-black focus:ring-0 focus:outline-0 text-white`}
         >
-          <SVGOutlineRegularArrowRight />
+          <ArrowRight />
         </Link>
       </div>
       <div className="flex gap-2 self-end">
@@ -47,7 +45,7 @@ function HorizontalScrollGrid({ children, to }) {
             setScrollLeft(parentRef.current.scrollLeft);
           }}
         >
-          <SVGOutlineArrowLeft />
+          <ChevronLeft />
         </Button>
         <Button
           isRound={true}
@@ -58,7 +56,7 @@ function HorizontalScrollGrid({ children, to }) {
             setScrollLeft(parentRef.current.scrollLeft);
           }}
         >
-          <SVGOutlineArrowRight />
+          <ChevronRight />
         </Button>
       </div>
     </div>

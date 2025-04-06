@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
+import { MessageSquare, Heart } from 'lucide-react';
 import { useLocation, useParams } from 'react-router';
 import {
   getDiscussionById,
@@ -24,8 +25,6 @@ import Loading from '../components/Loading';
 import Button from '../components/Button';
 import Loaded from '../components/Loaded';
 import Comment from '../components/Comment';
-import SVGOutlineChat from '../components/svgs/outline/SVGOutlineChat';
-import SVGOutlineHeart from '../components/svgs/outline/SVGOutlineHeart';
 import Header from '../components/Header';
 import Subheader from '../components/Subheader';
 
@@ -179,7 +178,7 @@ function Discussion() {
               });
             }}
           >
-            <SVGOutlineChat />
+            <MessageSquare />
           </Button>
           {authUser && authUser.id !== activeDiscussion.user_id && (
             <Button
@@ -205,7 +204,7 @@ function Discussion() {
                 setIsLoadingLike(false);
               }}
             >
-              <SVGOutlineHeart />
+              <Heart />
             </Button>
           )}
         </div>

@@ -1,17 +1,12 @@
 import { useContext, useEffect, useState } from 'react';
+import { MessageSquare, Heart, ChevronDown, ChevronUp, ChevronsDown } from 'lucide-react';
 import { ModalContext } from '../common/context/ModalContextProvider';
 import { AuthContext } from '../common/context/AuthContextProvider';
 import { DataContext } from '../common/context/DataContextProvider';
 import { BUTTON_COLOR } from '../common/enums';
 import { getCommentsByParentDiscussionId } from '../common/database/discussions';
-import SVGOulineArrowDown from './svgs/outline/SVGOutlineArrowDown';
-import SVGOutlineArrowUp from './svgs/outline/SVGOutlineArrowUp';
-import SVGOutlineCornerDownRightArrow from './svgs/outline/SVGOutlineCornerDownRightArrow';
 import Button from './Button';
 import DiscussionCard from './DiscussionCard';
-import SVGOutlineChat from './svgs/outline/SVGOutlineChat';
-import SVGOutlineHeart from '../components/svgs/outline/SVGOutlineHeart';
-import SVGOutlineCircle from '../components/svgs/outline/SVGOutlineCircle';
 import Loading from './Loading';
 
 function Comment({ comment, elementRef }) {
@@ -73,7 +68,7 @@ function Comment({ comment, elementRef }) {
                 });
               }}
             >
-              <SVGOutlineChat />
+              <MessageSquare />
             </Button>
             <Button
               isRound={true}
@@ -81,7 +76,7 @@ function Comment({ comment, elementRef }) {
               handleClick={() => {}}
               isDisabled={isLoadingNestedComments}
             >
-              <SVGOutlineHeart />
+              <Heart />
             </Button>
             {comment.discussions_count > 0 && (
               <Button
@@ -102,8 +97,8 @@ function Comment({ comment, elementRef }) {
                   setIsExpanded(!isExpanded);
                 }}
               >
-                {!isExpanded && <SVGOulineArrowDown />}
-                {isExpanded && <SVGOutlineArrowUp />}
+                {!isExpanded && <ChevronDown />}
+                {isExpanded && <ChevronUp />}
               </Button>
             )}
           </div>
@@ -121,14 +116,16 @@ function Comment({ comment, elementRef }) {
             </div>
           ))}
           {nestedComments[comment.id].hasMore && (
-            <Button
-              isDisabled={isLoadingNestedComments}
-              color={BUTTON_COLOR.SOLID_GREEN}
-              handleClick={async () => await getNestedComments(comment.id)}
-            >
-              <SVGOutlineCornerDownRightArrow />
-              <span>Show More</span>
-            </Button>
+            <div className="ml-4">
+              <Button
+                isRound={true}
+                isDisabled={isLoadingNestedComments}
+                color={BUTTON_COLOR.SOLID_BLUE}
+                handleClick={async () => await getNestedComments(comment.id)}
+              >
+                <ChevronsDown />
+              </Button>
+            </div>
           )}
           {isLoadingNestedComments && <Loading />}
         </div>
