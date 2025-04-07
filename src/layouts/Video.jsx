@@ -1,95 +1,60 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { MessageSquare, Heart } from 'lucide-react';
-import { useLocation, useParams } from 'react-router';
-import { getVideoById } from '../common/database/videos';
+import { useParams } from 'react-router';
 import { AuthContext } from '../common/context/AuthContextProvider';
 import { BUTTON_COLOR } from '../common/enums';
-import { increment } from '../common/database/rpc';
-import {
-  addVideoLike,
-  getVideoLikeByUserIdAndVideoId,
-  removeVideoLike,
-} from '../common/database/video-likes';
-import {
-  getVideoViewByUserIdAndVideoId,
-  addVideoView,
-  updateVideoView,
-} from '../common/database/video-views';
+import { addVideoLike, removeVideoLike } from '../common/database/video-likes';
 import Loading from '../components/Loading';
 import MediaPlayer from '../components/MediaPlayer';
 import Header from '../components/Header';
 import Button from '../components/Button';
+import { useVideo } from '../common/hooks/videos';
+import { useVideoLike } from '../common/hooks/video-likes';
+import { useVideoView } from '../common/hooks/video-views';
 
 function Video() {
-  const { id } = useParams();
-  const location = useLocation();
   const { authUser } = useContext(AuthContext);
-  const [video, setVideo] = useState(null);
-  const [isLoadingVideo, setIsLoadingVideo] = useState(false);
-  const [videoLike, setVideoLike] = useState(null);
-  const [isLoadingLike, setIsLoadingLike] = useState(false);
+  const { id } = useParams();
+  const [video, fetchingVideo] = useVideo(id);
+  const [videoLike, setVideoLike, fetchingVideoLike, setFetchingVideoLike] =
+    useVideoLike(video);
+  useVideoView(video);
 
-  useEffect(() => {
-    if (!location.state?.video) {
-      getVideo();
-    }
+  async function handleLike() {
+    setFetchingVideoLike(true);
 
-    if (location.state?.video) {
-      setVideo(location.state.video);
-    }
-  }, [location]);
+    const data = await addVideoLike({
+      user_id: authUser.id,
+      video_id: video.id,
+    });
 
-  useEffect(() => {
-    if (authUser && video) {
-      if (authUser.id !== video.user_id) {
-        getVideoLike();
-        getVideoView();
-      }
-    }
-  }, [authUser, video]);
+    setVideoLike(data);
 
-  async function getVideo() {
-    setIsLoadingVideo(true);
-    const { data } = await getVideoById(id);
-    setVideo(data[0]);
-    setIsLoadingVideo(false);
+    setFetchingVideoLike(false);
   }
 
-  async function getVideoLike() {
-    setIsLoadingLike(true);
-    const { data } = await getVideoLikeByUserIdAndVideoId(
-      authUser.id,
-      video.id
-    );
-    setVideoLike(data[0]);
-    setIsLoadingLike(false);
+  async function handleUnlike() {
+    setFetchingVideoLike(true);
+
+    await removeVideoLike(videoLike.id);
+    setVideoLike(null);
+
+    setFetchingVideoLike(false);
   }
 
-  async function getVideoView() {
-    const { data } = await getVideoViewByUserIdAndVideoId(
-      authUser.id,
-      video.id
-    );
-
-    if (data[0]) {
-      await updateVideoView(data[0].id, {
-        updated_at: new Date(),
-      });
+  async function handleLikeUnlike() {
+    if (videoLike) {
+      await handleUnlike();
     } else {
-      await addVideoView({
-        user_id: authUser.id,
-        video_id: video.id,
-      });
+      await handleLike();
     }
-
-    await increment('videos', video.id, 'views_count', 1);
   }
 
-  if (isLoadingVideo) {
+  if (fetchingVideo) {
     return <Loading />;
   }
 
-  if (video) {
+  if (!fetchingVideo && video) {
     return (
       <div className="flex w-full flex-col gap-4">
         <MediaPlayer media={video} width={1920} height={1080} />
@@ -115,21 +80,8 @@ function Video() {
               color={
                 videoLike ? BUTTON_COLOR.SOLID_RED : BUTTON_COLOR.OUTLINE_RED
               }
-              isDisabled={isLoadingLike}
-              handleClick={async () => {
-                setIsLoadingLike(true);
-                if (videoLike) {
-                  await removeVideoLike(videoLike.id);
-                  setVideoLike(null);
-                } else {
-                  const { data } = await addVideoLike({
-                    user_id: authUser.id,
-                    video_id: video.id,
-                  });
-                  setVideoLike(data[0]);
-                }
-                setIsLoadingLike(false);
-              }}
+              isDisabled={fetchingVideoLike}
+              handleClick={handleLikeUnlike}
             >
               <Heart />
             </Button>

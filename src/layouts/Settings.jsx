@@ -38,7 +38,10 @@ function Settings() {
           <Anchor active={location.pathname.includes('clips')} to="clips">
             Clips
           </Anchor>
-          <Anchor active={location.pathname.includes('discussions')} to="discussions">
+          <Anchor
+            active={location.pathname.includes('discussions')}
+            to="discussions"
+          >
             Discussions
           </Anchor>
         </nav>

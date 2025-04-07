@@ -153,15 +153,11 @@ async function getVideoById(id) {
 
     if (error) throw error;
 
-    return {
-      data,
-    };
+    return data[0];
   } catch (error) {
     console.log(error);
 
-    return {
-      data: null,
-    };
+    return null;
   }
 }
 

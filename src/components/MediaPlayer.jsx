@@ -1,5 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { RotateCcw, Maximize, Minimize, Play, Pause, VolumeX, Volume2 } from 'lucide-react';
+import {
+  RotateCcw,
+  Maximize,
+  Minimize,
+  Play,
+  Pause,
+  VolumeX,
+  Volume2,
+} from 'lucide-react';
 import { formatDuration } from '../common/helpers';
 import Button from '../components/Button';
 import Slider from '../components/Slider';
@@ -204,11 +212,7 @@ function MediaPlayer({ media, width, height }) {
                       setIsActiveMediaPlaying(!isActiveMediaPlaying)
                     }
                   >
-                    {isActiveMediaPlaying ? (
-                      <Pause />
-                    ) : (
-                      <Play />
-                    )}
+                    {isActiveMediaPlaying ? <Pause /> : <Play />}
                   </Button>
                   <Button
                     isRound={true}
@@ -246,11 +250,7 @@ function MediaPlayer({ media, width, height }) {
                   }
                 }}
               >
-                {isFullscreen ? (
-                  <Minimize />
-                ) : (
-                  <Maximize />
-                )}
+                {isFullscreen ? <Minimize /> : <Maximize />}
               </Button>
             </div>
           </div>

@@ -1,117 +1,75 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useRef } from 'react';
 
 const DataContext = createContext();
 
 function DataContextProvider({ children }) {
-  const [homeVideos, setHomeVideos] = useState({
-    data: [],
+  const users = useRef({});
+  const videos = useRef({});
+  const clips = useRef({});
+  const discussions = useRef({});
+
+  const [exploreUsers, setExploreUsers] = useState({
+    keys: [],
     hasMore: true,
     hasInitialized: false,
   });
 
-  const [homeClips, setHomeClips] = useState({
-    data: [],
+  const [exploreVideos, setExploreVideos] = useState({
+    keys: [],
     hasMore: true,
     hasInitialized: false,
   });
 
-  const [homeDiscussions, setHomeDiscussions] = useState({
-    data: [],
+  const [exploreClips, setExploreClips] = useState({
+    keys: [],
     hasMore: true,
     hasInitialized: false,
   });
 
-  const [latestVideos, setLatestVideos] = useState({
-    data: [],
+  const [exploreDiscussions, setExploreDiscussions] = useState({
+    keys: [],
     hasMore: true,
     hasInitialized: false,
   });
 
-  const [mostLikedVideos, setMostLikedVideos] = useState({
-    data: [],
+  const [viewAllUsers, setViewAllUsers] = useState({
+    keys: [],
     hasMore: true,
     hasInitialized: false,
   });
 
-  const [mostViewedVideos, setMostViewedVideos] = useState({
-    data: [],
+  const [viewAllVideos, setViewAllVideos] = useState({
+    keys: [],
     hasMore: true,
     hasInitialized: false,
   });
 
-  const [mostDiscussedVideos, setMostDiscussedVideos] = useState({
-    data: [],
+  const [viewAllClips, setViewAllClips] = useState({
+    keys: [],
     hasMore: true,
     hasInitialized: false,
   });
 
-  const [latestClips, setLatestClips] = useState({
-    data: [],
+  const [viewAllDiscussions, setViewAllDiscussions] = useState({
+    keys: [],
     hasMore: true,
     hasInitialized: false,
   });
 
-  const [mostLikedClips, setMostLikedClips] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [mostViewedClips, setMostViewedClips] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [mostDiscussedClips, setMostDiscussedClips] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [latestDiscussions, setLatestDiscussions] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [mostLikedDiscussions, setMostLikedDiscussions] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [mostViewedDiscussions, setMostViewedDiscussions] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [mostDiscussedDiscussions, setMostDiscussedDiscussions] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [comments, setComments] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [nestedComments, setNestedComments] = useState({});
-
-  const [newestUsers, setNewestUsers] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [mostFollowedUsers, setMostFollowedUsers] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
+  /* 
+    userVideos: {
+      [sarah]: {
+        data: [0,1],
+        hasMore: true,
+        hasIniialized: false,
+      },
+      [john]: {
+        data: [2],
+        hasMore: true,
+        hasIniialized: false,
+      },
+    }  
+  */
 
   const [userVideos, setUserVideos] = useState({
     data: [],
@@ -197,6 +155,32 @@ function DataContextProvider({ children }) {
     hasInitialized: false,
   });
 
+  const [homeVideos, setHomeVideos] = useState({
+    data: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
+  const [homeClips, setHomeClips] = useState({
+    data: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
+  const [homeDiscussions, setHomeDiscussions] = useState({
+    data: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
+  const [comments, setComments] = useState({
+    data: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
+  const [nestedComments, setNestedComments] = useState({});
+
   const [notifications, setNotifications] = useState({
     data: [],
     hasMore: true,
@@ -215,48 +199,38 @@ function DataContextProvider({ children }) {
   return (
     <DataContext.Provider
       value={{
+        users,
+        videos,
+        clips,
+        discussions,
+        exploreUsers,
+        setExploreUsers,
+        exploreVideos,
+        setExploreVideos,
+        exploreClips,
+        setExploreClips,
+        exploreDiscussions,
+        setExploreDiscussions,
+        viewAllUsers,
+        setViewAllUsers,
+        viewAllVideos,
+        setViewAllVideos,
+        viewAllClips,
+        setViewAllClips,
+        viewAllDiscussions,
+        setViewAllDiscussions,
+
+        notifications,
+        setNotifications,
+        readNotifications,
+        setReadNotifications,
+
         homeVideos,
         setHomeVideos,
         homeClips,
         setHomeClips,
         homeDiscussions,
         setHomeDiscussions,
-        latestVideos,
-        setLatestVideos,
-        mostLikedVideos,
-        setMostLikedVideos,
-        mostViewedVideos,
-        setMostViewedVideos,
-        mostDiscussedVideos,
-        setMostDiscussedVideos,
-        latestClips,
-        setLatestClips,
-        mostLikedClips,
-        setMostLikedClips,
-        mostViewedClips,
-        setMostViewedClips,
-        mostDiscussedClips,
-        setMostDiscussedClips,
-
-        latestDiscussions,
-        setLatestDiscussions,
-        mostLikedDiscussions,
-        setMostLikedDiscussions,
-        mostViewedDiscussions,
-        setMostViewedDiscussions,
-        mostDiscussedDiscussions,
-        setMostDiscussedDiscussions,
-
-        comments,
-        setComments,
-        nestedComments,
-        setNestedComments,
-
-        newestUsers,
-        setNewestUsers,
-
-        mostFollowedUsers,
-        setMostFollowedUsers,
 
         userVideos,
         setUserVideos,
@@ -264,14 +238,12 @@ function DataContextProvider({ children }) {
         setUserClips,
         userDiscussions,
         setUserDiscussions,
-
         userHiddenVideos,
         setUserHiddenVideos,
         userHiddenClips,
         setUserHiddenClips,
         userHiddenDiscussions,
         setUserHiddenDiscussions,
-
         userVideoLikes,
         setUserVideoLikes,
         userClipLikes,
@@ -289,10 +261,10 @@ function DataContextProvider({ children }) {
         userFollowing,
         setUserFollowing,
 
-        notifications,
-        setNotifications,
-        readNotifications,
-        setReadNotifications,
+        comments,
+        setComments,
+        nestedComments,
+        setNestedComments,
 
         activeUser,
         setActiveUser,

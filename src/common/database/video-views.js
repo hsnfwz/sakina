@@ -10,15 +10,11 @@ async function getVideoViewByUserIdAndVideoId(userId, videoId) {
 
     if (error) throw error;
 
-    return {
-      data,
-    };
+    return data[0];
   } catch (error) {
     console.log(error);
 
-    return {
-      data: null,
-    };
+    return null;
   }
 }
 
@@ -31,15 +27,11 @@ async function addVideoView(payload) {
 
     if (error) throw error;
 
-    return {
-      data,
-    };
+    return data[0];
   } catch (error) {
     console.log(error);
 
-    return {
-      data: null,
-    };
+    return null;
   }
 }
 
@@ -53,15 +45,11 @@ async function updateVideoView(id, payload) {
 
     if (error) throw error;
 
-    return {
-      data,
-    };
+    return data[0];
   } catch (error) {
     console.log(error);
 
-    return {
-      data: null,
-    };
+    return null;
   }
 }
 

@@ -1,5 +1,5 @@
 import { useContext, Fragment } from 'react';
-import { DataContext } from '../common/context/DataContextProvider.jsx';
+import { useParams } from 'react-router';
 import { AuthContext } from '../common/context/AuthContextProvider.jsx';
 import { useElementIntersection } from '../common/hooks';
 import { useUserVideos } from '../common/hooks/videos.js';
@@ -9,10 +9,13 @@ import VideoCard from '../components/VideoCard.jsx';
 import VideoCardGrid from '../components/VideoCardGrid.jsx';
 
 function UserVideos() {
+  const { username } = useParams();
   const { authUser } = useContext(AuthContext);
-  const { activeUser } = useContext(DataContext);
   const [elementRef, intersectingElement] = useElementIntersection();
-  const [userVideos, fetchingUserVideos] = useUserVideos(intersectingElement);
+  const [userVideos, fetchingUserVideos] = useUserVideos(
+    username,
+    intersectingElement
+  );
 
   return (
     <div className="flex w-full flex-col gap-4">
@@ -22,8 +25,7 @@ function UserVideos() {
             {(!video.is_anonymous ||
               (video.is_anonymous &&
                 authUser &&
-                activeUser &&
-                authUser.id === activeUser.id)) && (
+                authUser.id === video.user.id)) && (
               <VideoCard
                 video={video}
                 orientation="HORIZONTAL"

@@ -10,15 +10,11 @@ async function getVideoLikeByUserIdAndVideoId(userId, videoId) {
 
     if (error) throw error;
 
-    return {
-      data,
-    };
+    return data[0];
   } catch (error) {
     console.log(error);
 
-    return {
-      data: null,
-    };
+    return null;
   }
 }
 
@@ -31,15 +27,11 @@ async function addVideoLike(payload) {
 
     if (error) throw error;
 
-    return {
-      data,
-    };
+    return data[0];
   } catch (error) {
     console.log(error);
 
-    return {
-      data: null,
-    };
+    return null;
   }
 }
 

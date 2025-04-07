@@ -1,5 +1,13 @@
 import { useContext, useState, useRef } from 'react';
-import { Search, Home, Compass, Bell, Settings, Plus, CircleUserRound } from 'lucide-react';
+import {
+  Search,
+  Home,
+  Compass,
+  Bell,
+  Settings,
+  Plus,
+  CircleUserRound,
+} from 'lucide-react';
 import { useLocation } from 'react-router';
 import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 import { AuthContext } from '../common/context/AuthContextProvider';

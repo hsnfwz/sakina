@@ -26,7 +26,11 @@ function Welcome() {
         Video streaming and discussions platform
       </h1>
 
-      {isLoadingAuthUser && <Loading />}
+      {isLoadingAuthUser && (
+        <div className="self-center">
+          <Loading />
+        </div>
+      )}
 
       {!isLoadingAuthUser && (
         <div className="flex flex-col items-center gap-4 md:flex-row">

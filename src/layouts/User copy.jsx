@@ -32,21 +32,13 @@ function User() {
 
   useEffect(() => {
     async function getUser() {
-      let user = getSessionStorageData(username);
+      let user;
 
-      if (user) {
-        console.log('exists');
+      if (location.state.user) {
+        user = location.state.user;
       } else {
-        console.log('not exists');
-
-        if (location.state.user) {
-          user = location.state.user;
-        } else {
-          const { data } = await getUserByUsername(username);
-          user = data[0];
-        }
-
-        setSessionStorageData(username, user);
+        const { data } = await getUserByUsername(username);
+        user = data[0];
       }
 
       setActiveUser(user);
@@ -125,7 +117,7 @@ function User() {
             {activeUser.name && <span> - {activeUser.name}</span>}
           </h1>
           {activeUser.bio && <p>{activeUser.bio}</p>}
-          {/* {!isLoadingFollower && !follower && (authUser.id !== activeUser.id)  && (
+          {!isLoadingFollower && !follower && authUser.id !== activeUser.id && (
             <Button
               color={BUTTON_COLOR.OUTLINE_BLUE}
               handleClick={handleFollow}
@@ -134,7 +126,7 @@ function User() {
               Follow
             </Button>
           )}
-          {!isLoadingFollower && follower && (authUser.id !== activeUser.id) && (
+          {!isLoadingFollower && follower && authUser.id !== activeUser.id && (
             <Button
               color={BUTTON_COLOR.SOLID_BLUE}
               handleClick={handleUnfollow}
@@ -142,7 +134,7 @@ function User() {
             >
               Unfollow
             </Button>
-          )} */}
+          )}
         </div>
         <nav className="flex w-full">
           <Anchor

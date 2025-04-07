@@ -2,9 +2,7 @@ import { useContext } from 'react';
 import { useLocation, Link } from 'react-router';
 import { useElementIntersection } from '../common/hooks';
 import { useUserHiddenVideos, useUserVideos } from '../common/hooks/videos.js';
-import {
-  updateVideoById,
-} from '../common/database/videos.js';
+import { updateVideoById } from '../common/database/videos.js';
 import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 import Loading from '../components/Loading.jsx';
 import Loaded from '../components/Loaded.jsx';
@@ -14,7 +12,8 @@ import ContentTableCard from '../components/ContentTableCard.jsx';
 function SettingsVideos() {
   const [elementRef, intersectingElement] = useElementIntersection();
   const [userVideos, fetchingUserVideos] = useUserVideos(intersectingElement);
-  const [userHiddenVideos, fetchingUserHiddenVideos] = useUserHiddenVideos(intersectingElement);
+  const [userHiddenVideos, fetchingUserHiddenVideos] =
+    useUserHiddenVideos(intersectingElement);
   const { setModal } = useContext(ModalContext);
   const location = useLocation();
 

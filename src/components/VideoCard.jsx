@@ -29,7 +29,7 @@ function VideoCard({ video, elementRef, orientation }) {
           className={`${orientation === 'HORIZONTAL' ? 'aspect-[16/9]' : 'aspect-[9/16]'} h-full w-full rounded-lg object-cover object-center ${isLoadingImage ? 'hidden' : 'block'}`}
           onLoad={() => setIsLoadingImage(false)}
         />
-        <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center rounded-lg bg-black/50 text-white fill-white opacity-0 transition-all group-hover:opacity-100">
+        <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center rounded-lg bg-black/50 fill-white text-white opacity-0 transition-all group-hover:opacity-100">
           <Play />
         </div>
         <div

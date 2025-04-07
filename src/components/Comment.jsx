@@ -1,5 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
-import { MessageSquare, Heart, ChevronDown, ChevronUp, ChevronsDown } from 'lucide-react';
+import {
+  MessageSquare,
+  Heart,
+  ChevronDown,
+  ChevronUp,
+  ChevronsDown,
+} from 'lucide-react';
 import { ModalContext } from '../common/context/ModalContextProvider';
 import { AuthContext } from '../common/context/AuthContextProvider';
 import { DataContext } from '../common/context/DataContextProvider';

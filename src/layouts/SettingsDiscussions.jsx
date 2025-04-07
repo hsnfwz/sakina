@@ -1,10 +1,11 @@
 import { useContext } from 'react';
 import { useLocation, Link } from 'react-router';
 import { useElementIntersection } from '../common/hooks';
-import { useUserHiddenDiscussions, useUserDiscussions } from '../common/hooks/discussions.js';
 import {
-  updateDiscussionById,
-} from '../common/database/discussions.js';
+  useUserHiddenDiscussions,
+  useUserDiscussions,
+} from '../common/hooks/discussions.js';
+import { updateDiscussionById } from '../common/database/discussions.js';
 import { ModalContext } from '../common/context/ModalContextProvider.jsx';
 import Loading from '../components/Loading.jsx';
 import Loaded from '../components/Loaded.jsx';
@@ -13,8 +14,10 @@ import ContentTableCard from '../components/ContentTableCard.jsx';
 
 function SettingsDiscussions() {
   const [elementRef, intersectingElement] = useElementIntersection();
-  const [userDiscussions, fetchingUserDiscussions] = useUserDiscussions(intersectingElement);
-  const [userHiddenDiscussions, fetchingUserHiddenDiscussions] = useUserHiddenDiscussions(intersectingElement);
+  const [userDiscussions, fetchingUserDiscussions] =
+    useUserDiscussions(intersectingElement);
+  const [userHiddenDiscussions, fetchingUserHiddenDiscussions] =
+    useUserHiddenDiscussions(intersectingElement);
   const { setModal } = useContext(ModalContext);
   const location = useLocation();
 
@@ -64,7 +67,9 @@ function SettingsDiscussions() {
                     data: {
                       title: video.title,
                       handleHide: async () =>
-                        await updateDiscussionById(video.id, { is_hidden: true }),
+                        await updateDiscussionById(video.id, {
+                          is_hidden: true,
+                        }),
                     },
                   });
                 }}
@@ -82,7 +87,9 @@ function SettingsDiscussions() {
             {userHiddenDiscussions.data.map((video, index) => (
               <ContentTableCard
                 elementRef={
-                  index === userHiddenDiscussions.data.length - 1 ? elementRef : null
+                  index === userHiddenDiscussions.data.length - 1
+                    ? elementRef
+                    : null
                 }
                 key={index}
                 content={video}
@@ -104,7 +111,9 @@ function SettingsDiscussions() {
                     data: {
                       title: video.title,
                       handleUnhide: async () =>
-                        await updateDiscussionById(video.id, { is_hidden: false }),
+                        await updateDiscussionById(video.id, {
+                          is_hidden: false,
+                        }),
                     },
                   });
                 }}

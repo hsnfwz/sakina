@@ -1,104 +1,78 @@
 import { useEffect, useState, useContext } from 'react';
-import { getVideos, getVideosByUserId, getHiddenVideosByUserId } from '../database/videos';
+import { useLocation } from 'react-router';
+import {
+  getVideos,
+  getVideosByUserId,
+  getHiddenVideosByUserId,
+  getVideoById,
+} from '../database/videos';
 import { DataContext } from '../context/DataContextProvider';
 import { AuthContext } from '../context/AuthContextProvider';
+import { getSessionStorageData, setSessionStorageData } from '../helpers';
 
-function useVideos(intersectingElement) {
-  // const { videos, setVideos, clips, setClips } = useContext(DataContext);
+function useVideo(id) {
+  const { viewedVideos } = useContext(DataContext);
+  const location = useLocation();
+  const [video, setVideo] = useState(null);
+  const [fetchingVideo, setFetchingVideo] = useState(false);
+
+  useEffect(() => {
+    async function getVideo() {
+      setFetchingVideo(true);
+
+      let _video;
+
+      if (viewedVideos.current[id]) {
+        _video = viewedVideos.current[id];
+      } else {
+        if (location.state.video) {
+          _video = location.state.video;
+        } else {
+          const data = await getVideoById(id);
+          if (data) {
+            _video = data;
+          }
+        }
+
+        viewedVideos.current[id] = _video;
+      }
+
+      setVideo(_video);
+
+      setFetchingVideo(false);
+    }
+
+    getVideo();
+  }, [location]);
+
+  return [video, fetchingVideo];
+}
+
+function useUserVideos(username, intersectingElement) {
+  const { authUser } = useContext(AuthContext);
+  const { userVideos, setUserVideos, viewedUsers } = useContext(DataContext);
   const [videos, setVideos] = useState({
     data: [],
     hasMore: true,
     hasInitialized: false,
   });
-  const [fetchingVideos, setFetchingVideos] = useState(false);
-
-  useEffect(() => {
-    if (!videos.hasInitialized) {
-      fetchVideos();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (intersectingElement && videos.hasMore) {
-      fetchVideos();
-    }
-  }, [intersectingElement]);
-
-  async function fetchVideos() {
-    setFetchingVideos(true);
-
-    const { data, hasMore } = await getVideos('HORIZONTAL', videos.data.length);
-
-    const _videos = { ...videos };
-
-    if (data.length > 0) {
-      _videos.data = [...videos.data, ...data];
-    }
-
-    _videos.hasMore = hasMore;
-    _videos.hasInitialized = true;
-
-    setVideos(_videos);
-
-    setFetchingVideos(false);
-  }
-
-  return [videos, fetchingVideos];
-}
-
-function useClips(intersectingElement) {
-  // const { videos, setVideos, clips, setClips } = useContext(DataContext);
-  const [clips, setClips] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-  const [fetchingClips, setFetchingClips] = useState(false);
-
-  useEffect(() => {
-    if (!clips.hasInitialized) {
-      fetchClips();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (intersectingElement && clips.hasMore) {
-      fetchClips();
-    }
-  }, [intersectingElement]);
-
-  async function fetchClips() {
-    setFetchingClips(true);
-
-    const { data, hasMore } = await getVideos('VERTICAL', clips.data.length);
-
-    const _clips = { ...clips };
-
-    if (data.length > 0) {
-      _clips.data = [...clips.data, ...data];
-    }
-
-    _clips.hasMore = hasMore;
-    _clips.hasInitialized = true;
-
-    setClips(_clips);
-
-    setFetchingClips(false);
-  }
-
-  return [clips, fetchingClips];
-}
-
-function useUserVideos(intersectingElement) {
-  const { authUser } = useContext(AuthContext);
-  const { userVideos, setUserVideos } = useContext(DataContext);
   const [fetchingUserVideos, setFetchingUserVideos] = useState(false);
 
   useEffect(() => {
     if (authUser) {
-      if (!userVideos.hasInitialized) {
-        fetchUserVideos();
+      let _userVideos = getSessionStorageData(`${authUser}-videos`);
+
+      if (_userVideos) {
+        console.log('v exists');
+      } else {
+        console.log('v not exists');
+
+        if (!userVideos.hasInitialized) {
+          fetchUserVideos();
+        }
       }
+
+      setUserVideos(_userVideos);
     }
   }, [authUser]);
 
@@ -182,7 +156,8 @@ function useUserClips(intersectingElement) {
 function useUserHiddenVideos(intersectingElement) {
   const { authUser } = useContext(AuthContext);
   const { userHiddenVideos, setUserHiddenVideos } = useContext(DataContext);
-  const [fetchingUserHiddenVideos, setFetchingUserHiddenVideos] = useState(false);
+  const [fetchingUserHiddenVideos, setFetchingUserHiddenVideos] =
+    useState(false);
 
   useEffect(() => {
     if (authUser) {
@@ -269,4 +244,174 @@ function useUserHiddenClips(intersectingElement) {
   return [userHiddenClips, fetchingUserHiddenClips];
 }
 
-export { useVideos, useClips, useUserVideos, useUserClips, useUserHiddenVideos, useUserHiddenClips };
+function useExploreVideos() {
+  const { videos, exploreVideos, setExploreVideos } = useContext(DataContext);
+  const [fetchingExploreVideos, setFetchingExploreVideos] = useState(false);
+
+  useEffect(() => {
+    if (!exploreVideos.hasInitialized) {
+      fetchData();
+    }
+  }, []);
+
+  async function fetchData() {
+    setFetchingExploreVideos(true);
+
+    const { data, hasMore } = await getVideos(
+      'HORIZONTAL',
+      exploreVideos.keys.length
+    );
+    data.forEach((row) => (videos.current[row.id] = row));
+    const ids = data.map((row) => row.id);
+
+    const _exploreVideos = { ...exploreVideos };
+
+    if (data.length > 0) {
+      _exploreVideos.keys = [...exploreVideos.keys, ...ids];
+    }
+
+    _exploreVideos.hasMore = hasMore;
+    _exploreVideos.hasInitialized = true;
+
+    setExploreVideos(_exploreVideos);
+
+    setFetchingExploreVideos(false);
+  }
+
+  return [exploreVideos, fetchingExploreVideos];
+}
+
+function useViewAllVideos(intersectingElement) {
+  const { videos, viewAllVideos, setViewAllVideos } = useContext(DataContext);
+  const [fetchingViewAllVideos, setFetchingViewAllVideos] = useState(false);
+
+  useEffect(() => {
+    if (!viewAllVideos.hasInitialized) {
+      fetchData();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (intersectingElement && viewAllVideos.hasMore) {
+      fetchData();
+    }
+  }, [intersectingElement]);
+
+  async function fetchData() {
+    setFetchingViewAllVideos(true);
+
+    const { data, hasMore } = await getVideos(
+      'HORIZONTAL',
+      viewAllVideos.keys.length
+    );
+    data.forEach((row) => (videos.current[row.id] = row));
+    const ids = data.map((row) => row.id);
+
+    const _viewAllVideos = { ...viewAllVideos };
+
+    if (data.length > 0) {
+      _viewAllVideos.keys = [...viewAllVideos.keys, ...ids];
+    }
+
+    _viewAllVideos.hasMore = hasMore;
+    _viewAllVideos.hasInitialized = true;
+
+    setViewAllVideos(_viewAllVideos);
+
+    setFetchingViewAllVideos(false);
+  }
+
+  return [viewAllVideos, fetchingViewAllVideos];
+}
+
+function useExploreClips() {
+  const { clips, exploreClips, setExploreClips } = useContext(DataContext);
+  const [fetchingExploreClips, setFetchingExploreClips] = useState(false);
+
+  useEffect(() => {
+    if (!exploreClips.hasInitialized) {
+      fetchData();
+    }
+  }, []);
+
+  async function fetchData() {
+    setFetchingExploreClips(true);
+
+    const { data, hasMore } = await getVideos(
+      'VERTICAL',
+      exploreClips.keys.length
+    );
+    data.forEach((row) => (clips.current[row.id] = row));
+    const ids = data.map((row) => row.id);
+
+    const _exploreClips = { ...exploreClips };
+
+    if (data.length > 0) {
+      _exploreClips.keys = [...exploreClips.keys, ...ids];
+    }
+
+    _exploreClips.hasMore = hasMore;
+    _exploreClips.hasInitialized = true;
+
+    setExploreClips(_exploreClips);
+
+    setFetchingExploreClips(false);
+  }
+
+  return [exploreClips, fetchingExploreClips];
+}
+
+function useViewAllClips(intersectingElement) {
+  const { clips, viewAllClips, setViewAllClips } = useContext(DataContext);
+  const [fetchingViewAllClips, setFetchingViewAllClips] = useState(false);
+
+  useEffect(() => {
+    if (!viewAllClips.hasInitialized) {
+      fetchData();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (intersectingElement && viewAllClips.hasMore) {
+      fetchData();
+    }
+  }, [intersectingElement]);
+
+  async function fetchData() {
+    setFetchingViewAllClips(true);
+
+    const { data, hasMore } = await getVideos(
+      'VERTICAL',
+      viewAllClips.keys.length
+    );
+    data.forEach((row) => (clips.current[row.id] = row));
+    const ids = data.map((row) => row.id);
+
+    const _viewAllClips = { ...viewAllClips };
+
+    if (data.length > 0) {
+      _viewAllClips.keys = [...viewAllClips.keys, ...ids];
+    }
+
+    _viewAllClips.hasMore = hasMore;
+    _viewAllClips.hasInitialized = true;
+
+    setViewAllClips(_viewAllClips);
+
+    setFetchingViewAllClips(false);
+  }
+
+  return [viewAllClips, fetchingViewAllClips];
+}
+
+export {
+  useVideo,
+  useUserVideos,
+  useUserClips,
+  useUserHiddenVideos,
+  useUserHiddenClips,
+  useExploreVideos,
+  useViewAllVideos,
+  useExploreClips,
+  useViewAllClips,
+};

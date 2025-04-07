@@ -7,53 +7,9 @@ import {
 import { DataContext } from '../context/DataContextProvider';
 import { AuthContext } from '../context/AuthContextProvider';
 
-function useDiscussions(intersectingElement) {
-  // const { videos, setDiscussions, clips, setClips } = useContext(DataContext);
-  const [discussions, setDiscussions] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-  const [fetchingDiscussions, setFetchingDiscussions] = useState(false);
-
-  useEffect(() => {
-    if (!discussions.hasInitialized) {
-      fetchDiscussions();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (intersectingElement && discussions.hasMore) {
-      fetchDiscussions();
-    }
-  }, [intersectingElement]);
-
-  async function fetchDiscussions() {
-    setFetchingDiscussions(true);
-
-    const { data, hasMore } = await getDiscussions(discussions.data.length);
-
-    const _discussions = { ...discussions };
-
-    if (data.length > 0) {
-      _discussions.data = [...discussions.data, ...data];
-    }
-
-    _discussions.hasMore = hasMore;
-    _discussions.hasInitialized = true;
-
-    setDiscussions(_discussions);
-
-    setFetchingDiscussions(false);
-  }
-
-  return [discussions, fetchingDiscussions];
-}
-
 function useUserDiscussions(intersectingElement) {
   const { authUser } = useContext(AuthContext);
-  const { userDiscussions, setUserDiscussions } =
-    useContext(DataContext);
+  const { userDiscussions, setUserDiscussions } = useContext(DataContext);
   const [fetchingUserDiscussions, setFetchingUserDiscussions] = useState(false);
 
   useEffect(() => {
@@ -99,7 +55,8 @@ function useUserHiddenDiscussions(intersectingElement) {
   const { authUser } = useContext(AuthContext);
   const { userHiddenDiscussions, setUserHiddenDiscussions } =
     useContext(DataContext);
-  const [fetchingUserHiddenDiscussions, setFetchingUserHiddenDiscussions] = useState(false);
+  const [fetchingUserHiddenDiscussions, setFetchingUserHiddenDiscussions] =
+    useState(false);
 
   useEffect(() => {
     if (authUser) {
@@ -140,4 +97,91 @@ function useUserHiddenDiscussions(intersectingElement) {
   return [userHiddenDiscussions, fetchingUserHiddenDiscussions];
 }
 
-export { useDiscussions, useUserDiscussions, useUserHiddenDiscussions };
+function useExploreDiscussions() {
+  const { discussions, exploreDiscussions, setExploreDiscussions } =
+    useContext(DataContext);
+  const [fetchingExploreDiscussions, setFetchingExploreDiscussions] =
+    useState(false);
+
+  useEffect(() => {
+    if (!exploreDiscussions.hasInitialized) {
+      fetchData();
+    }
+  }, []);
+
+  async function fetchData() {
+    setFetchingExploreDiscussions(true);
+
+    const { data, hasMore } = await getDiscussions(
+      exploreDiscussions.keys.length
+    );
+    data.forEach((row) => (discussions.current[row.id] = row));
+    const ids = data.map((row) => row.id);
+
+    const _exploreDiscussions = { ...exploreDiscussions };
+
+    if (data.length > 0) {
+      _exploreDiscussions.keys = [...exploreDiscussions.keys, ...ids];
+    }
+
+    _exploreDiscussions.hasMore = hasMore;
+    _exploreDiscussions.hasInitialized = true;
+
+    setExploreDiscussions(_exploreDiscussions);
+
+    setFetchingExploreDiscussions(false);
+  }
+
+  return [exploreDiscussions, fetchingExploreDiscussions];
+}
+
+function useViewAllDiscussions(intersectingElement) {
+  const { discussions, viewAllDiscussions, setViewAllDiscussions } =
+    useContext(DataContext);
+  const [fetchingViewAllDiscussions, setFetchingViewAllDiscussions] =
+    useState(false);
+
+  useEffect(() => {
+    if (!viewAllDiscussions.hasInitialized) {
+      fetchData();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (intersectingElement && viewAllDiscussions.hasMore) {
+      fetchData();
+    }
+  }, [intersectingElement]);
+
+  async function fetchData() {
+    setFetchingViewAllDiscussions(true);
+
+    const { data, hasMore } = await getDiscussions(
+      viewAllDiscussions.keys.length
+    );
+    data.forEach((row) => (discussions.current[row.id] = row));
+    const ids = data.map((row) => row.id);
+
+    const _viewAllDiscussions = { ...viewAllDiscussions };
+
+    if (data.length > 0) {
+      _viewAllDiscussions.keys = [...viewAllDiscussions.keys, ...ids];
+    }
+
+    _viewAllDiscussions.hasMore = hasMore;
+    _viewAllDiscussions.hasInitialized = true;
+
+    setViewAllDiscussions(_viewAllDiscussions);
+
+    setFetchingViewAllDiscussions(false);
+  }
+
+  return [viewAllDiscussions, fetchingViewAllDiscussions];
+}
+
+export {
+  useUserDiscussions,
+  useUserHiddenDiscussions,
+  useExploreDiscussions,
+  useViewAllDiscussions,
+};
