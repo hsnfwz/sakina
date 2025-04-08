@@ -39,9 +39,6 @@ function Home() {
           >
             Discussions
           </Anchor>
-          <Anchor active={location.pathname.includes('users')} to="users">
-            Users
-          </Anchor>
         </nav>
         <Outlet />
       </div>
