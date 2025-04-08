@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import {
-  MessageSquare,
+  MessageCircle,
   Heart,
   ChevronDown,
   ChevronUp,
@@ -10,7 +10,7 @@ import { ModalContext } from '../common/context/ModalContextProvider';
 import { AuthContext } from '../common/context/AuthContextProvider';
 import { DataContext } from '../common/context/DataContextProvider';
 import { BUTTON_COLOR } from '../common/enums';
-import { getCommentsByParentDiscussionId } from '../common/database/discussions';
+import { getDiscussionCommentsByParentDiscussionId } from '../common/database/discussions';
 import Button from './Button';
 import DiscussionCard from './DiscussionCard';
 import Loading from './Loading';
@@ -37,7 +37,7 @@ function Comment({ comment, elementRef }) {
       };
     }
 
-    const { data, hasMore } = await getCommentsByParentDiscussionId(
+    const { data, hasMore } = await getDiscussionCommentsByParentDiscussionId(
       parentDiscussionId,
       nestedComment.data.length
     );
@@ -74,7 +74,7 @@ function Comment({ comment, elementRef }) {
                 });
               }}
             >
-              <MessageSquare />
+              <MessageCircle />
             </Button>
             <Button
               isRound={true}

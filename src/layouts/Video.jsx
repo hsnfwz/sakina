@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { MessageSquare, Heart } from 'lucide-react';
+import { MessageCircle, Heart } from 'lucide-react';
 import { useParams } from 'react-router';
 import { AuthContext } from '../common/context/AuthContextProvider';
 import { BUTTON_COLOR } from '../common/enums';
@@ -61,19 +61,19 @@ function Video() {
         <Header>{video.title}</Header>
         {video.description && <p>{video.description}</p>}
         <div className="flex gap-2">
-          {/* <Button
+          <Button
               color={BUTTON_COLOR.SOLID_GREEN}
               handleClick={() => {
                 setModal({
                   type: 'COMMENT_MODAL',
                   data: {
-                    parentDiscussionId: activeDiscussion.id,
+                    parentDiscussionId: null,
                   },
                 });
               }}
             >
-              <MessageSquare />
-            </Button> */}
+              <MessageCircle />
+            </Button>
           {authUser && authUser.id !== video.user_id && (
             <Button
               isRound={true}

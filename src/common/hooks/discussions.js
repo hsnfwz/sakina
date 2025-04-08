@@ -1,11 +1,98 @@
 import { useEffect, useState, useContext } from 'react';
+import { useLocation } from 'react-router';
 import {
   getDiscussions,
   getDiscussionsByUserId,
   getHiddenDiscussionsByUserId,
+  getDiscussionById,
+  getDiscussionCommentsByParentDiscussionId,
 } from '../database/discussions';
 import { DataContext } from '../context/DataContextProvider';
 import { AuthContext } from '../context/AuthContextProvider';
+
+function useDiscussion(id) {
+  const location = useLocation();
+  const { discussions } = useContext(DataContext);
+  const [discussion, setDiscussion] = useState(null);
+  const [fetchingDiscussion, setFetchingDiscussion] = useState(false);
+
+  useEffect(() => {
+    async function getData() {
+      setFetchingDiscussion(true);
+
+      let _discussion;
+
+      if (discussions.current[id]) {
+        _discussion = discussions.current[id];
+      } else {
+        if (location.state && location.state.discussion) {
+          _discussion = location.state.discussion;
+        } else {
+          const data = await getDiscussionById(id);
+          _discussion = data;
+        }
+
+        discussions.current[id] = _discussion;
+      }
+
+      setDiscussion(_discussion);
+
+      setFetchingDiscussion(false);
+    }
+
+    getData();
+  }, [location]);
+
+  return [discussion, fetchingDiscussion];
+}
+
+function useDiscussionComments(discussion, intersectingElement) {
+  const { discussions } = useContext(DataContext);
+  const [discussionComments, setDiscussionComments] = useState({
+    data: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+  const [fetchingDiscussionComments, setFetchingDiscussionComments] = useState(false);
+
+  useEffect(() => {
+    if (discussion && !discussionComments.hasInitialized) {
+      getData();
+    }
+  }, [discussion]);
+
+  useEffect(() => {
+    if (intersectingElement && discussionComments.hasMore) {
+      getData();
+    }
+  }, [intersectingElement]);
+
+  async function getData() {
+    setFetchingDiscussionComments(true);
+
+    const { data, hasMore } = await getDiscussionCommentsByParentDiscussionId(
+      discussion.id,
+      discussionComments.data.length
+    );
+    
+    // TODO: save discussionComments to the discussions object
+
+    const _discussionComments = { ...discussionComments };
+
+    if (data.length > 0) {
+      _discussionComments.data = [...discussionComments.data, ...data];
+    }
+
+    _discussionComments.hasMore = hasMore;
+    _discussionComments.hasInitialized = true;
+
+    setDiscussionComments(_discussionComments);
+
+    setFetchingDiscussionComments(false);
+  }
+
+  return [discussionComments, fetchingDiscussionComments];
+}
 
 function useUserDiscussions(intersectingElement) {
   const { authUser } = useContext(AuthContext);
@@ -180,6 +267,8 @@ function useViewAllDiscussions(intersectingElement) {
 }
 
 export {
+  useDiscussion,
+  useDiscussionComments,
   useUserDiscussions,
   useUserHiddenDiscussions,
   useExploreDiscussions,

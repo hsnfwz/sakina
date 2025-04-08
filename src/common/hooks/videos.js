@@ -8,33 +8,31 @@ import {
 } from '../database/videos';
 import { DataContext } from '../context/DataContextProvider';
 import { AuthContext } from '../context/AuthContextProvider';
-import { getSessionStorageData, setSessionStorageData } from '../helpers';
+import { getSessionStorageData } from '../helpers';
 
 function useVideo(id) {
-  const { viewedVideos } = useContext(DataContext);
   const location = useLocation();
+  const { videos } = useContext(DataContext);
   const [video, setVideo] = useState(null);
   const [fetchingVideo, setFetchingVideo] = useState(false);
 
   useEffect(() => {
-    async function getVideo() {
+    async function getData() {
       setFetchingVideo(true);
 
       let _video;
 
-      if (viewedVideos.current[id]) {
-        _video = viewedVideos.current[id];
+      if (videos.current[id]) {
+        _video = videos.current[id];
       } else {
-        if (location.state.video) {
+        if (location.state && location.state.video) {
           _video = location.state.video;
         } else {
           const data = await getVideoById(id);
-          if (data) {
-            _video = data;
-          }
+          _video = data;
         }
 
-        viewedVideos.current[id] = _video;
+        videos.current[id] = _video;
       }
 
       setVideo(_video);
@@ -42,7 +40,7 @@ function useVideo(id) {
       setFetchingVideo(false);
     }
 
-    getVideo();
+    getData();
   }, [location]);
 
   return [video, fetchingVideo];

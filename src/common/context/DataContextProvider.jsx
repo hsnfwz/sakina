@@ -8,6 +8,62 @@ function DataContextProvider({ children }) {
   const clips = useRef({});
   const discussions = useRef({});
 
+  /* 
+    discussionChildren: {
+      [discussionid]: {
+        keys: [0,1],
+        hasMore: true,
+        hasIniialized: false,
+      },
+      [discussionid]: {
+        keys: [2],
+        hasMore: true,
+        hasIniialized: false,
+      },
+    }  
+  */
+
+  const [discussionComments, setDiscussionComments] = useState({});
+
+  const [nestedComments, setNestedComments] = useState({});
+
+
+  const [unreadNotifications, setUnreadNotifications] = useState({
+    data: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
+  const [readNotifications, setReadNotifications] = useState({
+    data: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
+  const [homeUsers, setHomeUsers] = useState({
+    keys: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
+  const [homeVideos, setHomeVideos] = useState({
+    keys: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
+  const [homeClips, setHomeClips] = useState({
+    keys: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
+  const [homeDiscussions, setHomeDiscussions] = useState({
+    keys: [],
+    hasMore: true,
+    hasInitialized: false,
+  });
+
   const [exploreUsers, setExploreUsers] = useState({
     keys: [],
     hasMore: true,
@@ -155,46 +211,7 @@ function DataContextProvider({ children }) {
     hasInitialized: false,
   });
 
-  const [homeVideos, setHomeVideos] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [homeClips, setHomeClips] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [homeDiscussions, setHomeDiscussions] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [comments, setComments] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [nestedComments, setNestedComments] = useState({});
-
-  const [notifications, setNotifications] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
-  const [readNotifications, setReadNotifications] = useState({
-    data: [],
-    hasMore: true,
-    hasInitialized: false,
-  });
-
   const [activeUser, setActiveUser] = useState(null);
-  const [activeDiscussion, setActiveDiscussion] = useState(null);
 
   return (
     <DataContext.Provider
@@ -203,6 +220,14 @@ function DataContextProvider({ children }) {
         videos,
         clips,
         discussions,
+        homeUsers,
+        setHomeUsers,
+        homeVideos,
+        setHomeVideos,
+        homeClips,
+        setHomeClips,
+        homeDiscussions,
+        setHomeDiscussions,
         exploreUsers,
         setExploreUsers,
         exploreVideos,
@@ -219,18 +244,12 @@ function DataContextProvider({ children }) {
         setViewAllClips,
         viewAllDiscussions,
         setViewAllDiscussions,
-
-        notifications,
-        setNotifications,
+        discussionComments,
+        setDiscussionComments,
+        unreadNotifications,
+        setUnreadNotifications,
         readNotifications,
         setReadNotifications,
-
-        homeVideos,
-        setHomeVideos,
-        homeClips,
-        setHomeClips,
-        homeDiscussions,
-        setHomeDiscussions,
 
         userVideos,
         setUserVideos,
@@ -261,15 +280,11 @@ function DataContextProvider({ children }) {
         userFollowing,
         setUserFollowing,
 
-        comments,
-        setComments,
         nestedComments,
         setNestedComments,
 
         activeUser,
         setActiveUser,
-        activeDiscussion,
-        setActiveDiscussion,
       }}
     >
       {children}

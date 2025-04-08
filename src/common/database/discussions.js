@@ -145,15 +145,11 @@ async function getDiscussionById(id) {
 
     if (error) throw error;
 
-    return {
-      data,
-    };
+    return data[0];
   } catch (error) {
     console.log(error);
 
-    return {
-      data: null,
-    };
+    return null;
   }
 }
 
@@ -197,15 +193,11 @@ async function addDiscussion(payload) {
 
     if (error) throw error;
 
-    return {
-      data,
-    };
+    return data[0];
   } catch (error) {
     console.log(error);
 
-    return {
-      data: null,
-    };
+    return null;
   }
 }
 
@@ -219,19 +211,15 @@ async function updateDiscussionById(id, payload) {
 
     if (error) throw error;
 
-    return {
-      data,
-    };
+    return data[0];
   } catch (error) {
     console.log(error);
 
-    return {
-      data: null,
-    };
+    return null;
   }
 }
 
-async function getCommentsByParentDiscussionId(
+async function getDiscussionCommentsByParentDiscussionId(
   parentDiscussionId,
   startIndex = 0,
   limit = 6,
@@ -316,7 +304,7 @@ export {
   getHiddenDiscussionsByUserId,
   addDiscussion,
   updateDiscussionById,
-  getCommentsByParentDiscussionId,
+  getDiscussionCommentsByParentDiscussionId,
   getPendingPostsCount,
   getAcceptedPostsByReceiverProfileIds,
 };

@@ -3,6 +3,7 @@ import { ORDER_BY } from '../enums';
 
 async function getNotificationsByUserId(
   userId,
+  isRead,
   startIndex = 0,
   limit = 6,
   orderBy = ORDER_BY.NEWEST
@@ -11,38 +12,7 @@ async function getNotificationsByUserId(
     const { data, error } = await supabase
       .from('notifications')
       .select('*, sender:sender_user_id(*), receiver:receiver_user_id(*)')
-      .eq('is_read', false)
-      .eq('receiver_user_id', userId)
-      .order(orderBy.columnName, { ascending: orderBy.isAscending })
-      .range(startIndex, startIndex + limit - 1);
-
-    if (error) throw error;
-
-    return {
-      data,
-      hasMore: data.length === limit,
-    };
-  } catch (error) {
-    console.log(error);
-
-    return {
-      data: [],
-      hasMore: false,
-    };
-  }
-}
-
-async function getReadNotificationsByUserId(
-  userId,
-  startIndex = 0,
-  limit = 6,
-  orderBy = ORDER_BY.NEWEST
-) {
-  try {
-    const { data, error } = await supabase
-      .from('notifications')
-      .select('*, sender:sender_user_id(*), receiver:receiver_user_id(*)')
-      .eq('is_read', true)
+      .eq('is_read', isRead)
       .eq('receiver_user_id', userId)
       .order(orderBy.columnName, { ascending: orderBy.isAscending })
       .range(startIndex, startIndex + limit - 1);
@@ -130,7 +100,6 @@ async function updateNotificationById(id, payload) {
 
 export {
   getNotificationsByUserId,
-  getReadNotificationsByUserId,
   getNotificationsCountByUserId,
   addNotification,
   updateNotificationById,
