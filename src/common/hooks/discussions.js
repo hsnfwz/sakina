@@ -7,6 +7,7 @@ import {
   getDiscussionById,
   getDiscussionCommentsByParentDiscussionId,
 } from '../database/discussions';
+import { getFollowerDiscussionsBySenderUserId } from '../database/view-follower-discussions';
 import { DataContext } from '../context/DataContextProvider';
 import { AuthContext } from '../context/AuthContextProvider';
 
@@ -53,7 +54,8 @@ function useDiscussionComments(discussion, intersectingElement) {
     hasMore: true,
     hasInitialized: false,
   });
-  const [fetchingDiscussionComments, setFetchingDiscussionComments] = useState(false);
+  const [fetchingDiscussionComments, setFetchingDiscussionComments] =
+    useState(false);
 
   useEffect(() => {
     if (discussion && !discussionComments.hasInitialized) {
@@ -74,7 +76,7 @@ function useDiscussionComments(discussion, intersectingElement) {
       discussion.id,
       discussionComments.data.length
     );
-    
+
     // TODO: save discussionComments to the discussions object
 
     const _discussionComments = { ...discussionComments };
@@ -266,6 +268,51 @@ function useViewAllDiscussions(intersectingElement) {
   return [viewAllDiscussions, fetchingViewAllDiscussions];
 }
 
+function useHomeDiscussions(intersectingElement) {
+  const { authUser } = useContext(AuthContext);
+  const { discussions, homeDiscussions, setHomeDiscussions } =
+    useContext(DataContext);
+  const [fetchingHomeDiscussions, setFetchingHomeDiscussions] = useState(false);
+
+  useEffect(() => {
+    if (authUser && !homeDiscussions.hasInitialized) {
+      fetchData();
+    }
+  }, [authUser]);
+
+  useEffect(() => {
+    if (intersectingElement && homeDiscussions.hasMore) {
+      fetchData();
+    }
+  }, [intersectingElement]);
+
+  async function fetchData() {
+    setFetchingHomeDiscussions(true);
+
+    const { data, hasMore } = await getFollowerDiscussionsBySenderUserId(
+      authUser.id,
+      homeDiscussions.keys.length
+    );
+    data.forEach((row) => (discussions.current[row.id] = row));
+    const ids = data.map((row) => row.id);
+
+    const _homeDiscussions = { ...homeDiscussions };
+
+    if (data.length > 0) {
+      _homeDiscussions.keys = [...homeDiscussions.keys, ...ids];
+    }
+
+    _homeDiscussions.hasMore = hasMore;
+    _homeDiscussions.hasInitialized = true;
+
+    setHomeDiscussions(_homeDiscussions);
+
+    setFetchingHomeDiscussions(false);
+  }
+
+  return [homeDiscussions, fetchingHomeDiscussions];
+}
+
 export {
   useDiscussion,
   useDiscussionComments,
@@ -273,4 +320,5 @@ export {
   useUserHiddenDiscussions,
   useExploreDiscussions,
   useViewAllDiscussions,
+  useHomeDiscussions,
 };

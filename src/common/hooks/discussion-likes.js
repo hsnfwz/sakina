@@ -27,7 +27,12 @@ function useDiscussionLike(discussion) {
     getDiscussionLike();
   }, [authUser, discussion]);
 
-  return [discussionLike, setDiscussionLike, fetchingDiscussionLike, setFetchingDiscussionLike];
+  return [
+    discussionLike,
+    setDiscussionLike,
+    fetchingDiscussionLike,
+    setFetchingDiscussionLike,
+  ];
 }
 
 export { useDiscussionLike };

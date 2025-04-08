@@ -1,7 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import {
-  getNotificationsByUserId
-} from '../database/notifications';
+import { getNotificationsByUserId } from '../database/notifications';
 import { DataContext } from '../context/DataContextProvider';
 import { AuthContext } from '../context/AuthContextProvider';
 
@@ -52,8 +50,7 @@ function useUnreadNotifications(intersectingElement) {
 
 function useReadNotifications(intersectingElement) {
   const { authUser } = useContext(AuthContext);
-  const { readNotifications, setReadNotifications } =
-    useContext(DataContext);
+  const { readNotifications, setReadNotifications } = useContext(DataContext);
   const [fetchingReadNotifications, setFetchingReadNotifications] =
     useState(false);
 
@@ -95,7 +92,4 @@ function useReadNotifications(intersectingElement) {
   return [readNotifications, fetchingReadNotifications];
 }
 
-export {
-  useUnreadNotifications,
-  useReadNotifications,
-};
+export { useUnreadNotifications, useReadNotifications };

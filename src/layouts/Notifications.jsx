@@ -1,10 +1,11 @@
 import { useEffect, useContext, useState } from 'react';
 import { Check, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
+import { updateNotificationById } from '../common/database/notifications.js';
 import {
-  updateNotificationById,
-} from '../common/database/notifications.js';
-import { useReadNotifications, useUnreadNotifications } from '../common/hooks/notifications.js';
+  useReadNotifications,
+  useUnreadNotifications,
+} from '../common/hooks/notifications.js';
 import { BUTTON_COLOR } from '../common/enums.js';
 import { AuthContext } from '../common/context/AuthContextProvider.jsx';
 import { useElementIntersection } from '../common/hooks.js';
@@ -17,8 +18,10 @@ import NotificationCard from '../components/NotificationCard.jsx';
 function Notifications() {
   const { authUser } = useContext(AuthContext);
   const [elementRef, intersectingElement] = useElementIntersection();
-  const [unreadNotifications, fetchingUnreadNotifications] = useUnreadNotifications(intersectingElement);
-  const [readNotifications, fetchingReadNotifications] = useReadNotifications(intersectingElement);
+  const [unreadNotifications, fetchingUnreadNotifications] =
+    useUnreadNotifications(intersectingElement);
+  const [readNotifications, fetchingReadNotifications] =
+    useReadNotifications(intersectingElement);
 
   const [show, setShow] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +50,7 @@ function Notifications() {
     });
     setIsLoading(false);
   }
-  
+
   // async function refreshNotifications() {
   //   setIsLoading(true);
 
@@ -115,7 +118,9 @@ function Notifications() {
                       isRound={true}
                       color={BUTTON_COLOR.OUTLINE_RED}
                       isDisabled={isLoading}
-                      handleClick={async () => await handleRead(notification.id)}
+                      handleClick={async () =>
+                        await handleRead(notification.id)
+                      }
                     >
                       <Check />
                     </Button>
@@ -146,7 +151,9 @@ function Notifications() {
                       isRound={true}
                       color={BUTTON_COLOR.SOLID_RED}
                       isDisabled={isLoading}
-                      handleClick={async () => await handleUnread(notification.id)}
+                      handleClick={async () =>
+                        await handleUnread(notification.id)
+                      }
                     >
                       <X />
                     </Button>

@@ -6,6 +6,7 @@ import {
   getHiddenVideosByUserId,
   getVideoById,
 } from '../database/videos';
+import { getFollowerVideosBySenderUserId } from '../database/view-follower-videos';
 import { DataContext } from '../context/DataContextProvider';
 import { AuthContext } from '../context/AuthContextProvider';
 import { getSessionStorageData } from '../helpers';
@@ -402,6 +403,96 @@ function useViewAllClips(intersectingElement) {
   return [viewAllClips, fetchingViewAllClips];
 }
 
+function useHomeVideos(intersectingElement) {
+  const { authUser } = useContext(AuthContext);
+  const { videos, homeVideos, setHomeVideos } = useContext(DataContext);
+  const [fetchingHomeVideos, setFetchingHomeVideos] = useState(false);
+
+  useEffect(() => {
+    if (authUser && !homeVideos.hasInitialized) {
+      fetchData();
+    }
+  }, [authUser]);
+
+  useEffect(() => {
+    if (intersectingElement && homeVideos.hasMore) {
+      fetchData();
+    }
+  }, [intersectingElement]);
+
+  async function fetchData() {
+    setFetchingHomeVideos(true);
+
+    const { data, hasMore } = await getFollowerVideosBySenderUserId(
+      authUser.id,
+      'HORIZONTAL',
+      homeVideos.keys.length
+    );
+    data.forEach((row) => (videos.current[row.id] = row));
+    const ids = data.map((row) => row.id);
+
+    const _homeVideos = { ...homeVideos };
+
+    if (data.length > 0) {
+      _homeVideos.keys = [...homeVideos.keys, ...ids];
+    }
+
+    _homeVideos.hasMore = hasMore;
+    _homeVideos.hasInitialized = true;
+
+    setHomeVideos(_homeVideos);
+
+    setFetchingHomeVideos(false);
+  }
+
+  return [homeVideos, fetchingHomeVideos];
+}
+
+function useHomeClips(intersectingElement) {
+  const { authUser } = useContext(AuthContext);
+  const { clips, homeClips, setHomeClips } = useContext(DataContext);
+  const [fetchingHomeClips, setFetchingHomeClips] = useState(false);
+
+  useEffect(() => {
+    if (authUser && !homeClips.hasInitialized) {
+      fetchData();
+    }
+  }, [authUser]);
+
+  useEffect(() => {
+    if (intersectingElement && homeClips.hasMore) {
+      fetchData();
+    }
+  }, [intersectingElement]);
+
+  async function fetchData() {
+    setFetchingHomeClips(true);
+
+    const { data, hasMore } = await getFollowerVideosBySenderUserId(
+      authUser.id,
+      'VERTICAL',
+      homeClips.keys.length
+    );
+    data.forEach((row) => (clips.current[row.id] = row));
+    const ids = data.map((row) => row.id);
+
+    const _homeClips = { ...homeClips };
+
+    if (data.length > 0) {
+      _homeClips.keys = [...homeClips.keys, ...ids];
+    }
+
+    _homeClips.hasMore = hasMore;
+    _homeClips.hasInitialized = true;
+
+    setHomeClips(_homeClips);
+
+    setFetchingHomeClips(false);
+  }
+
+  return [homeClips, fetchingHomeClips];
+}
+
 export {
   useVideo,
   useUserVideos,
@@ -412,4 +503,6 @@ export {
   useViewAllVideos,
   useExploreClips,
   useViewAllClips,
+  useHomeVideos,
+  useHomeClips,
 };

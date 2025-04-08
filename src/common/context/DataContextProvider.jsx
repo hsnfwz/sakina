@@ -9,7 +9,7 @@ function DataContextProvider({ children }) {
   const discussions = useRef({});
 
   /* 
-    discussionChildren: {
+    discussionComments: {
       [discussionid]: {
         keys: [0,1],
         hasMore: true,
@@ -24,9 +24,7 @@ function DataContextProvider({ children }) {
   */
 
   const [discussionComments, setDiscussionComments] = useState({});
-
   const [nestedComments, setNestedComments] = useState({});
-
 
   const [unreadNotifications, setUnreadNotifications] = useState({
     data: [],

@@ -11,7 +11,7 @@ async function getVideoLikesByUserId(
     const { data, error } = await supabase
       .from('view_video_likes')
       .select(
-        '*, video_user:video_user_id(*), video_likes_user:video_likes_user_id(*) video:video_id(*)'
+        '*, video_user:video_user_id(*), video_likes_user:video_likes_user_id(*), video:video_id(*)'
       )
       .eq('orientation', 'HORIZONTAL')
       .eq('is_hidden', false)
@@ -45,7 +45,7 @@ async function getClipLikesByUserId(
     const { data, error } = await supabase
       .from('view_video_likes')
       .select(
-        '*, video_user:video_user_id(*), video_likes_user:video_likes_user_id(*) video:video_id(*)'
+        '*, video_user:video_user_id(*), video_likes_user:video_likes_user_id(*), video:video_id(*)'
       )
       .eq('orientation', 'VERTICAL')
       .eq('is_hidden', false)

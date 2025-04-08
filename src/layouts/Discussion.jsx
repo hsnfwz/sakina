@@ -1,7 +1,10 @@
 import { useContext } from 'react';
 import { MessageCircle, Heart } from 'lucide-react';
 import { useParams } from 'react-router';
-import { useDiscussion, useDiscussionComments } from '../common/hooks/discussions';
+import {
+  useDiscussion,
+  useDiscussionComments,
+} from '../common/hooks/discussions';
 import { useDiscussionLike } from '../common/hooks/discussion-likes';
 import { useDiscussionView } from '../common/hooks/discussion-views';
 import { useElementIntersection } from '../common/hooks';
@@ -25,9 +28,14 @@ function Discussion() {
   const { setModal } = useContext(ModalContext);
   const [elementRef, intersectingElement] = useElementIntersection();
   const [discussion, fetchingDiscussion] = useDiscussion(id);
-  const [discussionComments, fetchingDiscussionComments] = useDiscussionComments(discussion, intersectingElement);
-  const [discussionLike, setDiscussionLike, fetchingDiscussionLike, setFetchingDiscussionLike] =
-    useDiscussionLike(discussion);
+  const [discussionComments, fetchingDiscussionComments] =
+    useDiscussionComments(discussion, intersectingElement);
+  const [
+    discussionLike,
+    setDiscussionLike,
+    fetchingDiscussionLike,
+    setFetchingDiscussionLike,
+  ] = useDiscussionLike(discussion);
   useDiscussionView(discussion);
 
   async function handleLike() {
@@ -109,7 +117,9 @@ function Discussion() {
                   key={index}
                   comment={comment}
                   elementRef={
-                    index === discussionComments.data.length - 1 ? elementRef : null
+                    index === discussionComments.data.length - 1
+                      ? elementRef
+                      : null
                   }
                   showLink={true}
                 />

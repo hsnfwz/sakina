@@ -11,7 +11,7 @@ async function getVideoViewsByUserId(
     const { data, error } = await supabase
       .from('view_video_views')
       .select(
-        '*, video_user:video_user_id(*), video_views_user:video_views_user_id(*) video:video_id(*)'
+        '*, video_user:video_user_id(*), video_views_user:video_views_user_id(*), video:video_id(*)'
       )
       .eq('orientation', 'HORIZONTAL')
       .eq('is_hidden', false)
@@ -45,7 +45,7 @@ async function getClipViewsByUserId(
     const { data, error } = await supabase
       .from('view_video_views')
       .select(
-        '*, video_user:video_user_id(*), video_views_user:video_views_user_id(*) video:video_id(*)'
+        '*, video_user:video_user_id(*), video_views_user:video_views_user_id(*), video:video_id(*)'
       )
       .eq('orientation', 'VERTICAL')
       .eq('is_hidden', false)

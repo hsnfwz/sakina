@@ -10,7 +10,6 @@ import Home from './layouts/Home.jsx';
 import HomeClips from './layouts/HomeClips.jsx';
 import HomeDiscussions from './layouts/HomeDiscussions.jsx';
 import HomeVideos from './layouts/HomeVideos.jsx';
-import HomeUsers from './layouts/HomeUsers.jsx';
 import Explore from './layouts/Explore.jsx';
 import Videos from './layouts/Videos.jsx';
 import Clips from './layouts/Clips.jsx';
@@ -72,7 +71,6 @@ const router = createBrowserRouter([
           { path: 'videos', Component: HomeVideos },
           { path: 'clips', Component: HomeClips },
           { path: 'discussions', Component: HomeDiscussions },
-          { path: 'users', Component: HomeUsers },
         ],
       },
       {
@@ -152,8 +150,8 @@ createRoot(root).render(
 );
 
 /* 
-  - home page
   - video discussions
+
   - restore scroll position
   - likes for comments - every time we fetch comments/nested comments, get each their respective like record
   - isExpanded - make this an object property for each comment instead of state

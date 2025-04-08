@@ -62,18 +62,19 @@ function Video() {
         {video.description && <p>{video.description}</p>}
         <div className="flex gap-2">
           <Button
-              color={BUTTON_COLOR.SOLID_GREEN}
-              handleClick={() => {
-                setModal({
-                  type: 'COMMENT_MODAL',
-                  data: {
-                    parentDiscussionId: null,
-                  },
-                });
-              }}
-            >
-              <MessageCircle />
-            </Button>
+            isRound={true}
+            color={BUTTON_COLOR.SOLID_GREEN}
+            handleClick={() => {
+              setModal({
+                type: 'COMMENT_MODAL',
+                data: {
+                  parentDiscussionId: null,
+                },
+              });
+            }}
+          >
+            <MessageCircle />
+          </Button>
           {authUser && authUser.id !== video.user_id && (
             <Button
               isRound={true}
