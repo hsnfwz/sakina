@@ -150,16 +150,21 @@ createRoot(root).render(
 );
 
 /* 
+  - user, settings, discussion pages
+
   - video discussions
 
-  - restore scroll position
   - likes for comments - every time we fetch comments/nested comments, get each their respective like record
   - isExpanded - make this an object property for each comment instead of state
 
-  - explore and view all pages filters (newest, oldest, likes, views, discussions for day, week, month, year, all-time)
+  - restore and reset scroll positions
+
   - bookmarks (save for later)
   - playlists + search playlists + explore playlists + user playlists
-  - look into vimeo for video hosting - upload videos from sakina to vimeo and retreive the ID to store in the DB
+
+  - explore and view all page filters (newest, oldest, likes, views, discussions for day, week, month, year, all-time)
+
+  - add notification for mentions, likes, views, discussions, follows
 
   - video
     - add skip 5 seconds forward and back for video using arrow keys
@@ -167,6 +172,7 @@ createRoot(root).render(
     - autplay queue of videos (ex: playlists)
     - visually display audio using Web Audio API
 
+  - look into vimeo for video + thumbnail hosting - upload videos and thumbnails from sakina to vimeo and retreive the ID to store in the DB
   - look into new supabase UI for file uploads
     - show preview of post before submission
     - create/avatar modal upload progress indicator
@@ -192,10 +198,8 @@ createRoot(root).render(
 
 
   FUTURE FEATURES:
-  - notifications
-  - realtime notifications, messaging, and sharing
+  - real-time notifications, messaging, and sharing
   - livestreaming
-  - select thumbnail from video frame
   - block/mute users
   - analytics page
   - revenue system for content creators

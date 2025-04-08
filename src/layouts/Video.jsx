@@ -4,16 +4,18 @@ import { useParams } from 'react-router';
 import { AuthContext } from '../common/context/AuthContextProvider';
 import { BUTTON_COLOR } from '../common/enums';
 import { addVideoLike, removeVideoLike } from '../common/database/video-likes';
+import { useVideo } from '../common/hooks/videos';
+import { useVideoLike } from '../common/hooks/video-likes';
+import { useVideoView } from '../common/hooks/video-views';
+import { ModalContext } from '../common/context/ModalContextProvider';
 import Loading from '../components/Loading';
 import MediaPlayer from '../components/MediaPlayer';
 import Header from '../components/Header';
 import Button from '../components/Button';
-import { useVideo } from '../common/hooks/videos';
-import { useVideoLike } from '../common/hooks/video-likes';
-import { useVideoView } from '../common/hooks/video-views';
 
 function Video() {
   const { authUser } = useContext(AuthContext);
+  const { setModal } = useContext(ModalContext);
   const { id } = useParams();
   const [video, fetchingVideo] = useVideo(id);
   const [videoLike, setVideoLike, fetchingVideoLike, setFetchingVideoLike] =
